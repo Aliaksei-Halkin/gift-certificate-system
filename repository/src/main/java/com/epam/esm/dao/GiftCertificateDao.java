@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * @author Aliaksei Halkin
  */
-public interface GiftCertificateDao extends BaseDao {
+public interface GiftCertificateDao extends BaseDao<GiftCertificate,Long> {
     List<GiftCertificate> findCertificatesByQueryParameters(String query);
 
     Set<Tag> findGiftCertificateTags(long certificateId);

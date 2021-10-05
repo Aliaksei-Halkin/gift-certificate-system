@@ -9,26 +9,26 @@ import java.util.stream.Collectors;
 /**
  * @author Aliaksei Halkin
  */
-public class GiftCertificate extends AbstractEntity {
+public class GiftCertificate extends AbstractEntity<Long> {
     private String name;
     private String description;
     private BigDecimal price;
     private int duration;
-    private LocalDateTime createDate;
+    private LocalDateTime createdDate;
     private LocalDateTime updateDate;
     private List<Tag> tags;
 
     public GiftCertificate() {
     }
 
-    public GiftCertificate(Object id, String name, String description, BigDecimal price,
-                           int duration, LocalDateTime createDate, LocalDateTime updateDate, List<Tag> tags) {
+    public GiftCertificate(Long id, String name, String description, BigDecimal price,
+                           int duration, LocalDateTime createdDate, LocalDateTime updateDate, List<Tag> tags) {
         super(id);
         this.name = name;
         this.description = description;
         this.price = price;
         this.duration = duration;
-        this.createDate = createDate;
+        this.createdDate = createdDate;
         this.updateDate = updateDate;
         this.tags = tags;
     }
@@ -65,12 +65,12 @@ public class GiftCertificate extends AbstractEntity {
         this.duration = duration;
     }
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreateDate(LocalDateTime createDate) {
-        this.createDate = createDate;
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
     public LocalDateTime getUpdateDate() {
@@ -98,14 +98,14 @@ public class GiftCertificate extends AbstractEntity {
         return duration == that.duration && Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)
                 && Objects.equals(price, that.price)
-                && Objects.equals(createDate, that.createDate)
+                && Objects.equals(createdDate, that.createdDate)
                 && Objects.equals(updateDate, that.updateDate)
                 && Objects.equals(tags, that.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, description, price, duration, createDate,
+        return Objects.hash(super.hashCode(), name, description, price, duration, createdDate,
                 updateDate, tags);
     }
 
@@ -116,7 +116,7 @@ public class GiftCertificate extends AbstractEntity {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
-                ", createDate=" + createDate +
+                ", createDate=" + createdDate +
                 ", updateDate=" + updateDate +
                 ", tags=" + tags +
                 '}';

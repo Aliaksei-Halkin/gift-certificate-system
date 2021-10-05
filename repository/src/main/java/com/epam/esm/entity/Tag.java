@@ -5,13 +5,13 @@ import java.util.Objects;
 /**
  * @author Aliaksei Halkin
  */
-public class Tag extends AbstractEntity {
+public class Tag extends AbstractEntity<Long> {
     private String name;
 
     public Tag() {
     }
 
-    public Tag(Object id, String name) {
+    public Tag(Long id, String name) {
         super(id);
         this.name = name;
     }

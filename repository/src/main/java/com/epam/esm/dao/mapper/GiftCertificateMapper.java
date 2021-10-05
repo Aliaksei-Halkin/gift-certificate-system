@@ -22,7 +22,7 @@ public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
         certificate.setDescription(rs.getString(ColumnName.DESCRIPTION));
         certificate.setPrice(rs.getBigDecimal(ColumnName.PRICE));
         certificate.setDuration(rs.getInt(ColumnName.DURATION));
-        certificate.setCreateDate(rs.getTimestamp(ColumnName.CREATE_DATE).toLocalDateTime());
+        certificate.setCreatedDate(rs.getTimestamp(ColumnName.CREATE_DATE).toLocalDateTime());
         certificate.setUpdateDate(rs.getTimestamp(ColumnName.LAST_UPDATE_DATE).toLocalDateTime());
         return certificate;
     }
