@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @ComponentScan("com.epam.esm")
 public class WebConfig {
-    private final String EXCEPTION_MESSAGE_FILE_PATH = "exception_message";
+    private final String EXCEPTION_MESSAGE_FILE_PATH = "i18n/exception_message";
     private final String ENCODING = "UTF-8";
 
     @Bean
