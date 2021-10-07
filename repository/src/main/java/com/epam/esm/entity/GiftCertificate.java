@@ -2,8 +2,8 @@ package com.epam.esm.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -16,13 +16,13 @@ public class GiftCertificate extends AbstractEntity<Long> {
     private int duration;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
-    private List<Tag> tags;
+    private Set<Tag> tags;
 
     public GiftCertificate() {
     }
 
     public GiftCertificate(Long id, String name, String description, BigDecimal price,
-                           int duration, LocalDateTime createdDate, LocalDateTime updateDate, List<Tag> tags) {
+                           int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<Tag> tags) {
         super(id);
         this.name = name;
         this.description = description;
@@ -81,11 +81,11 @@ public class GiftCertificate extends AbstractEntity<Long> {
         this.updateDate = updateDate;
     }
 
-    public List<Tag> getTags() {
-        return tags.stream().collect(Collectors.toList());
+    public Set<Tag> getTags() {
+        return tags;
     }
 
-    public void setTags(List<Tag> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 

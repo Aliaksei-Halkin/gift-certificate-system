@@ -1,11 +1,9 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.entity.Tag;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,13 +20,13 @@ public class GiftCertificateDto {
     private LocalDateTime createdDate;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateDate;
-    private Set<Tag> tags;
+    private Set<TagDto> tags;
 
     public GiftCertificateDto() {
     }
 
     public GiftCertificateDto(Long id, String name, String description, BigDecimal price, int duration,
-                              LocalDateTime createdDate, LocalDateTime updateDate, Set<Tag> tags) {
+                              LocalDateTime createdDate, LocalDateTime updateDate, Set<TagDto> tags) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -95,11 +93,11 @@ public class GiftCertificateDto {
         this.updateDate = updateDate;
     }
 
-    public Set<Tag> getTags() {
+    public Set<TagDto> getTags() {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(Set<TagDto> tags) {
         this.tags = tags;
     }
 
