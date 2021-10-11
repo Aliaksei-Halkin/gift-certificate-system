@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  */
 
 public class GiftCertificateValidator {
-    private static final String REGEX_NAME_AND_DESCRIPTION = "[–∞-—è–ê-–Ø\\w\\s\\d\\.,?!]{1,250}";
+    private static final String REGEX_NAME_AND_DESCRIPTION =  "[‡-ˇ¿-ﬂ\\w\\s\\.,?!']{1,250}";
     private static final long MIN_ID = 1;
     private static final BigDecimal MIN_PRICE = new BigDecimal("0.01");
     private static final BigDecimal MAX_PRICE = new BigDecimal("1000000");
