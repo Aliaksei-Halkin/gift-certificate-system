@@ -36,13 +36,17 @@ public class RepositoryConfig {
     public DataSource productionDataSource(@Value("${spring.database.driverClassName}") String driverName,
                                            @Value("${spring.database.url_prod}") String url,
                                            @Value("${spring.database.username}") String username,
-                                           @Value("${spring.database.password}") String password) {
+                                           @Value("${spring.database.password}") String password,
+                                           @Value("${spring.database.initial_pool_size}")int initialPoolSize,
+                                           @Value("${spring.database.max_pool_size}")int maxPoolSize) {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         try {
             dataSource.setDriverClass(driverName);
             dataSource.setJdbcUrl(url);
             dataSource.setUser(username);
             dataSource.setPassword(password);
+            dataSource.setInitialPoolSize(initialPoolSize);
+            dataSource.setMaxPoolSize(maxPoolSize);
             return dataSource;
         } catch (PropertyVetoException e) {
             throw new CannotGetJdbcConnectionException("Error while get connection to database");

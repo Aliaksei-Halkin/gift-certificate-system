@@ -10,7 +10,6 @@ repositories {
 
 dependencies {
     implementation project(':service')
-    implementation("org.springframework:spring-web:${spring_version}")
     implementation("org.springframework:spring-webmvc:${spring_version}")
     providedCompile("javax.servlet:javax.servlet-api:4.0.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:${jackson_version}")

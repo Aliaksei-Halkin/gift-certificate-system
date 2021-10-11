@@ -4,9 +4,11 @@
  * This is a general purpose Gradle build.
  * Learn more about Gradle by exploring our samples at https://docs.gradle.org/7.2/samples
  */
+plugins{
+    id 'war'
+}
 group 'com.epam.esm'
 version '1.0.0'
-
 
 allprojects {
     apply plugin: 'java'
