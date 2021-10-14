@@ -9,7 +9,7 @@ import com.epam.esm.exception.ValidationException;
  */
 public class TagValidator {
     private static final long MIN_ID = 1;
-    private static final String REGEX_NAME = "[–∞-—è–ê-–Ø\\w\\s\\.,?!']{1,45}";
+    private static final String REGEX_NAME = "[‡-ˇ¿-ﬂ\\w\\s\\.,?!']{1,45}";
 
     public static void isValidTag(TagDto tagDto) {
         isValidName(tagDto.getName());

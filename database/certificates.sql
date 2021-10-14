@@ -63,7 +63,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `certificatesdb`;
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (1, 'est');
+INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (1, 'rest');
 INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (2, 'entertainment');
 INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (3, 'vacation');
 INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (4, 'tourism');
