@@ -9,9 +9,9 @@ repositories {
 }
 
 dependencies {
-    implementation project(':service')
-    implementation("org.springframework:spring-webmvc:${spring_version}")
-    providedCompile("javax.servlet:javax.servlet-api:4.0.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:${jackson_version}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jackson_version}")
+    implementation project (":service");
+    implementation "org.springframework:spring-webmvc:${spring_version}"
+    providedCompile "javax.servlet:javax.servlet-api:4.0.1"
+    implementation "com.fasterxml.jackson.core:jackson-databind:${jackson_version}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jackson_version}"
 }

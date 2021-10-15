@@ -6,11 +6,11 @@ repositories {
 }
 
 dependencies {
-    implementation project(":repository");
-    implementation("org.modelmapper:modelmapper:2.3.9")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:${jackson_version}")
-    testImplementation 'org.mockito:mockito-core:3.12.4'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
+    implementation project (":repository");
+    implementation "org.modelmapper:modelmapper:2.4.4"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:${jackson_version}"
+    implementation "org.mockito:mockito-core:4.0.0"
+    implementation "org.junit.jupiter:junit-jupiter-params:5.8.1"
 }
 
 
