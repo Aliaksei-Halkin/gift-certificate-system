@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 /**
+ * The class represents creation beans of ModelMapper and TransactionManager
+ *
  * @author Aliaksei Halkin
  */
 @Component

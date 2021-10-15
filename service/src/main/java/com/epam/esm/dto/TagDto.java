@@ -3,6 +3,8 @@ package com.epam.esm.dto;
 import java.util.Objects;
 
 /**
+ * The class represents Tag data transfer object
+ *
  * @author Aliaksei Halkin
  */
 
@@ -12,6 +14,7 @@ public class TagDto {
 
     public TagDto() {
     }
+
     public TagDto(Long id, String name) {
         this.id = id;
         this.name = name;

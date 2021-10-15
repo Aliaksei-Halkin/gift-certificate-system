@@ -21,6 +21,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * The class represents methods for work   with dao level, validation
+ *
  * @author Aliaksei Halkin
  */
 @Service

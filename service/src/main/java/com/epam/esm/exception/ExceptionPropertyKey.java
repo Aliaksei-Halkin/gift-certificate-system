@@ -1,6 +1,8 @@
 package com.epam.esm.exception;
 
 /**
+ * The class represents keys for exceptions in service layer.
+ *
  * @author Aliaksei Halkin
  */
 public class ExceptionPropertyKey {

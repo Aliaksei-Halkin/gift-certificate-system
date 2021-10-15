@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * The class represents GiftCertificate data transfer object
+ *
  * @author Aliaksei Halkin
  */
 public class GiftCertificateDto {

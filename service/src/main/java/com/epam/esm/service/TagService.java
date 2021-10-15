@@ -5,6 +5,8 @@ import com.epam.esm.dto.TagDto;
 import java.util.Set;
 
 /**
+ * The interface represents {@code Tag} service
+ *
  * @author Aliaksei Halkin
  */
 public interface TagService {

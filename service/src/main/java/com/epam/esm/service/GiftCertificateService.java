@@ -7,6 +7,8 @@ import com.epam.esm.util.QueryParameter;
 import java.util.List;
 
 /**
+ * The interface represents {@code GiftCertificate} service
+ *
  * @author Aliaksei Halkin
  */
 public interface GiftCertificateService {

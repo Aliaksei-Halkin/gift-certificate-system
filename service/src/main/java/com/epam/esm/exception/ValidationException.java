@@ -1,6 +1,8 @@
 package com.epam.esm.exception;
 
 /**
+ * The class represents custom exceptions for validation
+ *
  * @author Aliaksei Halkin
  */
 public class ValidationException extends RuntimeException {
