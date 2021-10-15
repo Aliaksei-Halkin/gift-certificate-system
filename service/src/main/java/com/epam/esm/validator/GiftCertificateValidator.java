@@ -7,11 +7,13 @@ import com.epam.esm.exception.ValidationException;
 import java.math.BigDecimal;
 
 /**
+ * The GiftCertificateValidator class represents certificate data validation
+ *
  * @author Aliaksei Halkin
  */
 
 public class GiftCertificateValidator {
-    private static final String REGEX_NAME_AND_DESCRIPTION =  "[à-ÿÀ-ß\\w\\s\\.,?!']{1,250}";
+    private static final String REGEX_NAME_AND_DESCRIPTION = "[à-ÿÀ-ß\\w\\s\\.,?!']{1,250}";
     private static final long MIN_ID = 1;
     private static final BigDecimal MIN_PRICE = new BigDecimal("0.01");
     private static final BigDecimal MAX_PRICE = new BigDecimal("1000000");
@@ -20,6 +22,7 @@ public class GiftCertificateValidator {
 
     private GiftCertificateValidator() {
     }
+
     public static void isValidGiftCertificate(GiftCertificateDto giftCertificateDto) {
         isValidName(giftCertificateDto.getName());
         isValidDescription(giftCertificateDto.getDescription());

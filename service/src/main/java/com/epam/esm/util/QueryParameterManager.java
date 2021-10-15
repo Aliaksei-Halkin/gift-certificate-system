@@ -6,6 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * The QueryParameterManager represents constructions for the query. It's addition for the main query.
+ *
  * @author Aliaksei Halkin
  */
 public class QueryParameterManager {

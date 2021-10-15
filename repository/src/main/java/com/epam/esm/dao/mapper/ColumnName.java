@@ -1,6 +1,7 @@
 package com.epam.esm.dao.mapper;
 
 /**
+ * The {@code ColumnName} class has fields equals fields in database
  * @author Aliaksei Halkin
  */
 public class ColumnName {

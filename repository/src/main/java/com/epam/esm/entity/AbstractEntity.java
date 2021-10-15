@@ -44,7 +44,14 @@ public abstract class AbstractEntity<K> implements Serializable {
     public void setId(K id) {
         this.id = id;
     }
-
+    /**
+     * The implementation of the equals method. Compare this instance of AbstractEntity to another
+     * object.
+     *
+     * @param o {@code Object} to be compared with this {@code AbstractEntity}
+     * @return {@code true} is object to compare is instance of {@code AbstractEntity} and it has the same
+     * value of all class members
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -52,13 +59,22 @@ public abstract class AbstractEntity<K> implements Serializable {
         AbstractEntity<?> that = (AbstractEntity<?>) o;
         return id.equals(that.id);
     }
-
+    /**
+     * The implementation of the hashCode() method. Uses method hash() of the {@code Objects} class get
+     * the hash value of the class members.
+     *
+     * @return {@code int} value of the hash value fo the all class members
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id);
     }
 
-
+    /**
+     * The standard method which represents the AbstractEntity in the string value
+     *
+     * @return {@code String} the AbstractEntity
+     */
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

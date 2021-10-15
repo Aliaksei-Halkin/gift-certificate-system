@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * The interface represents base dao  for other dao
+ *
  * @author Aliaksei Halkin
  */
 public interface BaseDao<T extends AbstractEntity<K>, K> {

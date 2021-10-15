@@ -3,6 +3,8 @@ package com.epam.esm.util;
 import java.util.Objects;
 
 /**
+ * The fields of QueryParameter class represents dats for QueryParameterManager
+ *
  * @author Aliaksei Halkin
  */
 public class QueryParameter {

@@ -9,11 +9,19 @@ import java.sql.SQLException;
 
 
 /**
+ * The {@code TagMapper} class build the {@code GiftCertificate} entity from resultset database
+ *
  * @author Aliaksei Halkin
  */
 @Component
 public class TagMapper implements RowMapper<Tag> {
-
+    /**
+     * This method   map each row of data in the ResultSet.
+     *
+     * @param rs     the ResultSet to map (pre-initialized for the current row)
+     * @param rowNum the number of the current row
+     * @return {@link Tag} entity with full fields
+     */
     @Override
     public Tag mapRow(ResultSet rs, int rowNum) throws SQLException {
         Tag tag = new Tag();

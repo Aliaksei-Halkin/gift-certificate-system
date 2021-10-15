@@ -6,20 +6,59 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * The entity class represents  GiftCertificate
+ *
  * @author Aliaksei Halkin
  */
 public class GiftCertificate extends AbstractEntity<Long> {
+    /**
+     * The name of GiftCertificate
+     */
     private String name;
+    /**
+     * The description of GiftCertificate
+     */
     private String description;
+    /**
+     * The price of GiftCertificate
+     */
     private BigDecimal price;
+    /**
+     * The duration of GiftCertificate
+     */
     private int duration;
+    /**
+     * The date and time of GiftCertificate creation.
+     */
     private LocalDateTime createdDate;
+    /**
+     * The date and time of GiftCertificate creation.
+     */
     private LocalDateTime updateDate;
+    /**
+     * The set of tags in this Gift certificate
+     */
     private Set<Tag> tags;
 
+    /**
+     * The no-args constructor
+     */
     public GiftCertificate() {
     }
 
+    /**
+     * The constructor with all parameters, used to create instance of {@code GiftCertificate} which already has
+     * unique {@param id} and to retrieve information about certificate from data storage.
+     *
+     * @param id          {@code Long} value of unique certificate identification number
+     * @param name        {@code String} represents the name of gift certificate
+     * @param description {@code String} represents the description of gift certificate
+     * @param price       {@code BigDecimal} represents the cost of gift certificate
+     * @param duration    {@code int} represents the duration of gift certificate
+     * @param createdDate {@code LocalDate} of gift certificate creation
+     * @param updateDate  {@code LocalDate} of gift certificate creation
+     * @param tags        {@code Set} represents set of tags
+     */
     public GiftCertificate(Long id, String name, String description, BigDecimal price,
                            int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<Tag> tags) {
         super(id);
@@ -88,6 +127,14 @@ public class GiftCertificate extends AbstractEntity<Long> {
         this.tags = tags;
     }
 
+    /**
+     * The implementation of the equals method. Compare this instance of GiftCertificate to another
+     * object.
+     *
+     * @param o {@code Object} to be compared with this {@code GiftCertificate}
+     * @return {@code true} is object to compare is instance of {@code GiftCertificate} and it has the same
+     * value of all class members
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,12 +149,23 @@ public class GiftCertificate extends AbstractEntity<Long> {
                 && Objects.equals(tags, that.tags);
     }
 
+    /**
+     * The implementation of the hashCode() method. Uses method hash() of the {@code Objects} class get
+     * the hash value of the class members.
+     *
+     * @return {@code int} value of the hash value fo the all class members
+     */
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), name, description, price, duration, createdDate,
                 updateDate, tags);
     }
 
+    /**
+     * The standard method which represents the GiftCertificate in the string value
+     *
+     * @return {@code String} the GiftCertificate
+     */
     @Override
     public String toString() {
         return "GiftCertificate{" + super.toString() +

@@ -20,6 +20,9 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
+ * The class represents GiftCertificate dao implementation.
+ * This class use {@link JdbcTemplate} to do standard CRUD operations in a database with table GiftCertificate.
+ *
  * @author Aliaksei Halkin
  */
 @Repository
@@ -46,10 +49,26 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             "DELETE FROM gift_certificates WHERE certificateId = ?";
     public static final String INSERT_RELATION_BETWEEN_TAG_AND_GIFT_CERTIFICATE =
             "INSERT INTO certificates_has_tags (certificateId, tagId) VALUES (?, ?)";
+    /**
+     * The {@link JdbcTemplate} object
+     */
     private final JdbcTemplate jdbcTemplate;
+    /**
+     * The {@link GiftCertificateMapper} object
+     */
     private final GiftCertificateMapper giftCertificateMapper;
+    /**
+     * The {@link TagMapper} object
+     */
     private final TagMapper tagMapper;
 
+    /**
+     * The constructor with all parameters, used to create instance of {@code TagDaoImpl}
+     *
+     * @param jdbcTemplate          The {@link JdbcTemplate} object
+     * @param giftCertificateMapper The {@link GiftCertificateMapper} object
+     * @param tagMapper             The {@link TagMapper} object
+     */
     @Autowired
     public GiftCertificateDaoImpl(JdbcTemplate jdbcTemplate, GiftCertificateMapper giftCertificateMapper,
                                   TagMapper tagMapper) {
@@ -58,16 +77,32 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         this.tagMapper = tagMapper;
     }
 
+    /**
+     * The method find  certificate by id
+     *
+     * @param id {@code Long} the id of the GiftCertificate
+     * @return Optional with {@link GiftCertificate} entity
+     */
     @Override
     public Optional<GiftCertificate> findById(Long id) {
         return jdbcTemplate.query(SELECT_CERTIFICATE_BY_ID, giftCertificateMapper, id).stream().findFirst();
     }
 
+    /**
+     * The method find all gift certificates
+     *
+     * @return {@code List} of all certificates
+     */
     @Override
     public List<GiftCertificate> findAll() {
         return jdbcTemplate.query(SELECT_CERTIFICATES_BY_PARAMETERS, giftCertificateMapper);
     }
 
+    /**
+     * The method add gift certificate to database
+     *
+     * @return {@code long} id of added certificate
+     */
     @Override
     public long add(GiftCertificate entity) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -87,11 +122,22 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         throw new RuntimeException("Generated id not found");
     }
 
+    /**
+     * The method delete certificate by id
+     *
+     * @param id of certificate
+     */
     @Override
     public void removeById(Long id) {
         jdbcTemplate.update(DELETE_CERTIFICATE, id);
     }
 
+    /**
+     * The method update certificate by id
+     *
+     * @param entity GiftCertificate for update
+     * @return updating GiftCertificate
+     */
     @Override
     public GiftCertificate update(GiftCertificate entity) {
         jdbcTemplate.update(UPDATE_CERTIFICATE, entity.getName(), entity.getDescription(), entity.getPrice(),
@@ -100,16 +146,34 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         return entity;
     }
 
+    /**
+     * The method update certificate by id
+     *
+     * @param query represents additional query to main quiery {@code SELECT_CERTIFICATES_BY_PARAMETERS}
+     * @return {@code List} of certificates
+     */
     @Override
     public List<GiftCertificate> findCertificatesByQueryParameters(String query) {
         return jdbcTemplate.query(SELECT_CERTIFICATES_BY_PARAMETERS + query, giftCertificateMapper);
     }
 
+    /**
+     * The method find all tags for certificate
+     *
+     * @param certificateId {@code long} id of certificate
+     * @return {@code Set} of all tags
+     */
     @Override
     public Set<Tag> findGiftCertificateTags(long certificateId) {
         return new HashSet<>(jdbcTemplate.query(SELECT_CERTIFICATE_TAGS, tagMapper, certificateId));
     }
 
+    /**
+     * The method add certificate and tags to certificate_has_tag table.
+     *
+     * @param tagId             id of tag
+     * @param giftCertificateId id of certificate
+     */
     @Override
     public void addRelationBetweenTagAndGiftCertificate(long tagId, long giftCertificateId) {
         jdbcTemplate.update(con -> {

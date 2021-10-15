@@ -5,6 +5,8 @@ import com.epam.esm.exception.ValidationException;
 import com.epam.esm.util.QueryParameter;
 
 /**
+ * The QueryParameterValidator class represents query parameter data validation
+ *
  * @author Aliaksei Halkin
  */
 public class QueryParameterValidator {

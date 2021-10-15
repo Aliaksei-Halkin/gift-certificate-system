@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * The interface represents {@code GiftCertificate} dao
+ *
  * @author Aliaksei Halkin
  */
-public interface GiftCertificateDao extends BaseDao<GiftCertificate,Long> {
+public interface GiftCertificateDao extends BaseDao<GiftCertificate, Long> {
     List<GiftCertificate> findCertificatesByQueryParameters(String query);
 
     Set<Tag> findGiftCertificateTags(long certificateId);

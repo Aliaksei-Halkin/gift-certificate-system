@@ -5,6 +5,7 @@ import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.ValidationException;
 
 /**
+ * The TagValidator class represents tag data validation
  * @author Aliaksei Halkin
  */
 public class TagValidator {

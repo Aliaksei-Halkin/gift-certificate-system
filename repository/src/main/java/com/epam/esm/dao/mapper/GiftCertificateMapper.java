@@ -9,11 +9,19 @@ import java.sql.SQLException;
 
 
 /**
+ * The {@code GiftCertificateMapper} class build the {@code GiftCertificate} entity from resultset database
+ *
  * @author Aliaksei Halkin
  */
 @Component
 public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
-
+    /**
+     * This method   map each row of data in the ResultSet.
+     *
+     * @param rs     the ResultSet to map (pre-initialized for the current row)
+     * @param rowNum the number of the current row
+     * @return {@link GiftCertificate} entity with full fields
+     */
     @Override
     public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
         GiftCertificate certificate = new GiftCertificate();
