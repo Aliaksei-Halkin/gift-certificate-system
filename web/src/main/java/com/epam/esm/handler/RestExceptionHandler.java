@@ -20,6 +20,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import java.util.Locale;
 
 /**
+ * The RestExceptionHandler class is handling exceptions in specific  handler methods.
+ *
  * @author Aliaksei Halkin
  */
 @RestControllerAdvice
@@ -30,6 +32,10 @@ public class RestExceptionHandler {
     public static final String METHOD_NOT_SUPPORT = "methodNotSupport";
     public static final String BODY_MISSING = "bodyIsMissing";
     public static final String INTERNAL_ERROR = "internalError";
+    /**
+     * Strategy interface for resolving messages, with support for the parameterization and
+     * internationalization of such messages.
+     */
     private final MessageSource messageSource;
 
     @Autowired
@@ -37,6 +43,14 @@ public class RestExceptionHandler {
         this.messageSource = messageSource;
     }
 
+    /**
+     * The{@link ValidationException} throw in the service layer, it's custom exception for it if
+     * validation data failed
+     *
+     * @param exception ValidationException
+     * @param locale    the existing locale
+     * @return the Response entity with an error code and a message.
+     */
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorHandler> handleValidationException(ValidationException exception, Locale locale) {
         String message = messageSource.getMessage(exception.getMessageKey(), new Object[]{exception.getMessageValue()},
@@ -46,6 +60,14 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorHandler, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * The{@link ResourceNotFoundException} throw in the service layer, it's custom exception for it if
+     * resources not found
+     *
+     * @param exception if  resources not found
+     * @param locale    the existing locale
+     * @return the Response entity with an error code and a message.
+     */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorHandler> handleResourceNotFoundException(ResourceNotFoundException exception,
                                                                         Locale locale) {
@@ -56,6 +78,13 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorHandler, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Exception thrown on a type mismatch when trying to set a bean property.
+     *
+     * @param exception TypeMismatchException
+     * @param locale    the existing locale
+     * @return the Response entity with an error code and a message.
+     */
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<ErrorHandler> handleTypeMismatchException(TypeMismatchException exception, Locale locale) {
         String message = messageSource.getMessage(INCORRECT_TYPE, null, locale);
@@ -64,6 +93,16 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorHandler, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * This is a custom solution to solve 404 responses
+     * By default when the DispatcherServlet can't find a handler for a request it sends a 404 response.
+     * However if its property "throwExceptionIfNoHandlerFound" is set to true this exception is raised and
+     * may be handled with a configured HandlerExceptionResolver.
+     *
+     * @param exception the NoHandlerFoundException exception
+     * @param locale    the existing locale
+     * @return the Response entity with an error code and a message.
+     */
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorHandler> handleNoHandlerFoundException(NoHandlerFoundException exception, Locale locale) {
         String message = messageSource.getMessage(PAGE_NOT_FOUND, null, locale);
@@ -72,6 +111,13 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorHandler, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Exception thrown when a request handler does not support a specific request method.
+     *
+     * @param exception the HttpRequestMethodNotSupportedException exception
+     * @param locale    the existing locale
+     * @return the Response entity with an error code and a message.
+     */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorHandler> handleHttpRequestMethodNotSupportedException(
             HttpRequestMethodNotSupportedException exception, Locale locale) {
@@ -81,6 +127,13 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorHandler, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
+    /**
+     * The handle Exception  when a request handler does not support a specific request method.
+     *
+     * @param exception HttpMessageNotReadableException
+     * @param locale    the existing locale
+     * @return the Response entity with an error code and a message.
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorHandler> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException exception, Locale locale) {
@@ -90,6 +143,13 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorHandler, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * The handle all internal exceptions
+     *
+     * @param exception -the Exception
+     * @param locale    the existing locale
+     * @return the Response entity with an error code and a message.
+     */
     @ExceptionHandler(value = {Exception.class, RuntimeException.class})
     public ResponseEntity<ErrorHandler> handleException(Exception exception, Locale locale) {
         String message = messageSource.getMessage(INTERNAL_ERROR, null, locale);

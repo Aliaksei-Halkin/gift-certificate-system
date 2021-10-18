@@ -1,6 +1,8 @@
 package com.epam.esm.handler;
 
 /**
+ * The class represents values for some exceptions.
+ *
  * @author Aliaksei Halkin
  */
 public final class ErrorCode {

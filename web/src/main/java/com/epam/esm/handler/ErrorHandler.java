@@ -1,6 +1,8 @@
 package com.epam.esm.handler;
 
 /**
+ * The class represents custom exceptions for web layer
+ *
  * @author Aliaksei Halkin
  */
 public class ErrorHandler {
