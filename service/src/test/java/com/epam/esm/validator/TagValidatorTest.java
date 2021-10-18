@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Aliaksei Halkin
  */
 class TagValidatorTest {
+    private final TagValidator tagValidator = new TagValidator();
+
     public static Object[][] correctTag() {
         Tag tag1 = new Tag();
         tag1.setId(1L);
@@ -31,7 +33,7 @@ class TagValidatorTest {
     @ParameterizedTest
     @MethodSource("correctTag")
     void whenIsValidNameTagThenShouldNotThrowException(Tag tag) {
-        assertDoesNotThrow(() -> TagValidator.isValidTag(tag));
+        assertDoesNotThrow(() -> tagValidator.isValidTag(tag));
     }
 
     public static Object[][] incorrectTag() {
@@ -56,7 +58,7 @@ class TagValidatorTest {
     @ParameterizedTest
     @MethodSource("incorrectTag")
     void whenIsNotValidNameTagThenShouldThrowException(Tag tag) {
-        assertThrows(ValidationException.class, () -> TagValidator.isValidTag(tag));
+        assertThrows(ValidationException.class, () -> tagValidator.isValidTag(tag));
     }
 
     public static Object[][] correctId() {
@@ -66,7 +68,7 @@ class TagValidatorTest {
     @ParameterizedTest
     @MethodSource("correctId")
     void whenIsValidIdTagThenShouldNotThrowException(Long id) {
-        assertDoesNotThrow(() -> TagValidator.isValidId(id));
+        assertDoesNotThrow(() -> tagValidator.isValidId(id));
     }
 
     public static Object[][] incorrectId() {
@@ -76,7 +78,7 @@ class TagValidatorTest {
     @ParameterizedTest
     @MethodSource("incorrectId")
     void whenIsNotValidIdTagThenShouldNotThrowException(Long id) {
-        assertThrows(ValidationException.class, () -> TagValidator.isValidId(id));
+        assertThrows(ValidationException.class, () -> tagValidator.isValidId(id));
     }
 
 }

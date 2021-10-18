@@ -10,6 +10,8 @@ import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.QueryParameter;
+import com.epam.esm.validator.GiftCertificateValidator;
+import com.epam.esm.validator.TagValidator;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -26,7 +28,8 @@ import static org.mockito.Mockito.*;
 class GiftCertificateServiceImplTest {
     private GiftCertificateDao giftCertificateDao = mock(GiftCertificateDaoImpl.class);
     private TagDao tagDao = mock(TagDaoImpl.class);
-    private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateDao, tagDao);
+    private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateDao, tagDao,
+            new GiftCertificateValidator(), new TagValidator());
 
 
     @Test
@@ -219,7 +222,7 @@ class GiftCertificateServiceImplTest {
 
         when(giftCertificateDao.findCertificatesByQueryParameters(anyString())).thenReturn(Collections.singletonList(giftCertificate));
 
-        List<GiftCertificate > giftCertificateDtos = giftCertificateService.findGiftCertificatesByParameters(parameter);
+        List<GiftCertificate> giftCertificateDtos = giftCertificateService.findGiftCertificatesByParameters(parameter);
 
         assertEquals(Collections.singletonList(giftCertificate), giftCertificateDtos);
     }
@@ -265,15 +268,15 @@ class GiftCertificateServiceImplTest {
         giftCertificate.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificate.setTags(tags);
 
-        GiftCertificate  giftCertificateDto = new GiftCertificate ();
+        GiftCertificate giftCertificateDto = new GiftCertificate();
         giftCertificateDto.setName("Hello");
         giftCertificateDto.setDescription("Hello from description");
         giftCertificateDto.setPrice(new BigDecimal("123"));
         giftCertificateDto.setDuration(1);
         giftCertificateDto.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificateDto.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        Set<Tag > tagsDto = new HashSet<>();
-        Tag  tagDto = new Tag ();
+        Set<Tag> tagsDto = new HashSet<>();
+        Tag tagDto = new Tag();
         tagDto.setName("Hi");
         tagsDto.add(tagDto);
         giftCertificateDto.setTags(tagsDto);
@@ -283,15 +286,15 @@ class GiftCertificateServiceImplTest {
         when(tagDao.findAll()).thenReturn(new LinkedList<>());
         when(tagDao.add(tag)).thenReturn(tag.getId());
         when(giftCertificateDao.findGiftCertificateTags(giftCertificate.getId())).thenReturn(tags);
-        GiftCertificate  mockedGiftCertificate  = giftCertificateService
+        GiftCertificate mockedGiftCertificate = giftCertificateService
                 .updateGiftCertificate(giftCertificate.getId(), giftCertificateDto);
 
-        assertEquals(giftCertificate, mockedGiftCertificate );
+        assertEquals(giftCertificate, mockedGiftCertificate);
     }
 
     @Test
     void whenUpdateGiftCertificateThenShouldReturnThrowException() {
-        GiftCertificate  giftCertificateDto = new GiftCertificate ();
+        GiftCertificate giftCertificateDto = new GiftCertificate();
         giftCertificateDto.setName("Hello");
         giftCertificateDto.setDescription("Hello from description");
         giftCertificateDto.setPrice(new BigDecimal("123"));

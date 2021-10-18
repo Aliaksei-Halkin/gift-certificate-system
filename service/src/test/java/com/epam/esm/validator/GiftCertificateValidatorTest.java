@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Aliaksei Halkin
  */
 class GiftCertificateValidatorTest {
+    private GiftCertificateValidator giftCertificateValidator = new GiftCertificateValidator();
 
     public static Object[][] correctGiftCertificate() {
         GiftCertificate giftCertificate1 = new GiftCertificate();
@@ -39,7 +40,7 @@ class GiftCertificateValidatorTest {
     @ParameterizedTest
     @MethodSource("correctGiftCertificate")
     void whenIsValidGiftCertificateThenShouldNotThrowException(GiftCertificate giftCertificate) {
-        assertDoesNotThrow(() -> GiftCertificateValidator.isValidGiftCertificate(giftCertificate));
+        assertDoesNotThrow(() -> giftCertificateValidator.isValidGiftCertificate(giftCertificate));
     }
 
     public static Object[][] incorrectGiftCertificate() {
@@ -72,7 +73,7 @@ class GiftCertificateValidatorTest {
     @ParameterizedTest
     @MethodSource("incorrectGiftCertificate")
     void whenIsNotValidGiftCertificateThenShouldThrowException(GiftCertificate giftCertificate) {
-        assertThrows(ValidationException.class, () -> GiftCertificateValidator.isValidGiftCertificate(giftCertificate));
+        assertThrows(ValidationException.class, () -> giftCertificateValidator.isValidGiftCertificate(giftCertificate));
     }
 
     public static Object[][] correctId() {
@@ -82,7 +83,7 @@ class GiftCertificateValidatorTest {
     @ParameterizedTest
     @MethodSource("correctId")
     void whenIsValidIdThenShouldNotThrowException(long id) {
-        assertDoesNotThrow(() -> GiftCertificateValidator.isValidId(id));
+        assertDoesNotThrow(() -> giftCertificateValidator.isValidId(id));
     }
 
     public static Object[][] incorrectId() {
@@ -92,6 +93,6 @@ class GiftCertificateValidatorTest {
     @ParameterizedTest
     @MethodSource("incorrectId")
     void whenIsNotValidIdThenShouldThrowException(long id) {
-        assertThrows(ValidationException.class, () -> GiftCertificateValidator.isValidId(id));
+        assertThrows(ValidationException.class, () -> giftCertificateValidator.isValidId(id));
     }
 }

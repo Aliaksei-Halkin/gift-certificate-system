@@ -35,13 +35,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private static final Logger LOGGER = LogManager.getLogger(GiftCertificateService.class);
     private final GiftCertificateDao giftCertificateDao;
     private final TagDao tagDao;
+    private final GiftCertificateValidator giftCertificateValidator;
+    private final TagValidator tagValidator;
 
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, TagDao tagDao) {
+    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, TagDao tagDao,
+                                      GiftCertificateValidator giftCertificateValidator, TagValidator tagValidator) {
         this.giftCertificateDao = giftCertificateDao;
         this.tagDao = tagDao;
-
+        this.giftCertificateValidator = giftCertificateValidator;
+        this.tagValidator = tagValidator;
     }
 
     @Override
@@ -49,9 +53,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) {
         giftCertificate.setCreatedDate(LocalDateTime.now());
         giftCertificate.setUpdateDate(LocalDateTime.now());
-        GiftCertificateValidator.isValidGiftCertificate(giftCertificate);
+        giftCertificateValidator.isValidGiftCertificate(giftCertificate);
         if (giftCertificate.getTags() != null) {
-            giftCertificate.getTags().forEach(TagValidator::isValidTag);
+            giftCertificate.getTags().forEach(tagValidator::isValidTag);
         }
         long certificateId = giftCertificateDao.add(giftCertificate);
         giftCertificate.setId(certificateId);
@@ -64,13 +68,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private void checkAndAddRelationBetweenTagAndGiftCertificate(Long giftCertificateId, Tag tag) {
         Tag processedTag;
-        if (checkIfTagAlreadyExist(tag)) {
-            LOGGER.debug("Tag already exist: " + tag);
+        if (!checkIfTagAlreadyExist(tag)) {
             processedTag = tagDao.findTagByName(tag.getName())
                     .orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_NAME_NOT_FOUND,
                             tag.getName()));
         } else {
-            LOGGER.debug("New tag: " + tag);
             long tagId = tagDao.add(tag);
             processedTag = tag;
             processedTag.setId(tagId);
@@ -81,14 +83,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private boolean checkIfTagAlreadyExist(Tag tag) {
-        return tagDao.findAll().contains(tag);
+        return tagDao.findTagByName(tag.getName()).isPresent();
     }
 
     @Override
     @Transactional
     public GiftCertificate addTagToGiftCertificate(Long giftCertificateId, Tag tag) {
-        GiftCertificateValidator.isValidId(giftCertificateId);
-        TagValidator.isValidTag(tag);
+        giftCertificateValidator.isValidId(giftCertificateId);
+        tagValidator.isValidTag(tag);
         GiftCertificate giftCertificate = checkAndGetGiftCertificate(giftCertificateId);
         giftCertificate.setUpdateDate(LocalDateTime.now());
         checkAndAddRelationBetweenTagAndGiftCertificate(giftCertificateId, tag);
@@ -107,7 +109,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public GiftCertificate findGiftCertificateById(Long id) {
-        GiftCertificateValidator.isValidId(id);
+        giftCertificateValidator.isValidId(id);
         GiftCertificate giftCertificate = checkAndGetGiftCertificate(id);
         giftCertificate.setTags(giftCertificateDao.findGiftCertificateTags(id));
         LOGGER.log(Level.INFO, "Found gift certificate by id: ", giftCertificate);
@@ -129,13 +131,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public void deleteGiftCertificateById(Long id) {
-        GiftCertificateValidator.isValidId(id);
+        giftCertificateValidator.isValidId(id);
         giftCertificateDao.removeById(id);
     }
 
     @Override
     public GiftCertificate updateGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate) {
-        GiftCertificateValidator.isValidId(giftCertificateId);
+        giftCertificateValidator.isValidId(giftCertificateId);
         GiftCertificate giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);
         updateFields(giftCertificate, giftCertificateVerified);
         giftCertificate.setUpdateDate(LocalDateTime.now());
@@ -160,9 +162,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (receivedGiftCertificate.getDuration() > 0) {
             updatedGiftCertificate.setDuration(receivedGiftCertificate.getDuration());
         }
-        GiftCertificateValidator.isValidGiftCertificate(updatedGiftCertificate);
+        giftCertificateValidator.isValidGiftCertificate(updatedGiftCertificate);
         if (receivedGiftCertificate.getTags() != null) {
-            receivedGiftCertificate.getTags().forEach(TagValidator::isValidTag);
+            receivedGiftCertificate.getTags().forEach(tagValidator::isValidTag);
         }
         Set<Tag> giftCertificateTags = giftCertificateDao.findGiftCertificateTags(updatedGiftCertificate.getId());
         Set<Tag> addedTags = new HashSet<>();

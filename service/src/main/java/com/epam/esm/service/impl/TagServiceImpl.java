@@ -27,15 +27,17 @@ import java.util.stream.Collectors;
 public class TagServiceImpl implements TagService {
     private static final Logger LOGGER = LogManager.getLogger(GiftCertificateService.class);
     private final TagDao tagDao;
+    private final TagValidator tagValidator;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao) {
+    public TagServiceImpl(TagDao tagDao, TagValidator tagValidator) {
         this.tagDao = tagDao;
+        this.tagValidator = tagValidator;
     }
 
     @Override
     public Tag addTag(Tag tag) {
-        TagValidator.isValidTag(tag);
+        tagValidator.isValidTag(tag);
         long tagId = tagDao.add(tag);
         tag.setId(tagId);
         LOGGER.log(Level.INFO, "Tag added: {}", tag);
@@ -50,7 +52,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag findTagById(long tagId) {
-        TagValidator.isValidId(tagId);
+        tagValidator.isValidId(tagId);
         Tag tag = retrieveTag(tagId);
         LOGGER.log(Level.INFO, "Found tag by id = {}, tag: {}", tagId, tag);
         return tag;
@@ -58,7 +60,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void deleteTagById(long tagId) {
-        TagValidator.isValidId(tagId);
+        tagValidator.isValidId(tagId);
         tagDao.removeById(tagId);
         LOGGER.log(Level.INFO, "Tag with id = {} deleted", tagId);
     }

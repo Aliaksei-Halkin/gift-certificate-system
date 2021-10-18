@@ -6,6 +6,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.TagService;
+import com.epam.esm.validator.TagValidator;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.*;
  */
 class TagServiceImplTest {
     private TagDao tagDao = mock(TagDaoImpl.class);
-    private TagService tagService = new TagServiceImpl(tagDao);
+    private TagService tagService = new TagServiceImpl(tagDao, new TagValidator());
 
     @Test
     void whenAddTagThenShouldReturnTagDto() {
