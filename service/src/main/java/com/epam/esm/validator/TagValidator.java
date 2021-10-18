@@ -1,19 +1,19 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.TagDto;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.ValidationException;
 
 /**
  * The TagValidator class represents tag data validation
- * @author Aliaksei Halkin
+  * @author Aliaksei Halkin
  */
 public class TagValidator {
     private static final long MIN_ID = 1;
     private static final String REGEX_NAME = "[à-ÿÀ-ß\\w\\s\\.,?!']{1,45}";
 
-    public static void isValidTag(TagDto tagDto) {
-        isValidName(tagDto.getName());
+    public static void isValidTag(Tag tag) {
+        isValidName(tag.getName());
     }
 
     public static void isValidId(long id) {

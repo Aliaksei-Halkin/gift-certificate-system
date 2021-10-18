@@ -1,13 +1,14 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.ValidationException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Aliaksei Halkin
@@ -15,19 +16,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class GiftCertificateValidatorTest {
 
     public static Object[][] correctGiftCertificate() {
-        GiftCertificateDto giftCertificate1 = new GiftCertificateDto();
+        GiftCertificate giftCertificate1 = new GiftCertificate();
         giftCertificate1.setName("Hello");
         giftCertificate1.setDescription("Hello from description");
         giftCertificate1.setDuration(1);
         giftCertificate1.setPrice(new BigDecimal("23.3"));
 
-        GiftCertificateDto giftCertificate2 = new GiftCertificateDto();
+        GiftCertificate giftCertificate2 = new GiftCertificate();
         giftCertificate2.setName("Hello 2");
         giftCertificate2.setDescription("Hello from description 2");
         giftCertificate2.setDuration(2);
         giftCertificate2.setPrice(new BigDecimal("34"));
 
-        GiftCertificateDto giftCertificate3 = new GiftCertificateDto();
+        GiftCertificate giftCertificate3 = new GiftCertificate();
         giftCertificate3.setName("Hello 3");
         giftCertificate3.setDescription("Hello from description 3");
         giftCertificate3.setDuration(2);
@@ -37,30 +38,30 @@ class GiftCertificateValidatorTest {
 
     @ParameterizedTest
     @MethodSource("correctGiftCertificate")
-    void whenIsValidGiftCertificateThenShouldNotThrowException(GiftCertificateDto giftCertificateDto) {
-        assertDoesNotThrow(() -> GiftCertificateValidator.isValidGiftCertificate(giftCertificateDto));
+    void whenIsValidGiftCertificateThenShouldNotThrowException(GiftCertificate giftCertificate) {
+        assertDoesNotThrow(() -> GiftCertificateValidator.isValidGiftCertificate(giftCertificate));
     }
 
     public static Object[][] incorrectGiftCertificate() {
-        GiftCertificateDto giftCertificate1 = new GiftCertificateDto();
+        GiftCertificate giftCertificate1 = new GiftCertificate();
         giftCertificate1.setName("");
         giftCertificate1.setDescription("Hello from description");
         giftCertificate1.setDuration(1);
         giftCertificate1.setPrice(new BigDecimal("23.3"));
 
-        GiftCertificateDto giftCertificate2 = new GiftCertificateDto();
+        GiftCertificate giftCertificate2 = new GiftCertificate();
         giftCertificate2.setName("Hello 2");
         giftCertificate2.setDescription("@@");
         giftCertificate2.setDuration(2);
         giftCertificate2.setPrice(new BigDecimal("34"));
 
-        GiftCertificateDto giftCertificate3 = new GiftCertificateDto();
+        GiftCertificate giftCertificate3 = new GiftCertificate();
         giftCertificate3.setName("Hello 3");
         giftCertificate3.setDescription("Hello from description 3");
         giftCertificate3.setDuration(0);
         giftCertificate3.setPrice(new BigDecimal("23"));
 
-        GiftCertificateDto giftCertificate4 = new GiftCertificateDto();
+        GiftCertificate giftCertificate4 = new GiftCertificate();
         giftCertificate4.setName("Hello 3");
         giftCertificate4.setDescription("Hello from description 3");
         giftCertificate4.setDuration(2);
@@ -70,8 +71,8 @@ class GiftCertificateValidatorTest {
 
     @ParameterizedTest
     @MethodSource("incorrectGiftCertificate")
-    void whenIsNotValidGiftCertificateThenShouldThrowException(GiftCertificateDto giftCertificateDto) {
-        assertThrows(ValidationException.class, () -> GiftCertificateValidator.isValidGiftCertificate(giftCertificateDto));
+    void whenIsNotValidGiftCertificateThenShouldThrowException(GiftCertificate giftCertificate) {
+        assertThrows(ValidationException.class, () -> GiftCertificateValidator.isValidGiftCertificate(giftCertificate));
     }
 
     public static Object[][] correctId() {

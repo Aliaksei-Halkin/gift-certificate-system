@@ -1,6 +1,6 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.dto.GiftCertificateDto;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.ValidationException;
 
@@ -23,11 +23,11 @@ public class GiftCertificateValidator {
     private GiftCertificateValidator() {
     }
 
-    public static void isValidGiftCertificate(GiftCertificateDto giftCertificateDto) {
-        isValidName(giftCertificateDto.getName());
-        isValidDescription(giftCertificateDto.getDescription());
-        isValidPrice(giftCertificateDto.getPrice());
-        isValidDuration(giftCertificateDto.getDuration());
+    public static void isValidGiftCertificate(GiftCertificate giftCertificate) {
+        isValidName(giftCertificate.getName());
+        isValidDescription(giftCertificate.getDescription());
+        isValidPrice(giftCertificate.getPrice());
+        isValidDuration(giftCertificate.getDuration());
     }
 
     public static void isValidId(long id) {

@@ -1,6 +1,6 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.dto.TagDto;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,13 +47,13 @@ public class TagController {
      * <p>
      * The default response status is 200 - OK.
      *
-     * @param tagDto Tag to be inserted into storage. Inferred from the request body.
+     * @param tag Tag to be inserted into storage. Inferred from the request body.
      * @return {@link ResponseEntity} with the inserted tag and its location included.
      */
     @PostMapping
-    public ResponseEntity<TagDto> addTag(@RequestBody TagDto tagDto) {
-        TagDto addedTagDto = tagService.addTag(tagDto);
-        return new ResponseEntity<>(addedTagDto, HttpStatus.OK);
+    public ResponseEntity<Tag> addTag(@RequestBody Tag tag) {
+        Tag addedTag = tagService.addTag(tag);
+        return new ResponseEntity<>(addedTag, HttpStatus.OK);
     }
 
     /**
@@ -69,9 +69,9 @@ public class TagController {
      * @return {@link ResponseEntity} with found tag.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TagDto> findTagById(@PathVariable("id") long id) {
-        TagDto tagDto = tagService.findTagById(id);
-        return new ResponseEntity<>(tagDto, HttpStatus.OK);
+    public ResponseEntity<Tag> findTagById(@PathVariable("id") long id) {
+        Tag tag = tagService.findTagById(id);
+        return new ResponseEntity<>(tag, HttpStatus.OK);
     }
 
     /**
@@ -84,9 +84,9 @@ public class TagController {
      * @return {@link ResponseEntity} with the list of the gift certificates.
      */
     @GetMapping
-    public ResponseEntity<Set<TagDto>> findAllTags() {
-        Set<TagDto> tagsDto = tagService.findAllTags();
-        return new ResponseEntity<>(tagsDto, HttpStatus.OK);
+    public ResponseEntity<Set<Tag>> findAllTags() {
+        Set<Tag> tags = tagService.findAllTags();
+        return new ResponseEntity<>(tags, HttpStatus.OK);
     }
 
     /**

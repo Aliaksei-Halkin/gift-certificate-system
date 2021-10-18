@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.TagDto;
+import com.epam.esm.entity.Tag;
 
 import java.util.Set;
 
@@ -11,11 +11,11 @@ import java.util.Set;
  */
 public interface TagService {
 
-    Set<TagDto> findAllTags();
+    Set<Tag> findAllTags();
 
-    TagDto findTagById(long id);
+    Tag findTagById(long id);
 
-    TagDto addTag(TagDto tagDto);
+    Tag addTag(Tag tag);
 
     void deleteTagById(long id);
 }

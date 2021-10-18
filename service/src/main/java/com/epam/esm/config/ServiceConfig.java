@@ -21,15 +21,6 @@ import javax.sql.DataSource;
 @ComponentScan("com.epam.esm")
 @EnableTransactionManagement
 public class ServiceConfig {
-    @Bean
-    public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT)
-                .setFieldMatchingEnabled(true)
-                .setSkipNullEnabled(true)
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
-        return modelMapper;
-    }
 
     @Bean
     public TransactionManager transactionManager(DataSource dataSource) {

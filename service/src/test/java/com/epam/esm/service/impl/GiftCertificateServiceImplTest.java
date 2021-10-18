@@ -4,8 +4,6 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.impl.GiftCertificateDaoImpl;
 import com.epam.esm.dao.impl.TagDaoImpl;
-import com.epam.esm.dto.GiftCertificateDto;
-import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ResourceNotFoundException;
@@ -13,14 +11,10 @@ import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.QueryParameter;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
-import org.modelmapper.convention.MatchingStrategies;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -32,33 +26,25 @@ import static org.mockito.Mockito.*;
 class GiftCertificateServiceImplTest {
     private GiftCertificateDao giftCertificateDao = mock(GiftCertificateDaoImpl.class);
     private TagDao tagDao = mock(TagDaoImpl.class);
-    private ModelMapper modelMapper = new ModelMapper();
-
-    {
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT)
-                .setFieldMatchingEnabled(true)
-                .setSkipNullEnabled(true)
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
-    }
-
-    private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateDao, tagDao, modelMapper);
+    private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateDao, tagDao);
 
 
     @Test
-    void whenAddGiftCertificateThenShouldReturnGiftCertificateDto() {
-        GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
-        giftCertificateDto.setName("Hello");
-        giftCertificateDto.setDescription("Hello from description");
-        giftCertificateDto.setPrice(new BigDecimal("123"));
-        giftCertificateDto.setDuration(1);
-        giftCertificateDto.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        giftCertificateDto.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        Set<TagDto> tagsDto = new HashSet<>();
-        TagDto tagDto = new TagDto();
-        tagDto.setId(1L);
-        tagDto.setName("Hi");
-        tagsDto.add(tagDto);
-        giftCertificateDto.setTags(tagsDto);
+    void whenAddGiftCertificateThenShouldReturnGiftCertificate() {
+        GiftCertificate giftCertificateFirst = new GiftCertificate();
+        giftCertificateFirst.setName("Hello");
+        giftCertificateFirst.setDescription("Hello from description");
+        giftCertificateFirst.setPrice(new BigDecimal("123"));
+        giftCertificateFirst.setDuration(1);
+        giftCertificateFirst.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
+        giftCertificateFirst.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
+
+        Set<Tag> tags = new HashSet<>();
+        Tag tagFirst = new Tag();
+        tagFirst.setId(1L);
+        tagFirst.setName("Hi");
+        tags.add(tagFirst);
+        giftCertificateFirst.setTags(tags);
 
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setId(1L);
@@ -68,26 +54,26 @@ class GiftCertificateServiceImplTest {
         giftCertificate.setDuration(1);
         giftCertificate.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificate.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        Set<Tag> tags = new HashSet<>();
+        Set<Tag> tagsSecond = new HashSet<>();
         Tag tag = new Tag();
         tag.setId(1L);
         tag.setName("Hi");
-        tags.add(tag);
-        giftCertificate.setTags(tags);
+        tagsSecond.add(tag);
+        giftCertificate.setTags(tagsSecond);
 
         when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificate.getId());
         when(tagDao.findAll()).thenReturn(Collections.singletonList(tag));
         when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
 
-        GiftCertificateDto mockedGiftCertificateDto = giftCertificateService.addGiftCertificate(giftCertificateDto);
-        giftCertificate.setCreatedDate(mockedGiftCertificateDto.getCreatedDate());
-        giftCertificate.setUpdateDate(mockedGiftCertificateDto.getUpdateDate());
-        assertEquals(giftCertificate, modelMapper.map(mockedGiftCertificateDto, GiftCertificate.class));
+        GiftCertificate mockedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificateFirst);
+        giftCertificate.setCreatedDate(mockedGiftCertificate.getCreatedDate());
+        giftCertificate.setUpdateDate(mockedGiftCertificate.getUpdateDate());
+        assertEquals(giftCertificate, mockedGiftCertificate);
     }
 
     @Test
     void whenAddGiftCertificateThenShouldThrowException() {
-        GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
+        GiftCertificate giftCertificateDto = new GiftCertificate();
         giftCertificateDto.setId(1L);
         giftCertificateDto.setName("Hello");
         giftCertificateDto.setDescription("Hello from description");
@@ -95,8 +81,8 @@ class GiftCertificateServiceImplTest {
         giftCertificateDto.setDuration(1);
         giftCertificateDto.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificateDto.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        Set<TagDto> tagsDto = new HashSet<>();
-        TagDto tagDto = new TagDto();
+        Set<Tag> tagsDto = new HashSet<>();
+        Tag tagDto = new Tag();
         tagDto.setId(1L);
         tagDto.setName("Hi");
         tagsDto.add(tagDto);
@@ -124,8 +110,8 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void whenAddTagToGiftCertificateThenShouldReturnGiftCertificateDto() {
-        TagDto tagDto = new TagDto();
+    void whenAddTagToGiftCertificateThenShouldReturnGiftCertificate() {
+        Tag tagDto = new Tag();
         tagDto.setName("Hi");
 
         Set<Tag> tags = new HashSet<>();
@@ -150,14 +136,14 @@ class GiftCertificateServiceImplTest {
         when(giftCertificateDao.update(giftCertificate)).thenReturn(giftCertificate);
         when(giftCertificateDao.findGiftCertificateTags(giftCertificate.getId())).thenReturn(tags);
 
-        GiftCertificateDto mockedGiftCertificateDto = giftCertificateService.addTagToGiftCertificate(giftCertificate.getId(), tagDto);
+        GiftCertificate mockedGiftCertificateDto = giftCertificateService.addTagToGiftCertificate(giftCertificate.getId(), tagDto);
 
-        assertEquals(giftCertificate, modelMapper.map(mockedGiftCertificateDto, GiftCertificate.class));
+        assertEquals(giftCertificate, mockedGiftCertificateDto);
     }
 
     @Test
     void whenAddTagToGiftCertificateThenShouldThrowException() {
-        TagDto tagDto = new TagDto();
+        Tag tagDto = new Tag();
         tagDto.setId(1L);
         tagDto.setName("Hi");
 
@@ -201,9 +187,9 @@ class GiftCertificateServiceImplTest {
 
         when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.of(giftCertificate));
         when(giftCertificateDao.findGiftCertificateTags(giftCertificate.getId())).thenReturn(tags);
-        GiftCertificateDto mockedGiftCertificateDto = giftCertificateService.findGiftCertificateById(giftCertificate.getId());
+        GiftCertificate mockedGiftCertificateDto = giftCertificateService.findGiftCertificateById(giftCertificate.getId());
 
-        assertEquals(giftCertificate, modelMapper.map(mockedGiftCertificateDto, GiftCertificate.class));
+        assertEquals(giftCertificate, mockedGiftCertificateDto);
     }
 
     @Test
@@ -233,11 +219,9 @@ class GiftCertificateServiceImplTest {
 
         when(giftCertificateDao.findCertificatesByQueryParameters(anyString())).thenReturn(Collections.singletonList(giftCertificate));
 
-        List<GiftCertificateDto> giftCertificateDtos = giftCertificateService.findGiftCertificatesByParameters(parameter);
+        List<GiftCertificate > giftCertificateDtos = giftCertificateService.findGiftCertificatesByParameters(parameter);
 
-        assertEquals(Collections.singletonList(giftCertificate), giftCertificateDtos.stream()
-                .map(giftCertificateDto -> modelMapper.map(giftCertificateDto, GiftCertificate.class))
-                .collect(Collectors.toList()));
+        assertEquals(Collections.singletonList(giftCertificate), giftCertificateDtos);
     }
 
     @Test
@@ -281,15 +265,15 @@ class GiftCertificateServiceImplTest {
         giftCertificate.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificate.setTags(tags);
 
-        GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
+        GiftCertificate  giftCertificateDto = new GiftCertificate ();
         giftCertificateDto.setName("Hello");
         giftCertificateDto.setDescription("Hello from description");
         giftCertificateDto.setPrice(new BigDecimal("123"));
         giftCertificateDto.setDuration(1);
         giftCertificateDto.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificateDto.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        Set<TagDto> tagsDto = new HashSet<>();
-        TagDto tagDto = new TagDto();
+        Set<Tag > tagsDto = new HashSet<>();
+        Tag  tagDto = new Tag ();
         tagDto.setName("Hi");
         tagsDto.add(tagDto);
         giftCertificateDto.setTags(tagsDto);
@@ -299,15 +283,15 @@ class GiftCertificateServiceImplTest {
         when(tagDao.findAll()).thenReturn(new LinkedList<>());
         when(tagDao.add(tag)).thenReturn(tag.getId());
         when(giftCertificateDao.findGiftCertificateTags(giftCertificate.getId())).thenReturn(tags);
-        GiftCertificateDto mockedGiftCertificateDto = giftCertificateService
+        GiftCertificate  mockedGiftCertificate  = giftCertificateService
                 .updateGiftCertificate(giftCertificate.getId(), giftCertificateDto);
 
-        assertEquals(giftCertificate, modelMapper.map(mockedGiftCertificateDto, GiftCertificate.class));
+        assertEquals(giftCertificate, mockedGiftCertificate );
     }
 
     @Test
     void whenUpdateGiftCertificateThenShouldReturnThrowException() {
-        GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
+        GiftCertificate  giftCertificateDto = new GiftCertificate ();
         giftCertificateDto.setName("Hello");
         giftCertificateDto.setDescription("Hello from description");
         giftCertificateDto.setPrice(new BigDecimal("123"));
