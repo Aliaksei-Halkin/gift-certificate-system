@@ -1,5 +1,7 @@
 package com.epam.esm.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -30,10 +32,12 @@ public class GiftCertificate extends AbstractEntity<Long> {
     /**
      * The date and time of GiftCertificate creation.
      */
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdDate;
     /**
      * The date and time of GiftCertificate creation.
      */
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateDate;
     /**
      * The set of tags in this Gift certificate
