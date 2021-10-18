@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Aliaksei Halkin
  */
-class TagDaoImplTest {
+class TagDaoImplIntegTest {
     private EmbeddedDatabase database;
     private TagDao tagDao;
 

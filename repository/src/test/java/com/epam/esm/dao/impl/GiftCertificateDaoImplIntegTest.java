@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Aliaksei Halkin
  */
-class GiftCertificateDaoImplTest {
+class GiftCertificateDaoImplIntegTest {
     private EmbeddedDatabase database;
     private GiftCertificateDao giftCertificateDao;
 
