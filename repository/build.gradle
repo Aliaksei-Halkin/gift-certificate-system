@@ -6,6 +6,7 @@ repositories {
 }
 
 dependencies {
+    implementation project(":entity");
     implementation "mysql:mysql-connector-java:8.0.25"
     implementation "com.mchange:c3p0:0.9.5.5"
     implementation "com.h2database:h2:1.4.200"
