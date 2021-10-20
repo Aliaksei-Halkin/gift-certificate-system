@@ -60,30 +60,33 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         long certificateId = giftCertificateDao.add(giftCertificate);
         giftCertificate.setId(certificateId);
         if (giftCertificate.getTags() != null) {
-            giftCertificate.getTags().forEach(tag -> checkAndAddRelationBetweenTagAndGiftCertificate(giftCertificate.getId(), tag));
+            giftCertificate.getTags().forEach(tag -> attachedTag(giftCertificate.getId(), tag));
         }
         LOGGER.info("Gift certificate added: " + giftCertificate);
         return giftCertificate;
     }
 
-    private void checkAndAddRelationBetweenTagAndGiftCertificate(Long giftCertificateId, Tag tag) {
-        Tag processedTag;
-        if (checkIfTagAlreadyExist(tag)) {
-            processedTag = tagDao.findTagByName(tag.getName())
-                    .orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_NAME_NOT_FOUND,
-                            tag.getName()));
-        } else {
+    /**
+     * Initially, we check if the tag exists in the database. If it is not, we add it to the certificate.
+     * If the tag exists in the database, but is not added to the certificate, we add it to the certificate
+     *
+     * @param giftCertificateId {@code Long} unique identifier of gift certificate
+     * @param tag               {@code Tag} attaching Tag
+     */
+    private void attachedTag(Long giftCertificateId, Tag tag) {
+        boolean isPresentTag = tagDao.findTagByName(tag.getName()).isPresent();
+        if (!isPresentTag) {
             long tagId = tagDao.add(tag);
-            processedTag = tag;
-            processedTag.setId(tagId);
+            giftCertificateDao.attachedTag(tagId, giftCertificateId);
         }
-        tag.setId(processedTag.getId());
-        giftCertificateDao.addRelationBetweenTagAndGiftCertificate(processedTag.getId(), giftCertificateId);
+        if (!giftCertificateDao.findGiftCertificateTags(giftCertificateId)//todo don't work
+                .stream()
+                .map(t -> t.getName())
+                .anyMatch(x -> x.equals(tag.getName()))) {
+            giftCertificateDao.attachedTag(tag.getId(), giftCertificateId);
+        }
     }
 
-    private boolean checkIfTagAlreadyExist(Tag tag) {
-        return tagDao.findTagByName(tag.getName()).isPresent();
-    }
 
     @Override
     @Transactional
@@ -92,7 +95,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         tagValidator.isValidTag(tag);
         GiftCertificate giftCertificate = checkAndGetGiftCertificate(giftCertificateId);
         giftCertificate.setUpdateDate(LocalDateTime.now());
-        checkAndAddRelationBetweenTagAndGiftCertificate(giftCertificateId, tag);
+        attachedTag(giftCertificateId, tag);
         GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificate);
         Set<Tag> giftCertificateTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
         updatedGiftCertificate.setTags(giftCertificateTags);
@@ -141,7 +144,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         updateFields(giftCertificate, giftCertificateVerified);
         giftCertificate.setUpdateDate(LocalDateTime.now());
         GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificateVerified);
-        giftCertificate.getTags().forEach(tag -> checkAndAddRelationBetweenTagAndGiftCertificate(giftCertificateId, tag));
+        giftCertificate.getTags().forEach(tag -> attachedTag(giftCertificateId, tag));
         Set<Tag> changedTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
         updatedGiftCertificate.setTags(changedTags);
         LOGGER.log(Level.INFO, "Gift certificate with id = {} updated", giftCertificateId);

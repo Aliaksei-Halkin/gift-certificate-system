@@ -133,11 +133,11 @@ class GiftCertificateDaoImplIntegTest {
 
     @Test
     void whenAddRelationBetweenTagAndGiftCertificateThenShouldNotThrowException() {
-        assertDoesNotThrow(() -> giftCertificateDao.addRelationBetweenTagAndGiftCertificate(2, 2));
+        assertDoesNotThrow(() -> giftCertificateDao.attachedTag(2, 2));
     }
 
     @Test
     void whenAddRelationBetweenTagAndGiftCertificateThenShouldThrowException() {
-        assertThrows(DuplicateKeyException.class, () -> giftCertificateDao.addRelationBetweenTagAndGiftCertificate(1, 2));
+        assertThrows(DuplicateKeyException.class, () -> giftCertificateDao.attachedTag(1, 2));
     }
 }

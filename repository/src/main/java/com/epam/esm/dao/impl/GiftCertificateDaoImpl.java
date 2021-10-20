@@ -175,7 +175,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @param giftCertificateId id of certificate
      */
     @Override
-    public void addRelationBetweenTagAndGiftCertificate(long tagId, long giftCertificateId) {
+    public void attachedTag(long tagId, long giftCertificateId) {
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(INSERT_RELATION_BETWEEN_TAG_AND_GIFT_CERTIFICATE);
             preparedStatement.setLong(1, giftCertificateId);

@@ -16,5 +16,5 @@ public interface GiftCertificateDao extends BaseDao<GiftCertificate, Long> {
 
     Set<Tag> findGiftCertificateTags(long certificateId);
 
-    void addRelationBetweenTagAndGiftCertificate(long tagId, long giftCertificateId);
+    void attachedTag(long tagId, long giftCertificateId);
 }
