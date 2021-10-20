@@ -12,7 +12,9 @@ import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.QueryParameter;
 import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.TagValidator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -30,118 +32,69 @@ class GiftCertificateServiceImplTest {
     private TagDao tagDao = mock(TagDaoImpl.class);
     private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateDao, tagDao,
             new GiftCertificateValidator(), new TagValidator());
+    private GiftCertificate giftCertificateFirst = new GiftCertificate();
+    private GiftCertificate giftCertificateSecond = new GiftCertificate();
+    private Tag tag = new Tag();
 
 
-    @Test
-    void whenAddGiftCertificateThenShouldReturnGiftCertificate() {
-        GiftCertificate giftCertificateFirst = new GiftCertificate();
+    @BeforeEach
+    void beforeAll() {
         giftCertificateFirst.setName("Hello");
         giftCertificateFirst.setDescription("Hello from description");
         giftCertificateFirst.setPrice(new BigDecimal("123"));
         giftCertificateFirst.setDuration(1);
         giftCertificateFirst.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificateFirst.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-
         Set<Tag> tags = new HashSet<>();
-        Tag tagFirst = new Tag();
-        tagFirst.setId(1L);
-        tagFirst.setName("Hi");
-        tags.add(tagFirst);
+        tag.setId(1L);
+        tag.setName("Hi");
+        tags.add(tag);
         giftCertificateFirst.setTags(tags);
+        giftCertificateSecond.setId(1L);
+        giftCertificateSecond.setName("Hello");
+        giftCertificateSecond.setDescription("Hello from description");
+        giftCertificateSecond.setPrice(new BigDecimal("123"));
+        giftCertificateSecond.setDuration(1);
+        giftCertificateSecond.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
+        giftCertificateSecond.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
+        giftCertificateSecond.setTags(tags);
+    }
 
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setId(1L);
-        giftCertificate.setName("Hello");
-        giftCertificate.setDescription("Hello from description");
-        giftCertificate.setPrice(new BigDecimal("123"));
-        giftCertificate.setDuration(1);
-        giftCertificate.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        giftCertificate.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        Set<Tag> tagsSecond = new HashSet<>();
-        Tag tag = new Tag();
-        tag.setId(1L);
-        tag.setName("Hi");
-        tagsSecond.add(tag);
-        giftCertificate.setTags(tagsSecond);
-
-        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificate.getId());
-        when(tagDao.findAll()).thenReturn(Collections.singletonList(tag));
+    @Test
+    void when_addGiftCertificate_ThenShouldReturnGiftCertificate() {
+        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificateSecond.getId());
         when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
-
         GiftCertificate mockedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificateFirst);
-        giftCertificate.setCreatedDate(mockedGiftCertificate.getCreatedDate());
-        giftCertificate.setUpdateDate(mockedGiftCertificate.getUpdateDate());
-        assertEquals(giftCertificate, mockedGiftCertificate);
+        giftCertificateSecond.setCreatedDate(mockedGiftCertificate.getCreatedDate());
+        giftCertificateSecond.setUpdateDate(mockedGiftCertificate.getUpdateDate());
+        verify(giftCertificateDao, Mockito.times(1)).add(any(GiftCertificate.class));
+        verify(tagDao, Mockito.times(2)).findTagByName(tag.getName());
+        assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 
     @Test
-    void whenAddGiftCertificateThenShouldThrowException() {
-        GiftCertificate giftCertificateDto = new GiftCertificate();
-        giftCertificateDto.setId(1L);
-        giftCertificateDto.setName("Hello");
-        giftCertificateDto.setDescription("Hello from description");
-        giftCertificateDto.setPrice(new BigDecimal("123"));
-        giftCertificateDto.setDuration(1);
-        giftCertificateDto.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        giftCertificateDto.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        Set<Tag> tagsDto = new HashSet<>();
-        Tag tagDto = new Tag();
-        tagDto.setId(1L);
-        tagDto.setName("Hi");
-        tagsDto.add(tagDto);
-        giftCertificateDto.setTags(tagsDto);
-
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setId(1L);
-        giftCertificate.setName("Hello");
-        giftCertificate.setDescription("Hello from description");
-        giftCertificate.setPrice(new BigDecimal("123"));
-        giftCertificate.setDuration(1);
-        giftCertificate.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        giftCertificate.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        Set<Tag> tags = new HashSet<>();
-        Tag tag = new Tag();
-        tag.setId(1L);
-        tag.setName("Hi");
-        tags.add(tag);
-        giftCertificate.setTags(tags);
-
-        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificate.getId());
-        when(tagDao.findAll()).thenReturn(Collections.singletonList(tag));
+    void when_addGiftCertificate_ThenShouldThrowException() {
+        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificateSecond.getId());
         when(tagDao.findTagByName(tag.getName())).thenThrow(ResourceNotFoundException.class);
-        assertThrows(ResourceNotFoundException.class, () -> giftCertificateService.addGiftCertificate(giftCertificateDto));
+        assertThrows(ResourceNotFoundException.class, () -> giftCertificateService.addGiftCertificate(giftCertificateFirst));
+        verify(giftCertificateDao, Mockito.times(1)).add(any(GiftCertificate.class));
+        verify(tagDao, Mockito.times(1)).findTagByName(tag.getName());
     }
 
     @Test
-    void whenAddTagToGiftCertificateThenShouldReturnGiftCertificate() {
+    void when_AddTagToGiftCertificate_ThenShouldReturnGiftCertificate() {
         Tag tagDto = new Tag();
         tagDto.setName("Hi");
-
-        Set<Tag> tags = new HashSet<>();
-        Tag tag = new Tag();
-        tag.setId(1L);
-        tag.setName("Hi");
-        tags.add(tag);
-
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setId(1L);
-        giftCertificate.setName("Hello");
-        giftCertificate.setDescription("Hello from description");
-        giftCertificate.setPrice(new BigDecimal("123"));
-        giftCertificate.setDuration(1);
-        giftCertificate.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        giftCertificate.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
-        giftCertificate.setTags(tags);
-
-        when(giftCertificateDao.findById(giftCertificate.getId())).thenReturn(Optional.of(giftCertificate));
-        when(tagDao.findAll()).thenReturn(new LinkedList<>());
+        when(giftCertificateDao.findById(giftCertificateSecond.getId())).thenReturn(Optional.of(giftCertificateSecond));
         when(tagDao.add(tag)).thenReturn(tag.getId());
-        when(giftCertificateDao.update(giftCertificate)).thenReturn(giftCertificate);
-        when(giftCertificateDao.findGiftCertificateTags(giftCertificate.getId())).thenReturn(tags);
-
-        GiftCertificate mockedGiftCertificateDto = giftCertificateService.addTagToGiftCertificate(giftCertificate.getId(), tagDto);
-
-        assertEquals(giftCertificate, mockedGiftCertificateDto);
+        when(giftCertificateDao.update(giftCertificateSecond)).thenReturn(giftCertificateSecond);
+        when(giftCertificateDao.findGiftCertificateTags(giftCertificateSecond.getId())).thenReturn(giftCertificateSecond.getTags());
+        GiftCertificate mockedGiftCertificate = giftCertificateService.addTagToGiftCertificate(giftCertificateSecond.getId(), tagDto);
+        verify(giftCertificateDao).findById(anyLong());
+        verify(tagDao).add(any(Tag.class));
+        verify(giftCertificateDao).update(any(GiftCertificate.class));
+        verify(giftCertificateDao).findGiftCertificateTags(anyLong());
+        assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 
     @Test

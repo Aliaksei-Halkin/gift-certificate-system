@@ -68,7 +68,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private void checkAndAddRelationBetweenTagAndGiftCertificate(Long giftCertificateId, Tag tag) {
         Tag processedTag;
-        if (!checkIfTagAlreadyExist(tag)) {
+        if (checkIfTagAlreadyExist(tag)) {
             processedTag = tagDao.findTagByName(tag.getName())
                     .orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_NAME_NOT_FOUND,
                             tag.getName()));
@@ -79,7 +79,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         tag.setId(processedTag.getId());
         giftCertificateDao.addRelationBetweenTagAndGiftCertificate(processedTag.getId(), giftCertificateId);
-
     }
 
     private boolean checkIfTagAlreadyExist(Tag tag) {

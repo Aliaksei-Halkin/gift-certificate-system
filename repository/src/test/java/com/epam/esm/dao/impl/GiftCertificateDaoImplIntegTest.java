@@ -1,6 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dao.mapper.ColumnName;
 import com.epam.esm.dao.mapper.GiftCertificateMapper;
 import com.epam.esm.dao.mapper.TagMapper;
 import com.epam.esm.entity.GiftCertificate;
@@ -46,19 +47,24 @@ class GiftCertificateDaoImplIntegTest {
     }
 
     @Test
-    void whenAddCorrectGiftCertificateThenShouldReturnCorrectGiftCertificate() {
+    void when_AddCorrectGiftCertificate_ThenShouldReturn_CorrectGiftCertificate() {
+        String nameGiftCertificate = "TestCertificate";
+        String addingQuery = " WHERE " + ColumnName.NAME + " = \'" + nameGiftCertificate + "\'";
+        int firstGiftCertificate = 0;
         GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setName("TestCertificate");
+        giftCertificate.setName(nameGiftCertificate);
         giftCertificate.setDescription("test description");
         giftCertificate.setPrice(new BigDecimal("13.0"));
         giftCertificate.setCreatedDate(LocalDateTime.now());
         giftCertificate.setUpdateDate(LocalDateTime.now());
         long actual = giftCertificateDao.add(giftCertificate);
-        assertEquals(6, actual);
+        long expected = giftCertificateDao.findCertificatesByQueryParameters(addingQuery)
+                .get(firstGiftCertificate).getId();
+        assertEquals(expected, actual);
     }
 
     @Test
-    void whenAddIncorrectGiftCertificateThenShouldReturnCorrectGiftCertificate() {
+    void when_AddIncorrectGiftCertificate_ThenShould_ThrowException() {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setName(null);
         giftCertificate.setDescription("test description");
@@ -69,13 +75,14 @@ class GiftCertificateDaoImplIntegTest {
     }
 
     @Test
-    void whenFindByExistIdThenShouldReturnTrue() {
+    void when_FindByExistId_ThenShoul_dReturnTrue() {
         Optional<GiftCertificate> giftCertificateOptional = giftCertificateDao.findById(1L);
         assertTrue(giftCertificateOptional.isPresent());
     }
 
     @Test
-    void whenFindByNoExistIdThenShouldReturnTrue() {
+    void when_GetByNoExistId_ThenShould_ReturnFalse() {
+        giftCertificateDao.removeById(10L);
         Optional<GiftCertificate> giftCertificateOptional = giftCertificateDao.findById(10L);
         assertFalse(giftCertificateOptional.isPresent());
     }
