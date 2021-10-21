@@ -134,22 +134,18 @@ public class GiftCertificateController {
      * The {@code direction} might contain one the following values: {@code desc} or {@code asc}.
      * <p>
      * The default response status is 200 - OK.
-     *
-     * @param tagName                The parameter used to find gift certificates by tag name.
-     * @param certificateName        The parameter used to find gift certificates by certificate name.
-     * @param certificateDescription The parameter used to find gift certificates by certificate description.
-     * @param order                  The parameter used to choose order of sorting certificates.
-     * @param direction              The parameter used to choose direction of sorting certificates.
-     * @return {@link ResponseEntity} with the list of the gift certificates.
+     * <p>
+     * //     * @param tagName                The parameter used to find gift certificates by tag name.
+     * //     * @param certificateName        The parameter used to find gift certificates by certificate name.
+     * //     * @param certificateDescription The parameter used to find gift certificates by certificate description.
+     * //     * @param order                  The parameter used to choose order of sorting certificates.
+     * //     * @param direction              The parameter used to choose direction of sorting certificates.
+     * //     * @return {@link ResponseEntity} with the list of the gift certificates.
+     * //
      */
-    @GetMapping
+    @GetMapping("/selection")
     public ResponseEntity<List<GiftCertificate>> findGiftCertificatesByParameters
-    (@RequestParam(value = "tagName", required = false) String tagName,
-     @RequestParam(value = "certificateName", required = false) String certificateName,
-     @RequestParam(value = "certificateDescription", required = false) String certificateDescription,
-     @RequestParam(value = "order", required = false) String order,
-     @RequestParam(value = "direction", required = false) String direction) {
-        QueryParameter queryParameter = new QueryParameter(tagName, certificateName, certificateDescription, order, direction);
+    (@RequestBody QueryParameter queryParameter) {
         List<GiftCertificate> giftCertificates = giftCertificateService.findGiftCertificatesByParameters(queryParameter);
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }
