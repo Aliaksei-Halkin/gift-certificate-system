@@ -6,6 +6,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.QueryParameter;
 import com.epam.esm.util.QueryParameterManager;
@@ -24,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The class represents service methods witch work with dao level, validation
@@ -60,6 +63,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificate.setCreatedDate(LocalDateTime.now());
         giftCertificate.setUpdateDate(LocalDateTime.now());
         giftCertificateValidator.isValidGiftCertificate(giftCertificate);
+        giftCertificateValidator.checkNameInDataBase(giftCertificate.getName());
         if (giftCertificate.getTags() != null) {
             giftCertificate.getTags().forEach(tagValidator::isValidTag);
         }
@@ -68,6 +72,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (giftCertificate.getTags() != null) {
             giftCertificate.getTags().forEach(tag -> attachedTag(giftCertificate.getId(), tag));
         }
+        giftCertificate.setTags(giftCertificateDao.findGiftCertificateTags(certificateId));
         LOGGER.info("Gift certificate added: " + giftCertificate);
         return giftCertificate;
     }

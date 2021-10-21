@@ -1,5 +1,7 @@
 package com.epam.esm.validator;
 
+import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dao.impl.GiftCertificateDaoImpl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.ValidationException;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,12 +11,14 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Aliaksei Halkin
  */
 class GiftCertificateValidatorTest {
-    private GiftCertificateValidator giftCertificateValidator = new GiftCertificateValidator();
+
+    private GiftCertificateValidator giftCertificateValidator = new GiftCertificateValidator(mock(GiftCertificateDaoImpl.class));
 
     public static Object[][] correctGiftCertificate() {
         GiftCertificate giftCertificate1 = new GiftCertificate();
