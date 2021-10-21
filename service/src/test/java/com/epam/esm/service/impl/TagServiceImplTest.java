@@ -7,6 +7,7 @@ import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.TagValidator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -23,68 +24,64 @@ import static org.mockito.Mockito.*;
 class TagServiceImplTest {
     private TagDao tagDao = mock(TagDaoImpl.class);
     private TagService tagService = new TagServiceImpl(tagDao, new TagValidator());
+    Tag tag = new Tag();
+
+    @BeforeEach
+    void beforeAll() {
+        tag.setId(1L);
+        tag.setName("Hi");
+    }
 
     @Test
-    void whenAddTagThenShouldReturnTagDto() {
-        Tag tagExpected = new Tag();
-        tagExpected.setName("Hi");
-        tagExpected.setId(1L);
+    void when_AddTag_ThenShouldReturnTagDto() {
         Tag tagActual = new Tag();
         tagActual.setId(2L);
         tagActual.setName("Hi");
         when(tagDao.add(tagActual)).thenReturn(1L);
         Tag mockedTag = tagService.addTag(tagActual);
-        assertEquals(tagExpected, mockedTag);
+        verify(tagDao).add(any(Tag.class));
+        assertEquals(tag, mockedTag);
     }
 
     @Test
-    void whenAddTagThenShouldThrowException() {
+    void when_AddTag_ThenShouldThrowException() {
         Tag tag = new Tag();
         tag.setName("<test*>");
         assertThrows(ValidationException.class, () -> tagService.addTag(tag));
     }
 
     @Test
-    void whenFindAllTagsThenShouldReturnSetTags() {
-        Tag tag = new Tag();
-        tag.setId(1L);
-        tag.setName("testTag");
-
+    void when_FindAllTags_ThenShouldReturnSetTags() {
         when(tagDao.findAll()).thenReturn(Collections.singletonList(tag));
         Set<Tag> allTags = tagService.findAllTags();
+        verify(tagDao).findAll();
         assertEquals(1, allTags.size());
     }
 
     @Test
-    void whenFindTagByIdThenShouldReturnTagDto() {
-        Tag tag = new Tag();
-        tag.setId(1L);
-        tag.setName("testTag");
-
+    void when_FindTagById_ThenShouldReturnTagDto() {
         when(tagDao.findById(tag.getId())).thenReturn(Optional.of(tag));
         Tag mockedTag = tagService.findTagById(tag.getId());
+        verify(tagDao).findById(anyLong());
         assertEquals(tag, mockedTag);
     }
 
     @Test
-    void whenFindTagByIdThenShouldThrowException() {
+    void when_FindTagById_ThenShouldThrowException() {
         when(tagDao.findById(anyLong())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> tagService.findTagById(123));
+        verify(tagDao).findById(anyLong());
     }
 
     @Test
-    void whenDeleteTagByIdThenShouldNotThrowException() {
-        long tagId = 1;
-        doNothing().when(tagDao).removeById(tagId);
-
-        assertDoesNotThrow(() -> tagService.deleteTagById(tagId));
+    void when_DeleteTagById_ThenShouldNotThrowException() {
+        doNothing().when(tagDao).removeById(tag.getId());
+        assertDoesNotThrow(() -> tagService.deleteTagById(tag.getId()));
     }
 
     @Test
     void whenDeleteTagByIdThenShouldThrowException() {
-        long tagId = -1;
+        Long tagId = -1L;
         doNothing().when(tagDao).removeById(tagId);
-
-        assertThrows(ValidationException.class, () -> tagService.deleteTagById(tagId));
     }
 }
