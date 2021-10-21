@@ -119,13 +119,12 @@ public class GiftCertificateController {
         return new ResponseEntity<>(tags, HttpStatus.OK);
     }
 
+
     /**
-     * Find the gift certificate in the storage by various parameter passed as a parameter in the request URI.
+     * Find the gift certificate in the storage by various parameter passed as a parameter from body QueryParameter
      * If there is no parameters method returns all the gift certificates in the storage.
      * <p>
-     * Annotated by {@link GetMapping} with no parameters. Therefore, processes GET requests at /certificates.
-     * <p>
-     * Accepts optional request parameters {@code tagName}, {@code certificateName}, {@code certificateDescription},
+     * Accepts optional request parameters in RequestBody:  {@code tagName}, {@code certificateName}, {@code certificateDescription},
      * {@code order}, {@code direction}. All parameters can be used in conjunction.
      * <p>
      * The {@code order} might contain one the following values:
@@ -135,13 +134,9 @@ public class GiftCertificateController {
      * <p>
      * The default response status is 200 - OK.
      * <p>
-     * //     * @param tagName                The parameter used to find gift certificates by tag name.
-     * //     * @param certificateName        The parameter used to find gift certificates by certificate name.
-     * //     * @param certificateDescription The parameter used to find gift certificates by certificate description.
-     * //     * @param order                  The parameter used to choose order of sorting certificates.
-     * //     * @param direction              The parameter used to choose direction of sorting certificates.
-     * //     * @return {@link ResponseEntity} with the list of the gift certificates.
-     * //
+     *
+     * @param queryParameter The parameters when include {@link QueryParameter} use to find gift certificates by certificate.
+     * @return {@link ResponseEntity} with the list of the gift certificates.
      */
     @GetMapping("/selection")
     public ResponseEntity<List<GiftCertificate>> findGiftCertificatesByParameters
@@ -188,6 +183,17 @@ public class GiftCertificateController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteGiftCertificateById(@PathVariable("id") long id) {
         giftCertificateService.deleteGiftCertificateById(id);
+    }
+
+    /**
+     * Find all gift certificates in the storage.
+     *
+     * @return the list of certificates
+     */
+    @GetMapping
+    public ResponseEntity<List<GiftCertificate>> findAllGiftCertificates() {
+        List<GiftCertificate> giftCertificates = giftCertificateService.findGiftCertificatesByParameters(new QueryParameter());
+        return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }
 
 }
