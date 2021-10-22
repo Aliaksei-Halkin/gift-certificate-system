@@ -10,5 +10,5 @@ import java.util.Optional;
  * @author Aliaksei Halkin
  */
 public interface TagDao extends BaseDao<Tag, Long> {
-    Optional<Tag> findTagByName(String name);
+   Optional<Tag> findTagByName(String name);
 }

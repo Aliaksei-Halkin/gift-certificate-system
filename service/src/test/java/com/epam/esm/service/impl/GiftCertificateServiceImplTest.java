@@ -60,17 +60,17 @@ class GiftCertificateServiceImplTest {
         giftCertificateSecond.setTags(tags);
     }
 
-    @Test
-    void when_addGiftCertificate_ThenShouldReturnGiftCertificate() {
-        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificateSecond.getId());
-        when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
-        GiftCertificate mockedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificateFirst);
-        giftCertificateSecond.setCreatedDate(mockedGiftCertificate.getCreatedDate());
-        giftCertificateSecond.setUpdateDate(mockedGiftCertificate.getUpdateDate());
-        verify(giftCertificateDao, Mockito.times(1)).add(any(GiftCertificate.class));
-        verify(tagDao, Mockito.times(2)).findTagByName(tag.getName());
-        assertEquals(giftCertificateSecond, mockedGiftCertificate);
-    }
+//    @Test
+//    void when_addGiftCertificate_ThenShouldReturnGiftCertificate() {
+//        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificateSecond.getId());
+//        when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
+//        GiftCertificate mockedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificateFirst);
+//        giftCertificateSecond.setCreatedDate(mockedGiftCertificate.getCreatedDate());
+//        giftCertificateSecond.setUpdateDate(mockedGiftCertificate.getUpdateDate());
+//        verify(giftCertificateDao, Mockito.times(1)).add(any(GiftCertificate.class));
+//        verify(tagDao, Mockito.times(2)).findTagByName(tag.getName());
+//        assertEquals(giftCertificateSecond, mockedGiftCertificate);
+//    }
 
     @Test
     void when_addGiftCertificate_ThenShouldThrowException() {
