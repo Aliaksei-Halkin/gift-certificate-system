@@ -175,12 +175,12 @@ public class GiftCertificateController {
      * /certificates/id, where id is the identifier of the gift certificate to be deleted
      * represented by a natural number.
      * <p>
-     * The default response status is 204 - No Content, as the response body is empty.
+     * The default response status is 200 - Ok.
      *
      * @param id The identifier of the gift certificate to be deleted. Inferred from the request URI.
      */
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     public void deleteGiftCertificateById(@PathVariable("id") long id) {
         giftCertificateService.deleteGiftCertificateById(id);
     }

@@ -60,7 +60,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void deleteTagById(long tagId) {
-        tagValidator.isValidId(tagId);
+        findTagById(tagId);
         tagDao.removeById(tagId);
         LOGGER.log(Level.INFO, "Tag with id = {} deleted", tagId);
     }

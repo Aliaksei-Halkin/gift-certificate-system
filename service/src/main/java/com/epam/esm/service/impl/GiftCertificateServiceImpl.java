@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -178,7 +177,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     public void deleteGiftCertificateById(Long id) {
-        giftCertificateValidator.isValidId(id);
+        findGiftCertificateById(id);
         giftCertificateDao.removeById(id);
     }
 
@@ -192,9 +191,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public GiftCertificate updateGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate) {
         giftCertificateValidator.isValidId(giftCertificateId);
-        GiftCertificate giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);
+        GiftCertificate giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);//из бд
         updateFields(giftCertificate, giftCertificateVerified);
-        giftCertificate.setUpdateDate(LocalDateTime.now());
+        giftCertificateVerified.setUpdateDate(LocalDateTime.now());
         GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificateVerified);
         giftCertificate.getTags().forEach(tag -> attachedTag(giftCertificateId, tag));
         Set<Tag> changedTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
@@ -226,16 +225,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (receivedGiftCertificate.getTags() != null) {
             receivedGiftCertificate.getTags().forEach(tagValidator::isValidTag);
         }
-        Set<Tag> giftCertificateTags = giftCertificateDao.findGiftCertificateTags(updatedGiftCertificate.getId());
-        Set<Tag> addedTags = new HashSet<>();
-        if (receivedGiftCertificate.getTags() != null) {
-            receivedGiftCertificate.getTags().stream().forEach(tag -> {
-                if (!giftCertificateTags.contains(tag)) {
-                    addedTags.add(tag);
-                }
-            });
-        }
-        updatedGiftCertificate.setTags(addedTags);
         LOGGER.log(Level.DEBUG, "Updated gift certificate: {}", updatedGiftCertificate);
     }
 }
