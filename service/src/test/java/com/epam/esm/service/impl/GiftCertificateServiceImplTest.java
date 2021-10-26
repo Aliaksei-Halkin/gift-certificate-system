@@ -45,6 +45,7 @@ class GiftCertificateServiceImplTest {
         giftCertificateFirst.setDuration(1);
         giftCertificateFirst.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificateFirst.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
+        giftCertificateFirst.setActive(true);
         Set<Tag> tags = new HashSet<>();
         tag.setId(1L);
         tag.setName("Hi");
@@ -58,6 +59,7 @@ class GiftCertificateServiceImplTest {
         giftCertificateSecond.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificateSecond.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificateSecond.setTags(tags);
+        giftCertificateSecond.setActive(true);
     }
 
     @Test
@@ -158,9 +160,9 @@ class GiftCertificateServiceImplTest {
         GiftCertificate mockedGiftCertificate = giftCertificateService
                 .updateGiftCertificate(giftCertificateSecond.getId(), giftCertificateSecond);
         verify(tagDao, Mockito.times(2)).findTagByName(anyString());
-        verify(giftCertificateDao).findById(anyLong());
+        verify(giftCertificateDao,Mockito.times(2)).findById(anyLong());
         verify(giftCertificateDao).update(any(GiftCertificate.class));
-        verify(giftCertificateDao, Mockito.times(2)).findGiftCertificateTags(anyLong());
+        verify(giftCertificateDao, Mockito.times(3)).findGiftCertificateTags(anyLong());
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 

@@ -25,23 +25,25 @@ public class TagDaoImpl implements TagDao {
     /**
      * This is the query SELECT to database
      */
-    public static final String SELECT_ALL_TAGS = "SELECT tagId, tagName FROM tags";
+    public static final String SELECT_ALL_TAGS = "SELECT *  FROM tags WHERE  active = true";
     /**
      * This is the query SELECT to database
      */
-    public static final String SELECT_TAG_BY_NAME = "SELECT tagId, tagName FROM tags WHERE tagName = ?";
+    public static final String SELECT_TAG_BY_NAME = "SELECT * FROM tags WHERE tagName = ?";
     /**
      * This is the query SELECT to database
      */
-    public static final String SELECT_TAG_BY_ID = "SELECT tagId, tagName FROM tags WHERE tagId = ?";
+    public static final String SELECT_TAG_BY_ID = "SELECT * FROM tags WHERE tagId = ? ";
     /**
      * This is the query INSERT to database
      */
     public static final String INSERT_TAG = "INSERT INTO tags (tagName) VALUES (?)";
     /**
-     * This is the query DELETE to database
+     * This is the query DELETE to database, the active value of Tag set false
      */
-    public static final String DELETE_TAG = "DELETE FROM tags WHERE tagId = ?";
+    public static final String DELETE_TAG = "UPDATE tags SET active=false WHERE tagId = ?";
+    public static final String RETURN_DELETED_TAG = "UPDATE tags SET active=true WHERE tagName = ?";
+    public static final String DELETE_TAGS_FROM_CERTIFICATES_HAS_TAGS = "DELETE FROM certificates_has_tags WHERE tagId = ?";
     /**
      * The {@link JdbcTemplate} object
      */
@@ -102,6 +104,7 @@ public class TagDaoImpl implements TagDao {
     @Override
     public void removeById(Long id) {
         jdbcTemplate.update(DELETE_TAG, id);
+        jdbcTemplate.update(DELETE_TAGS_FROM_CERTIFICATES_HAS_TAGS, id);
     }
 
     /**
@@ -134,5 +137,10 @@ public class TagDaoImpl implements TagDao {
     @Override
     public Optional<Tag> findTagByName(String name) {
         return jdbcTemplate.query(SELECT_TAG_BY_NAME, tagMapper, name).stream().findFirst();
+    }
+
+    @Override
+    public void returnDeletedTag(String name) {
+        jdbcTemplate.update(RETURN_DELETED_TAG, name);
     }
 }

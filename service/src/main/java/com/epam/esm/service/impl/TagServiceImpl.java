@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class TagServiceImpl implements TagService {
     private static final Logger LOGGER = LogManager.getLogger(GiftCertificateService.class);
+    private static final long NO_EXIST_ID = -1;
     private final TagDao tagDao;
     private final TagValidator tagValidator;
 
@@ -38,19 +39,29 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag addTag(Tag tag) {
+        long tagId;
         tagValidator.isValidTag(tag);
-        checkTagIsPresentInDatabase(tag.getName());
-        long tagId = tagDao.add(tag);
+        tagId = checkTagIsPresentInDatabase(tag.getName());
+        if (tagId < 0) {
+            tagId = tagDao.add(tag);
+        }
         tag.setId(tagId);
+        tag.setActive(true);
         LOGGER.log(Level.INFO, "Tag added: {}", tag);
         return tag;
     }
 
-    private void checkTagIsPresentInDatabase(String nameTag) {
-        List<String> namesOfCertificates = tagDao.findAll().stream().map(c -> c.getName()).collect(Collectors.toList());
-        if (namesOfCertificates.contains(nameTag)) {
+    private long checkTagIsPresentInDatabase(String nameTag) {
+        long idTag = NO_EXIST_ID;
+        Optional<Tag> tag = tagDao.findTagByName(nameTag);
+        if (tag.isPresent() && tag.get().isActive() == true) {
             throw new ValidationException(ExceptionPropertyKey.EXISTING_TAG, nameTag);
         }
+        if (tag.isPresent() && tag.get().isActive() == false) {
+            idTag = tag.get().getId();
+            tagDao.returnDeletedTag(tag.get().getName());
+        }
+        return idTag;
     }
 
     @Override
@@ -70,9 +81,17 @@ public class TagServiceImpl implements TagService {
     @Override
     public void deleteTagById(long tagId) {
         tagValidator.isValidId(tagId);
-        findTagById(tagId);
+        checkTagOnDoubleDelete(tagId);
         tagDao.removeById(tagId);
         LOGGER.log(Level.INFO, "Tag with id = {} deleted", tagId);
+    }
+
+    private void checkTagOnDoubleDelete(long tagId) {
+        Tag tag = retrieveTag(tagId);
+        if (tag.isActive() == false) {
+            throw new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_ID_NOT_FOUND,
+                    tagId);
+        }
     }
 
     private Tag retrieveTag(long tagId) {

@@ -14,6 +14,7 @@ public class ColumnName {
     public final static String DURATION = "duration";
     public final static String CREATE_DATE = "create_date";
     public final static String LAST_UPDATE_DATE = "last_update_date";
+    public final static String ACTIVE = "active";
 
     private ColumnName() {
     }

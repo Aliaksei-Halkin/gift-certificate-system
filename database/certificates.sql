@@ -1,4 +1,3 @@
-
 DROP SCHEMA IF EXISTS `certificatesdb`;
 
 CREATE SCHEMA IF NOT EXISTS `certificatesdb`;
@@ -13,15 +12,17 @@ CREATE TABLE IF NOT EXISTS `certificatesdb`.`gift_certificates`
     `duration`         INT            NOT NULL,
     `create_date`      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `last_update_date` TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`certificateId`)
+    `active`           boolean        default true,
+        PRIMARY KEY (`certificateId`)
 );
 
 CREATE UNIQUE INDEX `name_UNIQUE` ON `certificatesdb`.`gift_certificates` (`name` ASC) VISIBLE;
 
- CREATE TABLE IF NOT EXISTS `certificatesdb`.`tags`
+CREATE TABLE IF NOT EXISTS `certificatesdb`.`tags`
 (
     `tagId`   BIGINT      NOT NULL AUTO_INCREMENT,
     `tagName` VARCHAR(45) NOT NULL,
+    `active`           boolean        default true,
     PRIMARY KEY (`tagId`)
 );
 
@@ -49,11 +50,16 @@ CREATE INDEX `fk_gift_certificates_has_tags_gift_certificates_idx` ON `certifica
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `certificatesdb`;
-INSERT INTO `certificatesdb`.`gift_certificates` ( `name`, `description`, `price`, `duration` ) VALUES ( 'Fly on a helicopter', 'It is  a wonderful adventure', 899.99, 1);
-INSERT INTO `certificatesdb`.`gift_certificates` ( `name`, `description`, `price`, `duration`) VALUES ( 'Massage', 'All body', 49.99, 1);
-INSERT INTO `certificatesdb`.`gift_certificates` (`name`, `description`, `price`, `duration`) VALUES ('Skydiving', 'Skydiving from a skyscraper', 199.99, 2);
-INSERT INTO `certificatesdb`.`gift_certificates` ( `name`, `description`, `price`, `duration`) VALUES ( 'Cinema', 'You can choose 10 movie per month 10/2021', 5, 50);
-INSERT INTO `certificatesdb`.`gift_certificates` ( `name`, `description`, `price`, `duration`) VALUES ( 'Tourist equipment', ' you will choose one thing for free for 50 euros', 30, 1);
+INSERT INTO `certificatesdb`.`gift_certificates` (`name`, `description`, `price`, `duration`)
+VALUES ('Fly on a helicopter', 'It is  a wonderful adventure', 899.99, 1);
+INSERT INTO `certificatesdb`.`gift_certificates` (`name`, `description`, `price`, `duration`)
+VALUES ('Massage', 'All body', 49.99, 1);
+INSERT INTO `certificatesdb`.`gift_certificates` (`name`, `description`, `price`, `duration`)
+VALUES ('Skydiving', 'Skydiving from a skyscraper', 199.99, 2);
+INSERT INTO `certificatesdb`.`gift_certificates` (`name`, `description`, `price`, `duration`)
+VALUES ('Cinema', 'You can choose 10 movie per month 10/2021', 5, 50);
+INSERT INTO `certificatesdb`.`gift_certificates` (`name`, `description`, `price`, `duration`)
+VALUES ('Tourist equipment', ' you will choose one thing for free for 50 euros', 30, 1);
 
 COMMIT;
 
@@ -63,14 +69,22 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `certificatesdb`;
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (1, 'rest');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (2, 'entertainment');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (3, 'vacation');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (4, 'tourism');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (5, 'hike');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (6, 'health');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (7, 'extreme');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`) VALUES (8, 'massage');
+INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
+VALUES (1, 'rest');
+INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
+VALUES (2, 'entertainment');
+INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
+VALUES (3, 'vacation');
+INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
+VALUES (4, 'tourism');
+INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
+VALUES (5, 'hike');
+INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
+VALUES (6, 'health');
+INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
+VALUES (7, 'extreme');
+INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
+VALUES (8, 'massage');
 
 COMMIT;
 
@@ -80,22 +94,38 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `certificatesdb`;
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (1, 1);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (1, 2);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (1, 7);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (2, 1);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (2, 6);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (2, 8);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (3, 2);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (3, 7);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (4, 1);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (4, 2);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (4, 3);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (5, 1);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (5, 3);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (5, 4);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (5, 5);
-INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`) VALUES (5, 7);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (1, 1);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (1, 2);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (1, 7);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (2, 1);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (2, 6);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (2, 8);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (3, 2);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (3, 7);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (4, 1);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (4, 2);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (4, 3);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (5, 1);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (5, 3);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (5, 4);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (5, 5);
+INSERT INTO `certificatesdb`.`certificates_has_tags` (`certificateId`, `tagId`)
+VALUES (5, 7);
 
 COMMIT;
 

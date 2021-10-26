@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The class represents service methods witch work with dao level, validation
@@ -59,12 +60,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificate.setCreatedDate(LocalDateTime.now());
         giftCertificate.setUpdateDate(LocalDateTime.now());
         giftCertificateValidator.isValidGiftCertificate(giftCertificate);
-        giftCertificateValidator.checkNameInDataBase(giftCertificate.getName());
+        long certificateId = giftCertificateValidator.checkNameIsPresentInDatabase(giftCertificate.getName());
         if (giftCertificate.getTags() != null) {
             giftCertificate.getTags().forEach(tagValidator::isValidTag);
         }
-        long certificateId = giftCertificateDao.add(giftCertificate);
+        if (certificateId < 0) {
+            certificateId = giftCertificateDao.add(giftCertificate);
+        }
         giftCertificate.setId(certificateId);
+        giftCertificate.setActive(true);
         if (giftCertificate.getTags() != null) {
             giftCertificate.getTags().forEach(tag -> attachedTag(giftCertificate.getId(), tag));
         }
@@ -178,8 +182,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public void deleteGiftCertificateById(Long id) {
         giftCertificateValidator.isValidId(id);
-        findGiftCertificateById(id);
+        checkCertificateOnDoubleDelete(id);
         giftCertificateDao.removeById(id);
+        LOGGER.log(Level.INFO, "The certificate with id = {} deleted", id);
     }
 
     /**
@@ -192,15 +197,26 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public GiftCertificate updateGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate) {
         giftCertificateValidator.isValidId(giftCertificateId);
-        GiftCertificate giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);//из бд
+        GiftCertificate giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);
         updateFields(giftCertificate, giftCertificateVerified);
         giftCertificateVerified.setUpdateDate(LocalDateTime.now());
-        GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificateVerified);
-        giftCertificate.getTags().forEach(tag -> attachedTag(giftCertificateId, tag));
-        Set<Tag> changedTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
-        updatedGiftCertificate.setTags(changedTags);
+        giftCertificateDao.update(giftCertificateVerified);
+        Set<Tag> tagsGiftCertificate = removeTagsFromTableCertificatesHasTags(giftCertificateId, giftCertificate);
+        tagsGiftCertificate.forEach(tag -> attachedTag(giftCertificateId, tag));
         LOGGER.log(Level.INFO, "Gift certificate with id = {} updated", giftCertificateId);
-        return updatedGiftCertificate;
+        return findGiftCertificateById(giftCertificateId);
+    }
+
+    private Set<Tag> removeTagsFromTableCertificatesHasTags(Long giftCertificateId, GiftCertificate giftCertificate) {
+        Set<Tag> tagsGiftCertificate = giftCertificate.getTags();
+        Set<Tag> changedTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
+        Set<String> namesTagsGiftCertificate = tagsGiftCertificate.stream().map(tag -> tag.getName()).collect(Collectors.toSet());
+        for (Tag tagIterator : changedTags) {
+            if (!namesTagsGiftCertificate.contains(tagIterator.getName())) {
+                removeTagFromCertificateHasTags(giftCertificateId, tagIterator.getId());
+            }
+        }
+        return tagsGiftCertificate;
     }
 
     /**
@@ -222,10 +238,24 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (receivedGiftCertificate.getDuration() > 0) {
             updatedGiftCertificate.setDuration(receivedGiftCertificate.getDuration());
         }
+        if (receivedGiftCertificate.isActive() == true || receivedGiftCertificate.isActive() == false) {
+            updatedGiftCertificate.setActive(receivedGiftCertificate.isActive());
+        }
         giftCertificateValidator.isValidGiftCertificate(updatedGiftCertificate);
         if (receivedGiftCertificate.getTags() != null) {
             receivedGiftCertificate.getTags().forEach(tagValidator::isValidTag);
         }
         LOGGER.log(Level.DEBUG, "Updated gift certificate: {}", updatedGiftCertificate);
+    }
+
+    private void checkCertificateOnDoubleDelete(long id) {
+        GiftCertificate giftCertificate = findGiftCertificateById(id);
+        if (giftCertificate.isActive() == false) {
+            throw new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND, id);
+        }
+    }
+
+    private void removeTagFromCertificateHasTags(long giftCertificateId, long tagId) {
+        giftCertificateDao.removeTag(giftCertificateId, tagId);
     }
 }

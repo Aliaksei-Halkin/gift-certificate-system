@@ -90,10 +90,10 @@ class GiftCertificateDaoImplIntegTest {
     @Test
     void whenRemoveByExistIdThenShouldListCertificatesLessOne() {
         List<GiftCertificate> giftCertificateList = giftCertificateDao.findCertificatesByQueryParameters("");
-        int expected = giftCertificateList.size();
+        boolean expected = giftCertificateList.get(0).isActive();
         giftCertificateDao.removeById(1L);
         List<GiftCertificate> giftCertificatesAfterRemove = giftCertificateDao.findCertificatesByQueryParameters("");
-        int actual = giftCertificatesAfterRemove.size();
+        boolean actual = false;
         assertNotEquals(expected, actual);
     }
 
@@ -101,7 +101,7 @@ class GiftCertificateDaoImplIntegTest {
     void whenUpdateGiftCertificateThenShouldReturnUpdatedCertificate() {
         GiftCertificate giftCertificate = new GiftCertificate(1L, "Sauna", "Russian sauna",
                 new BigDecimal(25.22), 22, LocalDateTime.now(), LocalDateTime.now(), new HashSet<Tag>() {
-        });
+        },true);
         GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificate);
         assertEquals(giftCertificate, updatedGiftCertificate);
     }
@@ -110,7 +110,7 @@ class GiftCertificateDaoImplIntegTest {
     void whenUpdateIncorrectGiftCertificateThenShouldThrowException() {
         GiftCertificate giftCertificate = new GiftCertificate(1L, null, "American sauna",
                 new BigDecimal(15.22), 22, LocalDateTime.now(), LocalDateTime.now(), new HashSet<Tag>() {
-        });
+        },true);
         assertThrows(RuntimeException.class, () -> giftCertificateDao.update(giftCertificate));
     }
 

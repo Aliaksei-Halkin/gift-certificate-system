@@ -30,6 +30,7 @@ class TagServiceImplTest {
     void beforeAll() {
         tag.setId(1L);
         tag.setName("Hi");
+        tag.setActive(true);
     }
 
     @Test
@@ -37,6 +38,7 @@ class TagServiceImplTest {
         Tag tagActual = new Tag();
         tagActual.setId(2L);
         tagActual.setName("Hi");
+        tagActual.setActive(true);
         when(tagDao.add(tagActual)).thenReturn(1L);
         Tag mockedTag = tagService.addTag(tagActual);
         verify(tagDao).add(any(Tag.class));

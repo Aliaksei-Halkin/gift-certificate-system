@@ -21,8 +21,9 @@ class TagMapperTest {
     void whenMapRowThenShouldReturnTag() throws SQLException {
         when(resultSet.getLong(ColumnName.TAG_ID)).thenReturn(1L);
         when(resultSet.getString(ColumnName.TAG_NAME)).thenReturn("rest");
+        when(resultSet.getBoolean(ColumnName.ACTIVE)).thenReturn(true);
         Tag actual = mapper.mapRow(resultSet, 1);
-        Tag expected = new Tag(1L,"rest");
+        Tag expected = new Tag(1L,"rest",true);
         assertEquals(expected, actual);
     }
 }
