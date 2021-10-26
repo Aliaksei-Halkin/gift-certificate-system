@@ -7,24 +7,25 @@ import org.springframework.stereotype.Component;
 
 /**
  * The TagValidator class represents tag data validation
-  * @author Aliaksei Halkin
+ *
+ * @author Aliaksei Halkin
  */
 @Component
 public class TagValidator {
     private static final long MIN_ID = 1;
     private static final String REGEX_NAME = "[à-ÿÀ-ß\\w\\s\\.,?!']{1,45}";
 
-    public   void isValidTag(Tag tag) {
+    public void isValidTag(Tag tag) {
         isValidName(tag.getName());
     }
 
-    public   void isValidId(long id) {
+    public void isValidId(long id) {
         if (id < MIN_ID) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_ID, id);
         }
     }
 
-    private   void isValidName(String name) {
+    private void isValidName(String name) {
         if (name == null || name.isEmpty() || !name.matches(REGEX_NAME)) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_TAG_NAME, name);
         }

@@ -75,8 +75,10 @@ class TagServiceImplTest {
 
     @Test
     void when_DeleteTagById_ThenShouldNotThrowException() {
+        when(tagDao.findById(anyLong())).thenReturn(Optional.of(tag));
         doNothing().when(tagDao).removeById(tag.getId());
         assertDoesNotThrow(() -> tagService.deleteTagById(tag.getId()));
+        verify(tagDao).findById(anyLong());
     }
 
     @Test

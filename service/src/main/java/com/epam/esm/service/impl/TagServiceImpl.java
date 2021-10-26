@@ -4,6 +4,7 @@ import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validator.TagValidator;
@@ -38,10 +39,18 @@ public class TagServiceImpl implements TagService {
     @Override
     public Tag addTag(Tag tag) {
         tagValidator.isValidTag(tag);
+        checkTagIsPresentInDatabase(tag.getName());
         long tagId = tagDao.add(tag);
         tag.setId(tagId);
         LOGGER.log(Level.INFO, "Tag added: {}", tag);
         return tag;
+    }
+
+    private void checkTagIsPresentInDatabase(String nameTag) {
+        List<String> namesOfCertificates = tagDao.findAll().stream().map(c -> c.getName()).collect(Collectors.toList());
+        if (namesOfCertificates.contains(nameTag)) {
+            throw new ValidationException(ExceptionPropertyKey.EXISTING_TAG, nameTag);
+        }
     }
 
     @Override
@@ -60,6 +69,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void deleteTagById(long tagId) {
+        tagValidator.isValidId(tagId);
         findTagById(tagId);
         tagDao.removeById(tagId);
         LOGGER.log(Level.INFO, "Tag with id = {} deleted", tagId);
@@ -70,4 +80,5 @@ public class TagServiceImpl implements TagService {
         return optionalTag.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_ID_NOT_FOUND,
                 tagId));
     }
+
 }

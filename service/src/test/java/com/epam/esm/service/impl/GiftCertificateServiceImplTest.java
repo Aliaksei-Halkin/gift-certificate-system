@@ -60,17 +60,17 @@ class GiftCertificateServiceImplTest {
         giftCertificateSecond.setTags(tags);
     }
 
-//    @Test
-//    void when_addGiftCertificate_ThenShouldReturnGiftCertificate() {
-//        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificateSecond.getId());
-//        when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
-//        GiftCertificate mockedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificateFirst);
-//        giftCertificateSecond.setCreatedDate(mockedGiftCertificate.getCreatedDate());
-//        giftCertificateSecond.setUpdateDate(mockedGiftCertificate.getUpdateDate());
-//        verify(giftCertificateDao, Mockito.times(1)).add(any(GiftCertificate.class));
-//        verify(tagDao, Mockito.times(2)).findTagByName(tag.getName());
-//        assertEquals(giftCertificateSecond, mockedGiftCertificate);
-//    }
+    @Test
+    void when_addGiftCertificate_ThenShouldReturnGiftCertificate() {
+        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificateSecond.getId());
+        when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
+        GiftCertificate mockedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificateSecond);
+        giftCertificateSecond.setCreatedDate(mockedGiftCertificate.getCreatedDate());
+        giftCertificateSecond.setUpdateDate(mockedGiftCertificate.getUpdateDate());
+        verify(giftCertificateDao, Mockito.times(1)).add(any(GiftCertificate.class));
+        verify(tagDao, Mockito.times(2)).findTagByName(tag.getName());
+        assertEquals(giftCertificateSecond, mockedGiftCertificate);
+    }
 
     @Test
     void when_addGiftCertificate_ThenShouldThrowException() {
@@ -135,7 +135,9 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void when_DeleteGiftCertificateById_ThenShouldNotThrowException() {
-        Long certificateId = 1L;
+        Long certificateId = giftCertificateSecond.getId();
+        when(giftCertificateDao.findAll()).thenReturn(Collections.singletonList(giftCertificateSecond));
+        when(giftCertificateDao.findById(certificateId)).thenReturn(Optional.of(giftCertificateSecond));
         doNothing().when(giftCertificateDao).removeById(certificateId);
         assertDoesNotThrow(() -> giftCertificateService.deleteGiftCertificateById(certificateId));
     }
@@ -152,8 +154,10 @@ class GiftCertificateServiceImplTest {
         when(giftCertificateDao.findById(giftCertificateSecond.getId())).thenReturn(Optional.of(giftCertificateSecond));
         when(giftCertificateDao.update(giftCertificateSecond)).thenReturn(giftCertificateSecond);
         when(giftCertificateDao.findGiftCertificateTags(giftCertificateSecond.getId())).thenReturn(giftCertificateSecond.getTags());
+        when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
         GiftCertificate mockedGiftCertificate = giftCertificateService
                 .updateGiftCertificate(giftCertificateSecond.getId(), giftCertificateSecond);
+        verify(tagDao, Mockito.times(2)).findTagByName(anyString());
         verify(giftCertificateDao).findById(anyLong());
         verify(giftCertificateDao).update(any(GiftCertificate.class));
         verify(giftCertificateDao, Mockito.times(2)).findGiftCertificateTags(anyLong());

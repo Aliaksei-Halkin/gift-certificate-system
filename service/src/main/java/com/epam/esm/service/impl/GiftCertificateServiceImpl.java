@@ -177,6 +177,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     public void deleteGiftCertificateById(Long id) {
+        giftCertificateValidator.isValidId(id);
         findGiftCertificateById(id);
         giftCertificateDao.removeById(id);
     }

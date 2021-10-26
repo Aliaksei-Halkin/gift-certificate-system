@@ -18,6 +18,7 @@ public class ExceptionPropertyKey {
     public static final String INCORRECT_ORDER = "incorrectOrder";
     public static final String INCORRECT_DIRECTION = "incorrectDirection";
     public static final String EXISTING_CERTIFICATE = "existInTheDatabase";
+    public static final String EXISTING_TAG = "existTagInTheDatabase";
 
     private ExceptionPropertyKey() {
     }
