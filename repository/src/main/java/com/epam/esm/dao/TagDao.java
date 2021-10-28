@@ -12,5 +12,5 @@ import java.util.Optional;
 public interface TagDao extends BaseDao<Tag, Long> {
     Optional<Tag> findTagByName(String name);
 
-    void returnDeletedTag(String name);
+    void changeActiveForTag(String name);
 }

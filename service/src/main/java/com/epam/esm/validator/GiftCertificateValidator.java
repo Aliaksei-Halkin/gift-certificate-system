@@ -51,7 +51,7 @@ public class GiftCertificateValidator {
         }
     }
 
-    public long checkNameIsPresentInDatabase(String name) {
+    public long ifExistName(String name) {
         long certificateId = -1;
         String query = FIND_BY_NAME + name +"'";
         List<GiftCertificate> certificateByName = giftCertificateDao.findCertificatesByQueryParameters(query);

@@ -8,7 +8,7 @@ import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.QueryParameter;
-import com.epam.esm.util.QueryParameterManager;
+import com.epam.esm.util.QueryParameterBuilder;
 import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.QueryParameterValidator;
 import com.epam.esm.validator.TagValidator;
@@ -60,7 +60,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificate.setCreatedDate(LocalDateTime.now());
         giftCertificate.setUpdateDate(LocalDateTime.now());
         giftCertificateValidator.isValidGiftCertificate(giftCertificate);
-        long certificateId = giftCertificateValidator.checkNameIsPresentInDatabase(giftCertificate.getName());
+        long certificateId = giftCertificateValidator.ifExistName(giftCertificate.getName());
         if (giftCertificate.getTags() != null) {
             giftCertificate.getTags().forEach(tagValidator::isValidTag);
         }
@@ -69,10 +69,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         giftCertificate.setId(certificateId);
         giftCertificate.setActive(true);
+        final long id = giftCertificate.getId();
         if (giftCertificate.getTags() != null) {
-            giftCertificate.getTags().forEach(tag -> attachedTag(giftCertificate.getId(), tag));
+            deleteTagsFromGiftCertificate(id, giftCertificate);
+            giftCertificate.getTags().forEach(tag -> attachTag(id, tag));
         }
-        giftCertificate.setTags(giftCertificateDao.findGiftCertificateTags(certificateId));
+        giftCertificate.setTags(giftCertificateDao.findGiftCertificateTags(id));
         LOGGER.info("Gift certificate added: " + giftCertificate);
         return giftCertificate;
     }
@@ -84,14 +86,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @param giftCertificateId {@code Long} unique identifier of gift certificate
      * @param tag               {@code Tag} attaching Tag
      */
-    private void attachedTag(Long giftCertificateId, Tag tag) {
-        boolean isPresentTag = tagDao.findTagByName(tag.getName()).isPresent();
-        if (isPresentTag == false) {
-            tagDao.add(tag);
+    private void attachTag(Long giftCertificateId, Tag tag) {
+        Optional<Tag> tagByName = tagDao.findTagByName(tag.getName());
+        Tag movableTag = new Tag();
+        if (!tagByName.isPresent()) {
+            long id = tagDao.add(tag);
+            movableTag.setId(id);
+            movableTag.setName(tag.getName());
+        } else {
+            movableTag = tagByName.get();
         }
-        Tag movableTag = tagDao.findTagByName(tag.getName()).get();
         if (isPresentTagInGiftCertificate(giftCertificateId, movableTag) == false) {
-            giftCertificateDao.attachedTag(movableTag.getId(), giftCertificateId);
+            giftCertificateDao.attachTag(movableTag.getId(), giftCertificateId);
         }
     }
 
@@ -120,7 +126,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         tagValidator.isValidTag(tag);
         GiftCertificate giftCertificate = checkAndGetGiftCertificate(giftCertificateId);
         giftCertificate.setUpdateDate(LocalDateTime.now());
-        attachedTag(giftCertificateId, tag);
+        attachTag(giftCertificateId, tag);
         GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificate);
         Set<Tag> giftCertificateTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
         updatedGiftCertificate.setTags(giftCertificateTags);
@@ -164,7 +170,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificate> findGiftCertificatesByParameters(QueryParameter queryParameter) {
         QueryParameterValidator.isValidQueryParameters(queryParameter);
-        String query = QueryParameterManager.createQuery(queryParameter);
+        String query = QueryParameterBuilder.createQuery(queryParameter);
         LOGGER.log(Level.DEBUG, "Query parameter:  ", queryParameter);
         List<GiftCertificate> giftCertificates = giftCertificateDao.findCertificatesByQueryParameters(query);
         for (GiftCertificate certificate : giftCertificates) {
@@ -201,19 +207,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         updateFields(giftCertificate, giftCertificateVerified);
         giftCertificateVerified.setUpdateDate(LocalDateTime.now());
         giftCertificateDao.update(giftCertificateVerified);
-        Set<Tag> tagsGiftCertificate = removeTagsFromTableCertificatesHasTags(giftCertificateId, giftCertificate);
-        tagsGiftCertificate.forEach(tag -> attachedTag(giftCertificateId, tag));
+        Set<Tag> tagsGiftCertificate = deleteTagsFromGiftCertificate(giftCertificateId, giftCertificate);
+        tagsGiftCertificate.forEach(tag -> attachTag(giftCertificateId, tag));
         LOGGER.log(Level.INFO, "Gift certificate with id = {} updated", giftCertificateId);
         return findGiftCertificateById(giftCertificateId);
     }
 
-    private Set<Tag> removeTagsFromTableCertificatesHasTags(Long giftCertificateId, GiftCertificate giftCertificate) {
+    private Set<Tag> deleteTagsFromGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate) {
         Set<Tag> tagsGiftCertificate = giftCertificate.getTags();
-        Set<Tag> changedTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
+        Set<Tag> changingTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
         Set<String> namesTagsGiftCertificate = tagsGiftCertificate.stream().map(tag -> tag.getName()).collect(Collectors.toSet());
-        for (Tag tagIterator : changedTags) {
+        for (Tag tagIterator : changingTags) {
             if (!namesTagsGiftCertificate.contains(tagIterator.getName())) {
-                removeTagFromCertificateHasTags(giftCertificateId, tagIterator.getId());
+                giftCertificateDao.removeTag(giftCertificateId, tagIterator.getId());
             }
         }
         return tagsGiftCertificate;
@@ -255,7 +261,4 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
     }
 
-    private void removeTagFromCertificateHasTags(long giftCertificateId, long tagId) {
-        giftCertificateDao.removeTag(giftCertificateId, tagId);
-    }
 }

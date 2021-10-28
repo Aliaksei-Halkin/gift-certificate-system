@@ -140,7 +140,7 @@ public class TagDaoImpl implements TagDao {
     }
 
     @Override
-    public void returnDeletedTag(String name) {
+    public void changeActiveForTag(String name) {
         jdbcTemplate.update(RETURN_DELETED_TAG, name);
     }
 }

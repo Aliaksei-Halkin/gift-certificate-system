@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.epam.esm.dao.mapper.ColumnNameGiftCertificate.*;
+
 
 /**
  * The {@code GiftCertificateMapper} class build the {@code GiftCertificate} entity from resultset database
@@ -25,14 +27,14 @@ public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
     @Override
     public GiftCertificate mapRow(ResultSet rs, int rowNum) throws SQLException {
         GiftCertificate certificate = new GiftCertificate();
-        certificate.setId(rs.getLong(ColumnName.CERTIFICATE_ID));
-        certificate.setName(rs.getString(ColumnName.NAME));
-        certificate.setDescription(rs.getString(ColumnName.DESCRIPTION));
-        certificate.setPrice(rs.getBigDecimal(ColumnName.PRICE));
-        certificate.setDuration(rs.getInt(ColumnName.DURATION));
-        certificate.setCreatedDate(rs.getTimestamp(ColumnName.CREATE_DATE).toLocalDateTime());
-        certificate.setUpdateDate(rs.getTimestamp(ColumnName.LAST_UPDATE_DATE).toLocalDateTime());
-        certificate.setActive(rs.getBoolean(ColumnName.ACTIVE));
+        certificate.setId(rs.getLong(CERTIFICATE_ID.getName()));
+        certificate.setName(rs.getString(NAME.getName()));
+        certificate.setDescription(rs.getString(DESCRIPTION.getName()));
+        certificate.setPrice(rs.getBigDecimal(PRICE.getName()));
+        certificate.setDuration(rs.getInt(DURATION.getName()));
+        certificate.setCreatedDate(rs.getTimestamp(CREATE_DATE.getName()).toLocalDateTime());
+        certificate.setUpdateDate(rs.getTimestamp(LAST_UPDATE_DATE.getName()).toLocalDateTime());
+        certificate.setActive(rs.getBoolean(ACTIVE.getName()));
         return certificate;
     }
 }

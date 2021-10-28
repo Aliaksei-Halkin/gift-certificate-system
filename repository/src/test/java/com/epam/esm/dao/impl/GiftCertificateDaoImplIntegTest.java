@@ -1,7 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.mapper.ColumnName;
+import com.epam.esm.dao.mapper.ColumnNameGiftCertificate;
 import com.epam.esm.dao.mapper.GiftCertificateMapper;
 import com.epam.esm.dao.mapper.TagMapper;
 import com.epam.esm.entity.GiftCertificate;
@@ -49,7 +49,7 @@ class GiftCertificateDaoImplIntegTest {
     @Test
     void when_AddCorrectGiftCertificate_ThenShouldReturn_CorrectGiftCertificate() {
         String nameGiftCertificate = "TestCertificate";
-        String addingQuery = " WHERE " + ColumnName.NAME + " = \'" + nameGiftCertificate + "\'";
+        String addingQuery = " WHERE " + ColumnNameGiftCertificate.NAME + " = \'" + nameGiftCertificate + "\'";
         int firstGiftCertificate = 0;
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setName(nameGiftCertificate);
@@ -89,11 +89,11 @@ class GiftCertificateDaoImplIntegTest {
 
     @Test
     void whenRemoveByExistIdThenShouldListCertificatesLessOne() {
-        List<GiftCertificate> giftCertificateList = giftCertificateDao.findCertificatesByQueryParameters("");
-        boolean expected = giftCertificateList.get(0).isActive();
+        Optional<GiftCertificate> certificateById = giftCertificateDao.findById(1L);
+        boolean expected = certificateById.get().isActive();
         giftCertificateDao.removeById(1L);
-        List<GiftCertificate> giftCertificatesAfterRemove = giftCertificateDao.findCertificatesByQueryParameters("");
-        boolean actual = false;
+        Optional<GiftCertificate> certificateByIdActual = giftCertificateDao.findById(1L);
+        boolean actual = certificateByIdActual.get().isActive();
         assertNotEquals(expected, actual);
     }
 
@@ -133,11 +133,11 @@ class GiftCertificateDaoImplIntegTest {
 
     @Test
     void whenAddRelationBetweenTagAndGiftCertificateThenShouldNotThrowException() {
-        assertDoesNotThrow(() -> giftCertificateDao.attachedTag(2, 2));
+        assertDoesNotThrow(() -> giftCertificateDao.attachTag(2, 2));
     }
 
     @Test
     void whenAddRelationBetweenTagAndGiftCertificateThenShouldThrowException() {
-        assertThrows(DuplicateKeyException.class, () -> giftCertificateDao.attachedTag(1, 2));
+        assertThrows(DuplicateKeyException.class, () -> giftCertificateDao.attachTag(1, 2));
     }
 }
