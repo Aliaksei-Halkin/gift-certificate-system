@@ -31,9 +31,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public static final String SELECT_CERTIFICATES_BY_PARAMETERS =
             "SELECT DISTINCT gift_certificates.certificateId, gift_certificates.name, gift_certificates.description, " +
                     "gift_certificates.price, gift_certificates.duration, gift_certificates.create_date, " +
-                    "gift_certificates.last_update_date FROM gift_certificates ";
+                    "gift_certificates.last_update_date, gift_certificates.active FROM gift_certificates ";
     public static final String SELECT_CERTIFICATE_TAGS =
-            "SELECT tags.tagId, tags.tagName " +
+            "SELECT tags.tagId, tags.tagName, tags.active " +
                     "FROM tags " +
                     "JOIN certificates_has_tags ON tags.tagId = certificates_has_tags.tagId " +
                     "JOIN gift_certificates ON gift_certificates.certificateId = certificates_has_tags.certificateId " +
@@ -43,12 +43,17 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
                     "VALUES (?, ?, ?, ?, ?, ?)";
     public static final String UPDATE_CERTIFICATE =
             "UPDATE gift_certificates " +
-                    "SET name = ?, description = ?, price = ?, duration = ?, create_date = ?, last_update_date = ? " +
-                    "WHERE certificateId = ?";
+                    "SET name = ?, description = ?, price = ?, duration = ?, create_date = ?, last_update_date = ?, " +
+                    "active = ? WHERE certificateId = ?";
     public static final String DELETE_CERTIFICATE =
-            "DELETE FROM gift_certificates WHERE certificateId = ?";
+            "UPDATE gift_certificates SET active=false WHERE certificateId = ?";
     public static final String INSERT_RELATION_BETWEEN_TAG_AND_GIFT_CERTIFICATE =
             "INSERT INTO certificates_has_tags (certificateId, tagId) VALUES (?, ?)";
+    public static final String RETURN_DELETED_CERTIFICATE =
+            "UPDATE gift_certificates  SET active=true WHERE name = ?";
+    public static final String DELETE_CERTIFICATES_FROM_CERTIFICATES_HAS_TAGS =
+            "DELETE FROM certificates_has_tags WHERE certificateId = ?";
+    public static final String DELETE_TAG_FROM_CERTIFICATES_HAS_TAGS = "DELETE FROM certificates_has_tags WHERE certificateId = ? AND tagId = ?";
     /**
      * The {@link JdbcTemplate} object
      */
@@ -130,6 +135,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     @Override
     public void removeById(Long id) {
         jdbcTemplate.update(DELETE_CERTIFICATE, id);
+        jdbcTemplate.update(DELETE_CERTIFICATES_FROM_CERTIFICATES_HAS_TAGS, id);
     }
 
     /**
@@ -141,8 +147,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     @Override
     public GiftCertificate update(GiftCertificate entity) {
         jdbcTemplate.update(UPDATE_CERTIFICATE, entity.getName(), entity.getDescription(), entity.getPrice(),
-                entity.getDuration(), Timestamp.valueOf(entity.getCreatedDate()), Timestamp.valueOf(entity.getUpdateDate()),
-                entity.getId());
+                entity.getDuration(), Timestamp.valueOf(entity.getCreatedDate()),
+                Timestamp.valueOf(entity.getUpdateDate()), entity.isActive(), entity.getId());
         return entity;
     }
 
@@ -175,7 +181,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @param giftCertificateId id of certificate
      */
     @Override
-    public void attachedTag(long tagId, long giftCertificateId) {
+    public void attachTag(long tagId, long giftCertificateId) {
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(INSERT_RELATION_BETWEEN_TAG_AND_GIFT_CERTIFICATE);
             preparedStatement.setLong(1, giftCertificateId);
@@ -183,4 +189,15 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             return preparedStatement;
         });
     }
+
+    @Override
+    public void returnDeletedCertificate(String name) {
+        jdbcTemplate.update(RETURN_DELETED_CERTIFICATE, name);
+    }
+
+    @Override
+    public void removeTag(long giftCertificateId, long tagId) {
+        jdbcTemplate.update(DELETE_TAG_FROM_CERTIFICATES_HAS_TAGS, giftCertificateId, tagId);
+    }
+
 }

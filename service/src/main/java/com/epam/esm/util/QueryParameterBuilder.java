@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Aliaksei Halkin
  */
-public class QueryParameterManager {
+public class QueryParameterBuilder {
     private static final Logger LOGGER = LogManager.getLogger(GiftCertificateService.class);
     private static final String JOIN_CERTIFICATES_HAS_TAGS_AND_TAGS =
             "JOIN certificates_has_tags ON gift_certificates.certificateId = certificates_has_tags.certificateId " +

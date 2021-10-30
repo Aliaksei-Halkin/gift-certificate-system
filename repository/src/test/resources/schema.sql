@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS gift_certificates
     `duration`         INT            NOT NULL,
     `create_date`      TIMESTAMP      NOT NULL,
     `last_update_date` TIMESTAMP      NOT NULL,
+    `active` boolean default true,
     PRIMARY KEY (`certificateId`),
     UNIQUE INDEX name_UNIQUE (name ASC)
 );
@@ -16,6 +17,7 @@ CREATE TABLE IF NOT EXISTS tags
 (
     `tagId`   BIGINT      NOT NULL AUTO_INCREMENT,
     `tagName` VARCHAR(45) NOT NULL,
+    `active` boolean default true,
     PRIMARY KEY (`tagId`),
     UNIQUE INDEX tagName_UNIQUE (tagName ASC)
 );

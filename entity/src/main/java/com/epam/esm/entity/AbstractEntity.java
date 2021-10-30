@@ -11,6 +11,7 @@ import java.util.Objects;
  */
 public abstract class AbstractEntity<K> implements Serializable {
     private K id;
+    private boolean active;
 
     /**
      * Instantiates a new Entity.
@@ -23,8 +24,9 @@ public abstract class AbstractEntity<K> implements Serializable {
      *
      * @param id the id
      */
-    public AbstractEntity(K id) {
+    public AbstractEntity(K id, boolean active) {
         this.id = id;
+        this.active = active;
     }
 
     /**
@@ -44,6 +46,15 @@ public abstract class AbstractEntity<K> implements Serializable {
     public void setId(K id) {
         this.id = id;
     }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     /**
      * The implementation of the equals method. Compare this instance of AbstractEntity to another
      * object.
@@ -57,8 +68,9 @@ public abstract class AbstractEntity<K> implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AbstractEntity<?> that = (AbstractEntity<?>) o;
-        return id.equals(that.id);
+        return active == that.active && Objects.equals(id, that.id);
     }
+
     /**
      * The implementation of the hashCode() method. Uses method hash() of the {@code Objects} class get
      * the hash value of the class members.
@@ -67,7 +79,7 @@ public abstract class AbstractEntity<K> implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, active);
     }
 
     /**
@@ -77,8 +89,7 @@ public abstract class AbstractEntity<K> implements Serializable {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("id=").append(id);
-        return sb.toString();
+        return
+                "id=" + id + ", active=" + active + ", ";
     }
 }

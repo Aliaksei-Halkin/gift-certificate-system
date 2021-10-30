@@ -64,8 +64,8 @@ public class GiftCertificate extends AbstractEntity<Long> {
      * @param tags        {@code Set} represents set of tags
      */
     public GiftCertificate(Long id, String name, String description, BigDecimal price,
-                           int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<Tag> tags) {
-        super(id);
+                           int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<Tag> tags,boolean active) {
+        super(id,active);
         this.name = name;
         this.description = description;
         this.price = price;

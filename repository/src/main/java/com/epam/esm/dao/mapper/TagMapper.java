@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import static com.epam.esm.dao.mapper.ColumnNameTag.*;
 
 /**
  * The {@code TagMapper} class build the {@code GiftCertificate} entity from resultset database
@@ -25,8 +25,9 @@ public class TagMapper implements RowMapper<Tag> {
     @Override
     public Tag mapRow(ResultSet rs, int rowNum) throws SQLException {
         Tag tag = new Tag();
-        tag.setId(rs.getLong(ColumnName.TAG_ID));
-        tag.setName(rs.getString(ColumnName.TAG_NAME));
+        tag.setActive(rs.getBoolean(ACTIVE.getName()));
+        tag.setId(rs.getLong(TAG_ID.getName()));
+        tag.setName(rs.getString(TAG_NAME.getName()));
         return tag;
     }
 }

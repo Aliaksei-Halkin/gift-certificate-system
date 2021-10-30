@@ -24,7 +24,7 @@ class GiftCertificateMapperTest {
     @Test
     void whenMapRowThenShouldReturnGiftCertificate() throws SQLException {
         when(resultSet.getTimestamp(anyString())).thenReturn(Timestamp.valueOf(LocalDateTime.now()));
-        when(resultSet.getLong(ColumnName.CERTIFICATE_ID)).thenReturn(1L);
+        when(resultSet.getLong(ColumnNameGiftCertificate.CERTIFICATE_ID.getName())).thenReturn(1L);
         GiftCertificate actual = mapper.mapRow(resultSet,1);
         GiftCertificate expected = new GiftCertificate();
         expected.setCreatedDate(actual.getCreatedDate());

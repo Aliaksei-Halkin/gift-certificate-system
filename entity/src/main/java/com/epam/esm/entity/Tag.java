@@ -23,8 +23,8 @@ public class Tag extends AbstractEntity<Long> {
      * @param id   {@code Long} value of unique Tag identification number
      * @param name {@code String} represents name of tag
      */
-    public Tag(Long id, String name) {
-        super(id);
+    public Tag(Long id, String name, boolean active) {
+        super(id,active);
         this.name = name;
     }
 

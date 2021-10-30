@@ -8,7 +8,7 @@ import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.QueryParameter;
-import com.epam.esm.util.QueryParameterManager;
+import com.epam.esm.util.QueryParameterBuilder;
 import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.QueryParameterValidator;
 import com.epam.esm.validator.TagValidator;
@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The class represents service methods witch work with dao level, validation
@@ -59,16 +60,21 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificate.setCreatedDate(LocalDateTime.now());
         giftCertificate.setUpdateDate(LocalDateTime.now());
         giftCertificateValidator.isValidGiftCertificate(giftCertificate);
-        giftCertificateValidator.checkNameInDataBase(giftCertificate.getName());
+        long certificateId = giftCertificateValidator.ifExistName(giftCertificate.getName());
         if (giftCertificate.getTags() != null) {
             giftCertificate.getTags().forEach(tagValidator::isValidTag);
         }
-        long certificateId = giftCertificateDao.add(giftCertificate);
-        giftCertificate.setId(certificateId);
-        if (giftCertificate.getTags() != null) {
-            giftCertificate.getTags().forEach(tag -> attachedTag(giftCertificate.getId(), tag));
+        if (certificateId < 0) {
+            certificateId = giftCertificateDao.add(giftCertificate);
         }
-        giftCertificate.setTags(giftCertificateDao.findGiftCertificateTags(certificateId));
+        giftCertificate.setId(certificateId);
+        giftCertificate.setActive(true);
+        final long id = giftCertificate.getId();
+        if (giftCertificate.getTags() != null) {
+            deleteTagsFromGiftCertificate(id, giftCertificate);
+            giftCertificate.getTags().forEach(tag -> attachTag(id, tag));
+        }
+        giftCertificate.setTags(giftCertificateDao.findGiftCertificateTags(id));
         LOGGER.info("Gift certificate added: " + giftCertificate);
         return giftCertificate;
     }
@@ -80,14 +86,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @param giftCertificateId {@code Long} unique identifier of gift certificate
      * @param tag               {@code Tag} attaching Tag
      */
-    private void attachedTag(Long giftCertificateId, Tag tag) {
-        boolean isPresentTag = tagDao.findTagByName(tag.getName()).isPresent();
-        if (isPresentTag == false) {
-            tagDao.add(tag);
+    private void attachTag(Long giftCertificateId, Tag tag) {
+        Optional<Tag> tagByName = tagDao.findTagByName(tag.getName());
+        Tag movableTag = new Tag();
+        if (!tagByName.isPresent()) {
+            long id = tagDao.add(tag);
+            movableTag.setId(id);
+            movableTag.setName(tag.getName());
+        } else {
+            movableTag = tagByName.get();
         }
-        Tag movableTag = tagDao.findTagByName(tag.getName()).get();
         if (isPresentTagInGiftCertificate(giftCertificateId, movableTag) == false) {
-            giftCertificateDao.attachedTag(movableTag.getId(), giftCertificateId);
+            giftCertificateDao.attachTag(movableTag.getId(), giftCertificateId);
         }
     }
 
@@ -116,7 +126,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         tagValidator.isValidTag(tag);
         GiftCertificate giftCertificate = checkAndGetGiftCertificate(giftCertificateId);
         giftCertificate.setUpdateDate(LocalDateTime.now());
-        attachedTag(giftCertificateId, tag);
+        attachTag(giftCertificateId, tag);
         GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificate);
         Set<Tag> giftCertificateTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
         updatedGiftCertificate.setTags(giftCertificateTags);
@@ -160,7 +170,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificate> findGiftCertificatesByParameters(QueryParameter queryParameter) {
         QueryParameterValidator.isValidQueryParameters(queryParameter);
-        String query = QueryParameterManager.createQuery(queryParameter);
+        String query = QueryParameterBuilder.createQuery(queryParameter);
         LOGGER.log(Level.DEBUG, "Query parameter:  ", queryParameter);
         List<GiftCertificate> giftCertificates = giftCertificateDao.findCertificatesByQueryParameters(query);
         for (GiftCertificate certificate : giftCertificates) {
@@ -178,8 +188,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public void deleteGiftCertificateById(Long id) {
         giftCertificateValidator.isValidId(id);
-        findGiftCertificateById(id);
+        checkCertificateOnDoubleDelete(id);
         giftCertificateDao.removeById(id);
+        LOGGER.log(Level.INFO, "The certificate with id = {} deleted", id);
     }
 
     /**
@@ -192,15 +203,26 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public GiftCertificate updateGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate) {
         giftCertificateValidator.isValidId(giftCertificateId);
-        GiftCertificate giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);//из бд
+        GiftCertificate giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);
         updateFields(giftCertificate, giftCertificateVerified);
         giftCertificateVerified.setUpdateDate(LocalDateTime.now());
-        GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificateVerified);
-        giftCertificate.getTags().forEach(tag -> attachedTag(giftCertificateId, tag));
-        Set<Tag> changedTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
-        updatedGiftCertificate.setTags(changedTags);
+        giftCertificateDao.update(giftCertificateVerified);
+        Set<Tag> tagsGiftCertificate = deleteTagsFromGiftCertificate(giftCertificateId, giftCertificate);
+        tagsGiftCertificate.forEach(tag -> attachTag(giftCertificateId, tag));
         LOGGER.log(Level.INFO, "Gift certificate with id = {} updated", giftCertificateId);
-        return updatedGiftCertificate;
+        return findGiftCertificateById(giftCertificateId);
+    }
+
+    private Set<Tag> deleteTagsFromGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate) {
+        Set<Tag> tagsGiftCertificate = giftCertificate.getTags();
+        Set<Tag> changingTags = giftCertificateDao.findGiftCertificateTags(giftCertificateId);
+        Set<String> namesTagsGiftCertificate = tagsGiftCertificate.stream().map(tag -> tag.getName()).collect(Collectors.toSet());
+        for (Tag tagIterator : changingTags) {
+            if (!namesTagsGiftCertificate.contains(tagIterator.getName())) {
+                giftCertificateDao.removeTag(giftCertificateId, tagIterator.getId());
+            }
+        }
+        return tagsGiftCertificate;
     }
 
     /**
@@ -222,10 +244,21 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (receivedGiftCertificate.getDuration() > 0) {
             updatedGiftCertificate.setDuration(receivedGiftCertificate.getDuration());
         }
+        if (receivedGiftCertificate.isActive() == true || receivedGiftCertificate.isActive() == false) {
+            updatedGiftCertificate.setActive(receivedGiftCertificate.isActive());
+        }
         giftCertificateValidator.isValidGiftCertificate(updatedGiftCertificate);
         if (receivedGiftCertificate.getTags() != null) {
             receivedGiftCertificate.getTags().forEach(tagValidator::isValidTag);
         }
         LOGGER.log(Level.DEBUG, "Updated gift certificate: {}", updatedGiftCertificate);
     }
+
+    private void checkCertificateOnDoubleDelete(long id) {
+        GiftCertificate giftCertificate = findGiftCertificateById(id);
+        if (giftCertificate.isActive() == false) {
+            throw new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND, id);
+        }
+    }
+
 }

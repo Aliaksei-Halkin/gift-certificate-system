@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The GiftCertificateValidator class represents certificate data validation
@@ -24,6 +23,7 @@ public class GiftCertificateValidator {
     private static final BigDecimal MAX_PRICE = new BigDecimal("1000000");
     private static final int MIN_DURATION = 1;
     private static final int MAX_DURATION = 365;
+    public static final String FIND_BY_NAME = " WHERE name = '";
     private final GiftCertificateDao giftCertificateDao;
 
     @Autowired
@@ -51,11 +51,19 @@ public class GiftCertificateValidator {
         }
     }
 
-    public void checkNameInDataBase(String name) {
-        List<String> namesOfCertificates = giftCertificateDao.findAll().stream().map(c -> c.getName()).collect(Collectors.toList());
-        if (namesOfCertificates.contains(name)) {
+    public long ifExistName(String name) {
+        long certificateId = -1;
+        String query = FIND_BY_NAME + name +"'";
+        List<GiftCertificate> certificateByName = giftCertificateDao.findCertificatesByQueryParameters(query);
+        boolean checkCertificateByNameOnPresent = (certificateByName != null && !certificateByName.isEmpty());
+        if (checkCertificateByNameOnPresent && certificateByName.get(0).isActive() == true) {
             throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name);
         }
+        if (checkCertificateByNameOnPresent && certificateByName.get(0).isActive() == false) {
+            giftCertificateDao.returnDeletedCertificate(name);
+            certificateId = certificateByName.get(0).getId();
+        }
+        return certificateId;
     }
 
     private void isValidDescription(String description) {
