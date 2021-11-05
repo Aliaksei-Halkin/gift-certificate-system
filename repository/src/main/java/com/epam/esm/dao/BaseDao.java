@@ -1,7 +1,5 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.entity.AbstractEntity;
-
 import java.util.List;
 import java.util.Optional;
 

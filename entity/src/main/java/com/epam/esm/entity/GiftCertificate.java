@@ -1,7 +1,12 @@
 package com.epam.esm.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.epam.esm.column.ColumnNameGiftCertificate;
+import com.epam.esm.column.ColumnNameGiftCertificatesHasTags;
+import com.epam.esm.column.ColumnNameTag;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -12,36 +17,58 @@ import java.util.Set;
  *
  * @author Aliaksei Halkin
  */
-public class GiftCertificate extends AbstractEntity<Long> {
+@Entity
+@Table(name = ColumnNameGiftCertificate.CERTIFICATE_TABLE)
+public class GiftCertificate {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = ColumnNameGiftCertificate.CERTIFICATE_ID,
+            nullable = false, unique = true)
+    private Long id;
+
+    @Column(name = ColumnNameGiftCertificate.ACTIVE, nullable = false)
+    private boolean active;
     /**
      * The name of GiftCertificate
      */
+    @Column(name = ColumnNameGiftCertificate.NAME,
+            nullable = false, unique = true)
     private String name;
     /**
      * The description of GiftCertificate
      */
+    @Column(name=ColumnNameGiftCertificate.DESCRIPTION)
     private String description;
     /**
      * The price of GiftCertificate
      */
+    @Column(name=ColumnNameGiftCertificate.PRICE)
     private BigDecimal price;
     /**
      * The duration of GiftCertificate
      */
+    @Column(name=ColumnNameGiftCertificate.DURATION)
     private int duration;
     /**
      * The date and time of GiftCertificate creation.
      */
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name=ColumnNameGiftCertificate.CREATE_DATE)
+    @CreationTimestamp
     private LocalDateTime createdDate;
     /**
      * The date and time of GiftCertificate creation.
      */
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Column(name=ColumnNameGiftCertificate.LAST_UPDATE_DATE)
+    @UpdateTimestamp
     private LocalDateTime updateDate;
     /**
      * The set of tags in this Gift certificate
      */
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name= ColumnNameGiftCertificatesHasTags.TABLE,
+            joinColumns = @JoinColumn(name =ColumnNameGiftCertificate.CERTIFICATE_ID),
+            inverseJoinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.TAG_ID)
+    )
     private Set<Tag> tags;
 
     /**
@@ -64,8 +91,8 @@ public class GiftCertificate extends AbstractEntity<Long> {
      * @param tags        {@code Set} represents set of tags
      */
     public GiftCertificate(Long id, String name, String description, BigDecimal price,
-                           int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<Tag> tags,boolean active) {
-        super(id,active);
+                           int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<Tag> tags, boolean active) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
@@ -73,6 +100,23 @@ public class GiftCertificate extends AbstractEntity<Long> {
         this.createdDate = createdDate;
         this.updateDate = updateDate;
         this.tags = tags;
+        this.active = active;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public String getName() {
@@ -143,14 +187,8 @@ public class GiftCertificate extends AbstractEntity<Long> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         GiftCertificate that = (GiftCertificate) o;
-        return duration == that.duration && Objects.equals(name, that.name)
-                && Objects.equals(description, that.description)
-                && Objects.equals(price, that.price)
-                && Objects.equals(createdDate, that.createdDate)
-                && Objects.equals(updateDate, that.updateDate)
-                && Objects.equals(tags, that.tags);
+        return active == that.active && duration == that.duration && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(createdDate, that.createdDate) && Objects.equals(updateDate, that.updateDate) && Objects.equals(tags, that.tags);
     }
 
     /**
@@ -161,8 +199,7 @@ public class GiftCertificate extends AbstractEntity<Long> {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name, description, price, duration, createdDate,
-                updateDate, tags);
+        return Objects.hash(id, active, name, description, price, duration, createdDate, updateDate, tags);
     }
 
     /**
@@ -172,12 +209,14 @@ public class GiftCertificate extends AbstractEntity<Long> {
      */
     @Override
     public String toString() {
-        return "GiftCertificate{" + super.toString() +
-                "name='" + name + '\'' +
+        return "GiftCertificate{" +
+                "id=" + id +
+                ", active=" + active +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", duration=" + duration +
-                ", createDate=" + createdDate +
+                ", createdDate=" + createdDate +
                 ", updateDate=" + updateDate +
                 ", tags=" + tags +
                 '}';

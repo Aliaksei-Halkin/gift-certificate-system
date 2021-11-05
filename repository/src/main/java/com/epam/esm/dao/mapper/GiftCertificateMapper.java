@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.epam.esm.dao.mapper.ColumnNameGiftCertificate.*;
+import static com.epam.esm.column.ColumnNameGiftCertificate.*;
 
 
 /**

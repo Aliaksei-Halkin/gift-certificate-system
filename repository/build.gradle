@@ -1,14 +1,14 @@
 group 'com.epam.esm'
-version '1.0.0'
+version '1.2.0'
 
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation project(":entity");
     implementation "mysql:mysql-connector-java:8.0.25"
     implementation "com.mchange:c3p0:0.9.5.5"
-    implementation "com.h2database:h2:1.4.200"
-    implementation "org.mockito:mockito-core:3.12.4"
+    implementation("org.hibernate:hibernate-core")
+    implementation("org.springframework:spring-orm")
+   // testCompile("com.h2database:h2")
+   // implementation "com.h2database:h2:1.4.200"
+   // implementation "org.mockito:mockito-core:3.12.4"
 }

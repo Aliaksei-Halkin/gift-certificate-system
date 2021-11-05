@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.epam.esm.dao.mapper.ColumnNameTag.*;
+import static com.epam.esm.column.ColumnNameTag.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

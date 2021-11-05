@@ -9,6 +9,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
@@ -44,26 +46,10 @@ public class TagDaoImpl implements TagDao {
     public static final String DELETE_TAG = "UPDATE tags SET active=false WHERE tagId = ?";
     public static final String RETURN_DELETED_TAG = "UPDATE tags SET active=true WHERE tagName = ?";
     public static final String DELETE_TAGS_FROM_CERTIFICATES_HAS_TAGS = "DELETE FROM certificates_has_tags WHERE tagId = ?";
-    /**
-     * The {@link JdbcTemplate} object
-     */
-    private final JdbcTemplate jdbcTemplate;
-    /**
-     * The {@link TagMapper} object
-     */
-    private final TagMapper tagMapper;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    /**
-     * The constructor with all parameters, used to create instance of {@code TagDaoImpl}
-     *
-     * @param jdbcTemplate The {@link JdbcTemplate} object
-     * @param tagMapper    The {@link TagMapper} object
-     */
-    @Autowired
-    public TagDaoImpl(JdbcTemplate jdbcTemplate, TagMapper tagMapper) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.tagMapper = tagMapper;
-    }
+
 
     /**
      * The method find   Tag by id
@@ -73,7 +59,7 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findById(Long id) {
-        return jdbcTemplate.query(SELECT_TAG_BY_ID, tagMapper, id).stream().findFirst();
+        return Optional.ofNullable(entityManager.find(Tag.class,id));
     }
 
     /**
@@ -125,7 +111,7 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public List<Tag> findAll() {
-        return jdbcTemplate.query(SELECT_ALL_TAGS, tagMapper);
+        return entityManager;
     }
 
     /**

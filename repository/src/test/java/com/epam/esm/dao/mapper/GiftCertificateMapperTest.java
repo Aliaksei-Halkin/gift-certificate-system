@@ -1,5 +1,6 @@
 package com.epam.esm.dao.mapper;
 
+import com.epam.esm.column.ColumnNameGiftCertificate;
 import com.epam.esm.entity.GiftCertificate;
 import org.junit.jupiter.api.Test;
 

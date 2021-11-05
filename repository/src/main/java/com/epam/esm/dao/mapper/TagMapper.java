@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import static com.epam.esm.dao.mapper.ColumnNameTag.*;
+import static com.epam.esm.column.ColumnNameTag.*;
 
 /**
  * The {@code TagMapper} class build the {@code GiftCertificate} entity from resultset database
