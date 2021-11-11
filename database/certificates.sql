@@ -1,6 +1,6 @@
 DROP SCHEMA IF EXISTS `certificatesdb`;
 
-CREATE SCHEMA IF NOT EXISTS `certificatesdb`;
+CREATE DATABASE IF NOT EXISTS `certificatesdb`;
 USE `certificatesdb`;
 
 CREATE TABLE IF NOT EXISTS `certificatesdb`.`gift_certificates`
@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS `certificatesdb`.`certificates_has_tags`
             REFERENCES `certificatesdb`.`tags` (`tagId`)
             ON DELETE CASCADE
 );
-CREATE INDEX `fk_gift_certificates_has_tags_tags1_idx` USING HASH ON `certificatesdb`.`certificates_has_tags` (`tagId` ASC) VISIBLE;
-CREATE INDEX `fk_gift_certificates_has_tags_gift_certificates_idx` USING HASH ON `certificatesdb`.`certificates_has_tags` (`certificateId` ASC) VISIBLE;
+CREATE INDEX `fk_gift_certificates_has_tags_tags1_idx`  ON `certificatesdb`.`certificates_has_tags` (`tagId` ASC) VISIBLE;
+CREATE INDEX `fk_gift_certificates_has_tags_gift_certificates_idx`  ON `certificatesdb`.`certificates_has_tags` (`certificateId` ASC) VISIBLE;
 
 CREATE TABLE IF NOT EXISTS user
 (
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS user
     email      VARCHAR(50) NOT NULL,
     active     BOOL default true
 );
-CREATE UNIQUE INDEX user_login USING HASH ON user (login ASC);
+CREATE UNIQUE INDEX user_login  ON user (login ASC);
 
 CREATE TABLE IF NOT EXISTS order
 (
@@ -124,7 +124,6 @@ INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
 VALUES (7, 'extreme');
 INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
 VALUES (8, 'massage');
-
 COMMIT;
 
 

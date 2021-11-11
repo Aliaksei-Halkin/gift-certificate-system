@@ -19,9 +19,9 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 public class ServiceConfig {
 
-    @Bean
-    public TransactionManager transactionManager(DataSource dataSource) {
-        return new DataSourceTransactionManager(dataSource);
-    }
+//    @Bean
+//    public TransactionManager transactionManager(DataSource dataSource) {
+//        return new DataSourceTransactionManager(dataSource);
+//    }
 
 }

@@ -8,7 +8,7 @@ import java.util.Optional;
  *
  * @author Aliaksei Halkin
  */
-public interface BaseDao<T extends AbstractEntity<K>, K> {
+public interface BaseDao<T, K> {
     Optional<T> findById(K id);
 
     List<T> findAll();

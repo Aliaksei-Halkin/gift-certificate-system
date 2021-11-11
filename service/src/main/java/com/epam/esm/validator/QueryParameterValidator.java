@@ -22,8 +22,8 @@ public class QueryParameterValidator {
         isValidTagName(queryParameter.getTagName());
         isValidGiftCertificateName(queryParameter.getCertificateName());
         isValidGiftCertificateDescription(queryParameter.getCertificateDescription());
-        isValidOrderType(queryParameter.getOrder());
-        isValidSortDirection(queryParameter.getDirection());
+        isValidOrderType(queryParameter.getOrder().toLowerCase());
+        isValidSortDirection(queryParameter.getDirection().toLowerCase());
     }
 
     private static void isValidTagName(String tagName) {

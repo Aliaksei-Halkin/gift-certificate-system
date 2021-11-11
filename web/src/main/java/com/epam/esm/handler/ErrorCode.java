@@ -6,10 +6,10 @@ package com.epam.esm.handler;
  * @author Aliaksei Halkin
  */
 public final class ErrorCode {
-    public static final int NOT_FOUND = 404404;
-    public static final int BAD_REQUEST = 400400;
-    public static final int METHOD_NOT_ALLOWED = 405405;
-    public static final int INTERNAL_ERROR = 500500;
+    public static final int NOT_FOUND = 404;
+    public static final int BAD_REQUEST = 400;
+    public static final int METHOD_NOT_ALLOWED = 405;
+    public static final int INTERNAL_ERROR = 500;
 
     private ErrorCode() {
     }

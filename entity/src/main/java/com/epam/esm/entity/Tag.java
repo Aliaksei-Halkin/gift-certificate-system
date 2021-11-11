@@ -24,9 +24,10 @@ public class Tag {
     private String name;
     @Column(name = ColumnNameTag.ACTIVE)
     private boolean active;
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
+            fetch =FetchType.LAZY)
     @JoinTable(name = ColumnNameGiftCertificatesHasTags.TABLE,
-            joinColumns = @JoinColumn(name = ColumnNameTag.TAG_ID),
+            joinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.TAG_ID),
             inverseJoinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.CERTIFICATE_ID))
     private List<GiftCertificate> giftCertificates;
 

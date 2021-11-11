@@ -1,18 +1,12 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.mapper.TagMapper;
 import com.epam.esm.entity.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,15 +21,12 @@ public class TagDaoImpl implements TagDao {
     /**
      * This is the query SELECT to database
      */
-    public static final String SELECT_ALL_TAGS = "SELECT *  FROM tags WHERE  active = true";
+    public static final String SELECT_ALL_TAGS = "  FROM Tag WHERE  active = true";
     /**
      * This is the query SELECT to database
      */
-    public static final String SELECT_TAG_BY_NAME = "SELECT * FROM tags WHERE tagName = ?";
-    /**
-     * This is the query SELECT to database
-     */
-    public static final String SELECT_TAG_BY_ID = "SELECT * FROM tags WHERE tagId = ? ";
+    public static final String SELECT_TAG_BY_NAME = "  FROM Tag WHERE name = :name";
+    private static final String NAME_PARAMETER = "name";
     /**
      * This is the query INSERT to database
      */
@@ -43,12 +34,12 @@ public class TagDaoImpl implements TagDao {
     /**
      * This is the query DELETE to database, the active value of Tag set false
      */
-    public static final String DELETE_TAG = "UPDATE tags SET active=false WHERE tagId = ?";
-    public static final String RETURN_DELETED_TAG = "UPDATE tags SET active=true WHERE tagName = ?";
-    public static final String DELETE_TAGS_FROM_CERTIFICATES_HAS_TAGS = "DELETE FROM certificates_has_tags WHERE tagId = ?";
+    public static final String DELETE_TAG_BY_ID = "UPDATE Tag SET active=false WHERE id = :id";
+    private static final String ID_PARAMETER = "id";
+    public static final String RETURN_DELETED_TAG = "UPDATE Tag SET active=true WHERE name = :name";
+
     @PersistenceContext
     private EntityManager entityManager;
-
 
 
     /**
@@ -59,7 +50,7 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findById(Long id) {
-        return Optional.ofNullable(entityManager.find(Tag.class,id));
+        return Optional.ofNullable(entityManager.find(Tag.class, id));
     }
 
     /**
@@ -70,16 +61,8 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public long add(Tag entity) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement(INSERT_TAG, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, entity.getName());
-            return preparedStatement;
-        }, keyHolder);
-        if (keyHolder.getKey() != null) {
-            return keyHolder.getKey().longValue();
-        }
-        throw new RuntimeException("Generated tagId not found");
+        entityManager.persist(entity);
+        return entity.getId();
     }
 
     /**
@@ -89,8 +72,8 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public void removeById(Long id) {
-        jdbcTemplate.update(DELETE_TAG, id);
-        jdbcTemplate.update(DELETE_TAGS_FROM_CERTIFICATES_HAS_TAGS, id);
+        entityManager.createQuery(DELETE_TAG_BY_ID)
+                .setParameter(ID_PARAMETER, id).executeUpdate();
     }
 
     /**
@@ -111,7 +94,7 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public List<Tag> findAll() {
-        return entityManager;
+        return entityManager.createQuery(SELECT_ALL_TAGS, Tag.class).getResultList();
     }
 
     /**
@@ -122,11 +105,16 @@ public class TagDaoImpl implements TagDao {
      */
     @Override
     public Optional<Tag> findTagByName(String name) {
-        return jdbcTemplate.query(SELECT_TAG_BY_NAME, tagMapper, name).stream().findFirst();
+        return entityManager.createQuery(SELECT_TAG_BY_NAME, Tag.class)
+                .setParameter(NAME_PARAMETER, name)
+                .getResultStream()
+                .findFirst();
     }
 
     @Override
     public void changeActiveForTag(String name) {
-        jdbcTemplate.update(RETURN_DELETED_TAG, name);
+        entityManager.createQuery(RETURN_DELETED_TAG, Tag.class)
+                .setParameter(NAME_PARAMETER, name)
+                .executeUpdate();
     }
 }

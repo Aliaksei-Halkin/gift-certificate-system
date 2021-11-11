@@ -20,9 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -170,7 +168,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<GiftCertificate> findGiftCertificatesByParameters(QueryParameter queryParameter) {
         QueryParameterValidator.isValidQueryParameters(queryParameter);
-        String query = QueryParameterBuilder.createQuery(queryParameter);
+        String query = QueryParameterBuilder.createQueryForCertificates(queryParameter);
         LOGGER.log(Level.DEBUG, "Query parameter:  ", queryParameter);
         List<GiftCertificate> giftCertificates = giftCertificateDao.findCertificatesByQueryParameters(query);
         for (GiftCertificate certificate : giftCertificates) {
@@ -261,4 +259,29 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
     }
 
+    public Map<String, String> toMap(QueryParameter queryParameter) {
+        Map<String, String> mapParameter = new HashMap<>();
+        String certificateDescription = queryParameter.getCertificateDescription();
+        String certificateName = queryParameter.getCertificateName();
+        String direction = queryParameter.getDirection();
+        String tagName = queryParameter.getTagName();
+        String order=queryParameter.getOrder();
+                if (!certificateDescription.isEmpty() && certificateDescription != null) {
+            mapParameter.put("description", certificateDescription);
+        }
+        if (!certificateName.isEmpty() && certificateName != null) {
+            mapParameter.put("certificateName",certificateName);
+        }
+        if (!tagName.isEmpty() && tagName != null) {
+            mapParameter.put("tagName",tagName);
+        }
+
+        if (!order.isEmpty() && order != null) {
+            mapParameter.put("order",order.toLowerCase());
+        }
+        if (!direction.isEmpty() && direction != null) {
+            mapParameter.put("direction",direction.toLowerCase());
+        }
+        return mapParameter;
+    }
 }

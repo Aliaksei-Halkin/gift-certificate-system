@@ -53,7 +53,7 @@ public class TagController {
     @PostMapping
     public ResponseEntity<Tag> addTag(@RequestBody Tag tag) {
         Tag addedTag = tagService.addTag(tag);
-        return new ResponseEntity<>(addedTag, HttpStatus.OK);
+        return new ResponseEntity<>(addedTag, HttpStatus.CREATED);
     }
 
     /**

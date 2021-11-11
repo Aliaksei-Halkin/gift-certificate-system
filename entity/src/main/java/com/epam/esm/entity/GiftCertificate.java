@@ -2,9 +2,9 @@ package com.epam.esm.entity;
 
 import com.epam.esm.column.ColumnNameGiftCertificate;
 import com.epam.esm.column.ColumnNameGiftCertificatesHasTags;
-import com.epam.esm.column.ColumnNameTag;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -37,38 +37,39 @@ public class GiftCertificate {
     /**
      * The description of GiftCertificate
      */
-    @Column(name=ColumnNameGiftCertificate.DESCRIPTION)
+    @Column(name = ColumnNameGiftCertificate.DESCRIPTION)
     private String description;
     /**
      * The price of GiftCertificate
      */
-    @Column(name=ColumnNameGiftCertificate.PRICE)
+    @Column(name = ColumnNameGiftCertificate.PRICE)
     private BigDecimal price;
     /**
      * The duration of GiftCertificate
      */
-    @Column(name=ColumnNameGiftCertificate.DURATION)
+    @Column(name = ColumnNameGiftCertificate.DURATION)
     private int duration;
     /**
      * The date and time of GiftCertificate creation.
      */
-    @Column(name=ColumnNameGiftCertificate.CREATE_DATE)
+    @Column(name = ColumnNameGiftCertificate.CREATE_DATE)
     @CreationTimestamp
     private LocalDateTime createdDate;
     /**
      * The date and time of GiftCertificate creation.
      */
-    @Column(name=ColumnNameGiftCertificate.LAST_UPDATE_DATE)
+    @Column(name = ColumnNameGiftCertificate.LAST_UPDATE_DATE)
     @UpdateTimestamp
     private LocalDateTime updateDate;
     /**
      * The set of tags in this Gift certificate
      */
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name= ColumnNameGiftCertificatesHasTags.TABLE,
-            joinColumns = @JoinColumn(name =ColumnNameGiftCertificate.CERTIFICATE_ID),
+    @JoinTable(name = ColumnNameGiftCertificatesHasTags.TABLE,
+            joinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.CERTIFICATE_ID),
             inverseJoinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.TAG_ID)
     )
+    @Where(clause = "active = 1")
     private Set<Tag> tags;
 
     /**
