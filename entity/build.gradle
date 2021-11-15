@@ -1,2 +1,11 @@
 group 'com.epam.esm'
 version '1.2.0'
+bootJar {
+    enabled = false
+}
+jar{
+    enabled = true
+}
+bootRun{
+    enabled = false
+}

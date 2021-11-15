@@ -57,7 +57,7 @@ public class GiftCertificateController {
     @PostMapping
     public ResponseEntity<GiftCertificate> addGiftCertificate(@RequestBody GiftCertificate giftCertificate) {
         GiftCertificate addedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificate);
-        return new ResponseEntity<>(addedGiftCertificate, HttpStatus.OK);
+        return new ResponseEntity<>(addedGiftCertificate, HttpStatus.CREATED);
     }
 
     /**

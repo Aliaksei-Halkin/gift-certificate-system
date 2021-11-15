@@ -16,5 +16,13 @@ dependencies {
 //    implementation "org.mockito:mockito-core:4.0.0"
 //    implementation "org.junit.jupiter:junit-jupiter-params:5.8.1"
 }
-
+bootJar {
+    enabled = false
+}
+jar{
+    enabled = true
+}
+bootRun{
+    enabled = false
+}
 

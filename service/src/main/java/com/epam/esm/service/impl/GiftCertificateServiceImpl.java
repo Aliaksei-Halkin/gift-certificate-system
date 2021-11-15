@@ -167,17 +167,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     public List<GiftCertificate> findGiftCertificatesByParameters(QueryParameter queryParameter) {
-        QueryParameterValidator.isValidQueryParameters(queryParameter);
-        String query = QueryParameterBuilder.createQueryForCertificates(queryParameter);
-        LOGGER.log(Level.DEBUG, "Query parameter:  ", queryParameter);
-        List<GiftCertificate> giftCertificates = giftCertificateDao.findCertificatesByQueryParameters(query);
-        for (GiftCertificate certificate : giftCertificates) {
-            Set<Tag> giftCertificateTags = giftCertificateDao.findGiftCertificateTags(certificate.getId());
-            certificate.setTags(giftCertificateTags);
-        }
-        return giftCertificates;
+//        QueryParameterValidator.isValidQueryParameters(queryParameter);
+//      String query = QueryParameterBuilder.createQueryForCertificates(queryParameter);
+//        LOGGER.log(Level.DEBUG, "Query parameter:  ", queryParameter);
+//        List<GiftCertificate> giftCertificates = giftCertificateDao.findCertificatesByQueryParameters(query);
+//        for (GiftCertificate certificate : giftCertificates) {
+//            Set<Tag> giftCertificateTags = giftCertificateDao.findGiftCertificateTags(certificate.getId());
+//            certificate.setTags(giftCertificateTags);
+//        }
+//        return giftCertificates;
+        return null;
     }
-
+//todo check
     /**
      * The method represents delete GiftCertificate by Id
      *

@@ -10,8 +10,8 @@ import com.epam.esm.util.QueryParameter;
  * @author Aliaksei Halkin
  */
 public class QueryParameterValidator {
-    private static final String REGEX_TAG_NAME = "[‡-ˇ¿-ﬂ\\w\\s\\.,?!']{1,45}";
-    private static final String REGEX_GIFT_CERTIFICATE_NAME_AND_DESCRIPTION = "[‡-ˇ¿-ﬂ\\w\\s\\.,?!']{1,250}";
+    private static final String REGEX_TAG_NAME = "[–∞-—è–ê-–Ø\\w\\s\\.,?!']{1,45}";
+    private static final String REGEX_GIFT_CERTIFICATE_NAME_AND_DESCRIPTION = "[–∞-—è–ê-–Ø\\w\\s\\.,?!']{1,250}";
     private static final String REGEX_ORDER = "name|description";
     private static final String REGEX_DIRECTION = "asc|desc";
 

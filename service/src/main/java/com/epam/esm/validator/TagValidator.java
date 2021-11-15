@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class TagValidator {
     private static final long MIN_ID = 1;
-    private static final String REGEX_NAME = "[‡-ˇ¿-ﬂ\\w\\s\\.,?!']{1,45}";
+    private static final String REGEX_NAME = "[–∞-—è–ê-–Ø\\w\\s\\.,?!']{1,45}";
 
     public void isValidTag(Tag tag) {
         isValidName(tag.getName());

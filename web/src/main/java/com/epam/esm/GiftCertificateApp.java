@@ -11,8 +11,6 @@ import java.util.Locale;
 @SpringBootApplication
 public class GiftCertificateApp {
     public static void main(String[] args) {
-        Locale.setDefault(Locale.ENGLISH);
-        SpringApplication.run(GiftCertificateApp.class,args);
+        SpringApplication.run(GiftCertificateApp.class, args);
     }
-
 }
