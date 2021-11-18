@@ -18,19 +18,19 @@ import java.util.Objects;
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = ColumnNameTag.TAG_ID,
+    @Column(name = "tagId",
             nullable = false, unique = true)
     private Long id;
-    @Column(name = ColumnNameTag.TAG_NAME, unique = true)
+    @Column(name = "tagName", unique = true)
     private String name;
-    @Column(name = ColumnNameTag.ACTIVE)
+    @Column(name = "active")
     private boolean active;
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
             fetch = FetchType.LAZY)
-    @JoinTable(name = ColumnNameGiftCertificatesHasTags.TABLE,
-            joinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.TAG_ID),
-            inverseJoinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.CERTIFICATE_ID))
+    @JoinTable(name = "certificates_has_tags",
+            joinColumns = @JoinColumn(name = "tagId"),
+            inverseJoinColumns = @JoinColumn(name = "certificateId"))
     private List<GiftCertificate> giftCertificates;
 
     /**

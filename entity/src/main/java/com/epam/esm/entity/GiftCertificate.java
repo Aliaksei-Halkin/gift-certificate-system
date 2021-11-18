@@ -22,52 +22,52 @@ import java.util.Set;
 public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = ColumnNameGiftCertificate.CERTIFICATE_ID,
+    @Column(name = "certificateId",
             nullable = false, unique = true)
     private Long id;
 
-    @Column(name = ColumnNameGiftCertificate.ACTIVE, nullable = false)
+    @Column(name = "active", nullable = false)
     private boolean active;
     /**
      * The name of GiftCertificate
      */
-    @Column(name = ColumnNameGiftCertificate.NAME,
+    @Column(name = "name",
             nullable = false, unique = true)
     private String name;
     /**
      * The description of GiftCertificate
      */
-    @Column(name = ColumnNameGiftCertificate.DESCRIPTION)
+    @Column(name = "description")
     private String description;
     /**
      * The price of GiftCertificate
      */
-    @Column(name = ColumnNameGiftCertificate.PRICE)
+    @Column(name = "price")
     private BigDecimal price;
     /**
      * The duration of GiftCertificate
      */
-    @Column(name = ColumnNameGiftCertificate.DURATION)
+    @Column(name = "duration")
     private int duration;
     /**
      * The date and time of GiftCertificate creation.
      */
-    @Column(name = ColumnNameGiftCertificate.CREATE_DATE)
+    @Column(name = "create_date")
     @CreationTimestamp
     private LocalDateTime createdDate;
     /**
      * The date and time of GiftCertificate creation.
      */
-    @Column(name = ColumnNameGiftCertificate.LAST_UPDATE_DATE)
+    @Column(name = "last_update_date")
     @UpdateTimestamp
     private LocalDateTime updateDate;
     /**
      * The set of tags in this Gift certificate
      */
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = ColumnNameGiftCertificatesHasTags.TABLE,
-            joinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.CERTIFICATE_ID),
-            inverseJoinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.TAG_ID)
+    @JoinTable(name = "certificates_has_tags",
+            joinColumns = @JoinColumn(name = "certificateId"),
+            inverseJoinColumns = @JoinColumn(name = "tagId")
     )
     @Where(clause = "active = 1")
     private Set<Tag> tags;
