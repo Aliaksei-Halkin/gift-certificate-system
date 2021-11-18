@@ -2,6 +2,7 @@ package com.epam.esm.entity;
 
 import com.epam.esm.column.ColumnNameGiftCertificatesHasTags;
 import com.epam.esm.column.ColumnNameTag;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Objects;
  * @author Aliaksei Halkin
  */
 @Entity
-@Table(name = ColumnNameTag.TAG_TABLE)
+@Table(name = "tags")
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +25,9 @@ public class Tag {
     private String name;
     @Column(name = ColumnNameTag.ACTIVE)
     private boolean active;
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
-            fetch =FetchType.LAZY)
+            fetch = FetchType.LAZY)
     @JoinTable(name = ColumnNameGiftCertificatesHasTags.TABLE,
             joinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.TAG_ID),
             inverseJoinColumns = @JoinColumn(name = ColumnNameGiftCertificatesHasTags.CERTIFICATE_ID))
@@ -101,7 +103,7 @@ public class Tag {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tag tag = (Tag) o;
-        return active == tag.active && Objects.equals(id, tag.id) && Objects.equals(name, tag.name) && Objects.equals(giftCertificates, tag.giftCertificates);
+        return active == tag.active && Objects.equals(id, tag.id) && Objects.equals(name, tag.name);
     }
 
 
@@ -128,7 +130,6 @@ public class Tag {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", active=" + active +
-                ", giftCertificates=" + giftCertificates +
                 '}';
     }
 }

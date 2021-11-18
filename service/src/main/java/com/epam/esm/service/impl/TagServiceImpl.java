@@ -38,9 +38,11 @@ public class TagServiceImpl implements TagService {
         this.tagValidator = tagValidator;
     }
 
-    @Override
     @Transactional
+    @Override
     public Tag addTag(Tag tag) {
+        tag.setId(null);
+        tag.setActive(true);
         long tagId;
         tagValidator.isValidTag(tag);
         tagId = ifExist(tag.getName());
@@ -48,7 +50,6 @@ public class TagServiceImpl implements TagService {
             tagId = tagDao.add(tag);
         }
         tag.setId(tagId);
-        tag.setActive(true);
         LOGGER.log(Level.INFO, "Tag added: {}", tag);
         return tag;
     }
@@ -80,6 +81,7 @@ public class TagServiceImpl implements TagService {
         return tag;
     }
 
+    @Transactional
     @Override
     public void deleteTagById(long tagId) {
         tagValidator.isValidId(tagId);

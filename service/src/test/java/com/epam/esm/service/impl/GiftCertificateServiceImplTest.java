@@ -70,7 +70,7 @@ class GiftCertificateServiceImplTest {
         giftCertificateSecond.setCreatedDate(mockedGiftCertificate.getCreatedDate());
         giftCertificateSecond.setUpdateDate(mockedGiftCertificate.getUpdateDate());
         verify(giftCertificateDao, Mockito.times(1)).add(any(GiftCertificate.class));
-        verify(tagDao, Mockito.times(2)).findTagByName(tag.getName());
+        verify(tagDao, Mockito.times(1)).findTagByName(tag.getName());
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 
@@ -93,7 +93,7 @@ class GiftCertificateServiceImplTest {
         when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.ofNullable(tag));
         GiftCertificate mockedGiftCertificate = giftCertificateService.addTagToGiftCertificate(giftCertificateSecond.getId(), tag);
         verify(giftCertificateDao).findById(anyLong());
-        verify(tagDao, Mockito.times(2)).findTagByName(anyString());
+        verify(tagDao, Mockito.times(1)).findTagByName(anyString());
         verify(giftCertificateDao).update(any(GiftCertificate.class));
         verify(giftCertificateDao, Mockito.times(2)).findGiftCertificateTags(anyLong());
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
@@ -159,7 +159,7 @@ class GiftCertificateServiceImplTest {
         when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
         GiftCertificate mockedGiftCertificate = giftCertificateService
                 .updateGiftCertificate(giftCertificateSecond.getId(), giftCertificateSecond);
-        verify(tagDao, Mockito.times(2)).findTagByName(anyString());
+        verify(tagDao, Mockito.times(1)).findTagByName(anyString());
         verify(giftCertificateDao,Mockito.times(2)).findById(anyLong());
         verify(giftCertificateDao).update(any(GiftCertificate.class));
         verify(giftCertificateDao, Mockito.times(3)).findGiftCertificateTags(anyLong());

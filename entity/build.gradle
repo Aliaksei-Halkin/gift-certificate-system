@@ -1,11 +1,7 @@
 group 'com.epam.esm'
 version '1.2.0'
-bootJar {
-    enabled = false
-}
-jar{
-    enabled = true
-}
-bootRun{
-    enabled = false
+
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation'org.hibernate:hibernate-core'
 }

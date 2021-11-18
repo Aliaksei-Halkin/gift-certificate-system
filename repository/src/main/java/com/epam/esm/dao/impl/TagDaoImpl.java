@@ -34,9 +34,9 @@ public class TagDaoImpl implements TagDao {
     /**
      * This is the query DELETE to database, the active value of Tag set false
      */
-    public static final String DELETE_TAG_BY_ID = "UPDATE Tag SET active=false WHERE id = :id";
+    public static final String DELETE_TAG_BY_ID = "UPDATE Tag SET active=FALSE WHERE id = :id ";
     private static final String ID_PARAMETER = "id";
-    public static final String RETURN_DELETED_TAG = "UPDATE Tag SET active=true WHERE name = :name";
+    public static final String RETURN_DELETED_TAG = "UPDATE tags SET active=true WHERE tagName = :name";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -82,6 +82,7 @@ public class TagDaoImpl implements TagDao {
      * @param entity Tag for update
      * @return updating Tag
      */
+
     @Override
     public Tag update(Tag entity) {
         throw new UnsupportedOperationException("Update is not available action for Tag");
@@ -113,7 +114,7 @@ public class TagDaoImpl implements TagDao {
 
     @Override
     public void changeActiveForTag(String name) {
-        entityManager.createQuery(RETURN_DELETED_TAG, Tag.class)
+        entityManager.createNativeQuery(RETURN_DELETED_TAG, Tag.class)
                 .setParameter(NAME_PARAMETER, name)
                 .executeUpdate();
     }
