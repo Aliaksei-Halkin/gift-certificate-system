@@ -28,21 +28,18 @@ public class TagDaoImpl implements TagDao {
     public static final String SELECT_TAG_BY_NAME = "  FROM Tag WHERE name = :name";
     private static final String NAME_PARAMETER = "name";
     /**
-     * This is the query INSERT to database
-     */
-    public static final String INSERT_TAG = "INSERT INTO tags (tagName) VALUES (?)";
-    /**
      * This is the query DELETE to database, the active value of Tag set false
      */
     public static final String DELETE_TAG_BY_ID = "UPDATE Tag SET active=FALSE WHERE id = :id ";
     private static final String ID_PARAMETER = "id";
-    public static final String RETURN_DELETED_TAG = "UPDATE tags SET active=true WHERE tagName = :name";
+    public static final String ACTIVATE_TAG_BY_NAME = "UPDATE tags SET active=true WHERE tagName = :name";
 
     @PersistenceContext
     private EntityManager entityManager;
 
 
     /**
+     *
      * The method find   Tag by id
      *
      * @param id {@code Long} the id of the Tag
@@ -114,7 +111,7 @@ public class TagDaoImpl implements TagDao {
 
     @Override
     public void changeActiveForTag(String name) {
-        entityManager.createNativeQuery(RETURN_DELETED_TAG, Tag.class)
+        entityManager.createNativeQuery(ACTIVATE_TAG_BY_NAME, Tag.class)
                 .setParameter(NAME_PARAMETER, name)
                 .executeUpdate();
     }

@@ -1,15 +1,18 @@
 package com.epam.esm.config;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -32,8 +35,8 @@ public class RepositoryConfig {
     private String jdbcUrl;
     private String user;
     private String password;
-    private String initialPoolSize;
-    private String maxPoolSize;
+    private int initialPoolSize;
+    private int maxPoolSize;
 
 
     public void setDriverClass(String driverClass) {
@@ -52,11 +55,11 @@ public class RepositoryConfig {
         this.password = password;
     }
 
-    public void setInitialPoolSize(String initialPoolSize) {
+    public void setInitialPoolSize(int initialPoolSize) {
         this.initialPoolSize = initialPoolSize;
     }
 
-    public void setMaxPoolSize(String maxPoolSize) {
+    public void setMaxPoolSize(int maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
     }
 
@@ -70,6 +73,7 @@ public class RepositoryConfig {
         DataSource dataSource = DataSourceBuilder.create().type(DriverManagerDataSource.class).build();
         return dataSource;
     }
+
     /**
      * The second configuration- a prod, for production.We use c3p0  for create pool connection
      */
@@ -82,19 +86,19 @@ public class RepositoryConfig {
             dataSource.setJdbcUrl(jdbcUrl);
             dataSource.setUser(user);
             dataSource.setPassword(password);
-            dataSource.setInitialPoolSize(Integer.parseInt(initialPoolSize.trim()));
-            dataSource.setMaxPoolSize(Integer.parseInt(maxPoolSize.trim()));
+            dataSource.setInitialPoolSize(initialPoolSize);
+            dataSource.setMaxPoolSize(maxPoolSize);
             return dataSource;
         } catch (PropertyVetoException e) {
             throw new CannotGetJdbcConnectionException("Error while get connection to database");
         }
     }
-//    @Profile("test")
-//    @Bean
-//    public DataSource testDataSource() {
-//        return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-//                .addScript("classpath:schema.sql").addScript("classpath:test-data.sql").setScriptEncoding("UTF-8").build();
-//    }
+    @Profile("test")
+    @Bean
+    public DataSource testDataSource() {
+        return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
+                .addScript("classpath:schema.sql").addScript("classpath:test-data.sql").setScriptEncoding("UTF-8").build();
+    }
 
     @Profile(value = {"dev", "prod"})
     @Bean
@@ -103,15 +107,15 @@ public class RepositoryConfig {
         return entityManagerFactoryBuilder.dataSource(dataSource).packages(PACKAGE_TO_SCAN).build();
     }
 
-//    @Profile("test")
-//    @Bean
-//    public LocalContainerEntityManagerFactoryBean testManagerFactory(DataSource dataSource) {
-//        LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
-//        entityManager.setDataSource(dataSource);
-//        entityManager.setPackagesToScan(PACKAGE_TO_SCAN);
-//        entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-//        return entityManager;
-//    }
+    @Profile("test")
+    @Bean
+    public LocalContainerEntityManagerFactoryBean testManagerFactory(@Qualifier("testDataSource") DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
+        entityManager.setDataSource(dataSource);
+        entityManager.setPackagesToScan(PACKAGE_TO_SCAN);
+        entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        return entityManager;
+    }
 
     @Bean
     public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {

@@ -1,7 +1,5 @@
 package com.epam.esm.entity;
 
-import com.epam.esm.column.ColumnNameGiftCertificate;
-import com.epam.esm.column.ColumnNameGiftCertificatesHasTags;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
@@ -18,7 +16,7 @@ import java.util.Set;
  * @author Aliaksei Halkin
  */
 @Entity
-@Table(name = ColumnNameGiftCertificate.CERTIFICATE_TABLE)
+@Table(name = "gift_certificates")
 public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

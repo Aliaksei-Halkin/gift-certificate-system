@@ -45,7 +45,7 @@ public class TagServiceImpl implements TagService {
         tag.setActive(true);
         long tagId;
         tagValidator.isValidTag(tag);
-        tagId = ifExist(tag.getName());
+        tagId = checkOnExist(tag.getName());
         if (tagId < 0) {
             tagId = tagDao.add(tag);
         }
@@ -54,7 +54,7 @@ public class TagServiceImpl implements TagService {
         return tag;
     }
 
-    private long ifExist(String nameTag) {
+    private long checkOnExist(String nameTag) {
         long idTag = NO_EXIST_ID;
         Optional<Tag> tag = tagDao.findTagByName(nameTag);
         if (tag.isPresent() && tag.get().isActive() == true) {

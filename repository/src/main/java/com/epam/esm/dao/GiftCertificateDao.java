@@ -18,7 +18,7 @@ public interface GiftCertificateDao extends BaseDao<GiftCertificate, Long> {
 
     void attachTag(long tagId, long giftCertificateId);
 
-    void returnDeletedCertificate(String name);
+    void activateGiftCertificate(String name);
 
     void removeTag(long giftCertificateId, long tagId);
 }

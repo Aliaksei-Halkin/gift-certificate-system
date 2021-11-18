@@ -1,7 +1,5 @@
 package com.epam.esm.entity;
 
-import com.epam.esm.column.ColumnNameGiftCertificatesHasTags;
-import com.epam.esm.column.ColumnNameTag;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;

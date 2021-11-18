@@ -60,7 +60,7 @@ public class GiftCertificateValidator {
             throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name);
         }
         if (checkCertificateByNameOnPresent && certificateByName.get(0).isActive() == false) {
-            giftCertificateDao.returnDeletedCertificate(name);
+            giftCertificateDao.activateGiftCertificate(name);
             certificateId = certificateByName.get(0).getId();
         }
         return certificateId;

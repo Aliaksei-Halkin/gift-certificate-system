@@ -139,7 +139,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public void returnDeletedCertificate(String name) {
+    public void activateGiftCertificate(String name) {
         entityManager.createQuery(RETURN_DELETED_CERTIFICATE).setParameter(1, name).executeUpdate();
     }
 
