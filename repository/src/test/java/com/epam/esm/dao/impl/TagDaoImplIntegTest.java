@@ -1,6 +1,6 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.config.RepositoryConfig;
+import com.epam.esm.config.RepositoryTestConfig;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * @author Aliaksei Halkin
  */
-@SpringBootTest(classes = {RepositoryConfig.class})
+@SpringBootTest(classes = {RepositoryTestConfig.class})
 @ActiveProfiles("test")
 @Transactional
 class TagDaoImplIntegTest {
