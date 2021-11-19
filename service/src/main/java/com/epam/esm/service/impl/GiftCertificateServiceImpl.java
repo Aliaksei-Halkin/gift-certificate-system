@@ -5,12 +5,11 @@ import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionPropertyKey;
+import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.QueryParameter;
-import com.epam.esm.util.QueryParameterBuilder;
 import com.epam.esm.validator.GiftCertificateValidator;
-import com.epam.esm.validator.QueryParameterValidator;
 import com.epam.esm.validator.TagValidator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -141,7 +140,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private GiftCertificate checkAndGetGiftCertificate(Long id) {
         Optional<GiftCertificate> giftCertificateOptional = giftCertificateDao.findById(id);
         return giftCertificateOptional
-                .orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND, id));
+                .orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND,
+                        id, IdentifierEntity.CERTIFICATE));
     }
 
     /**
@@ -256,7 +256,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private void checkCertificateOnDoubleDelete(long id) {
         GiftCertificate giftCertificate = findGiftCertificateById(id);
         if (giftCertificate.isActive() == false) {
-            throw new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND, id);
+            throw new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND, id,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 

@@ -3,6 +3,7 @@ package com.epam.esm.validator;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.ExceptionPropertyKey;
+import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,13 +42,15 @@ public class GiftCertificateValidator {
 
     public void isValidId(long id) {
         if (id < MIN_ID) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_ID, id);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_ID, id,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
     private void isValidName(String name) {
         if (name == null || name.isEmpty() || !name.matches(REGEX_NAME_AND_DESCRIPTION)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_NAME, name);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_NAME, name,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
@@ -57,7 +60,8 @@ public class GiftCertificateValidator {
         List<GiftCertificate> certificateByName = giftCertificateDao.findCertificatesByQueryParameters(query);
         boolean checkCertificateByNameOnPresent = (certificateByName != null && !certificateByName.isEmpty());
         if (checkCertificateByNameOnPresent && certificateByName.get(0).isActive() == true) {
-            throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name);
+            throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name,
+                    IdentifierEntity.CERTIFICATE);
         }
         if (checkCertificateByNameOnPresent && certificateByName.get(0).isActive() == false) {
             giftCertificateDao.activateGiftCertificate(name);
@@ -68,19 +72,22 @@ public class GiftCertificateValidator {
 
     private void isValidDescription(String description) {
         if (description != null && !description.isEmpty() && !description.matches(REGEX_NAME_AND_DESCRIPTION)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_DESCRIPTION, description);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_DESCRIPTION, description,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
     private void isValidPrice(BigDecimal price) {
         if (price == null || price.compareTo(MIN_PRICE) < 0 || price.compareTo(MAX_PRICE) > 0) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_PRICE, price);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_PRICE, price,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
     private void isValidDuration(int duration) {
         if (duration < MIN_DURATION || duration > MAX_DURATION) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_DURATION, duration);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_DURATION, duration,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 }

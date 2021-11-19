@@ -8,10 +8,12 @@ package com.epam.esm.exception;
 public class ResourceNotFoundException extends RuntimeException {
     private String messageKey;
     private Object messageValue;
+    private IdentifierEntity identification;
 
-    public ResourceNotFoundException(String messageKey, Object messageValue) {
+    public ResourceNotFoundException(String messageKey, Object messageValue, IdentifierEntity identification) {
         this.messageKey = messageKey;
         this.messageValue = messageValue;
+        this.identification = identification;
     }
 
     public String getMessageKey() {
@@ -20,5 +22,9 @@ public class ResourceNotFoundException extends RuntimeException {
 
     public Object getMessageValue() {
         return messageValue;
+    }
+
+    public IdentifierEntity getIdentification() {
+        return identification;
     }
 }

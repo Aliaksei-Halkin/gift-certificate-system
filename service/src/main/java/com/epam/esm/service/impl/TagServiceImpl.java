@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionPropertyKey;
+import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
@@ -58,7 +59,7 @@ public class TagServiceImpl implements TagService {
         long idTag = NO_EXIST_ID;
         Optional<Tag> tag = tagDao.findTagByName(nameTag);
         if (tag.isPresent() && tag.get().isActive() == true) {
-            throw new ValidationException(ExceptionPropertyKey.EXISTING_TAG, nameTag);
+            throw new ValidationException(ExceptionPropertyKey.EXISTING_TAG, nameTag, IdentifierEntity.TAG);
         }
         if (tag.isPresent() && tag.get().isActive() == false) {
             idTag = tag.get().getId();
@@ -94,14 +95,14 @@ public class TagServiceImpl implements TagService {
         Tag tag = retrieveTag(tagId);
         if (tag.isActive() == false) {
             throw new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_ID_NOT_FOUND,
-                    tagId);
+                    tagId, IdentifierEntity.TAG);
         }
     }
 
     private Tag retrieveTag(long tagId) {
         Optional<Tag> optionalTag = tagDao.findById(tagId);
         return optionalTag.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_ID_NOT_FOUND,
-                tagId));
+                tagId, IdentifierEntity.TAG));
     }
 
 }

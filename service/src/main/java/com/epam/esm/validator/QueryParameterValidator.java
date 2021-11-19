@@ -1,6 +1,7 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.exception.ExceptionPropertyKey;
+import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.util.QueryParameter;
 
@@ -28,14 +29,15 @@ public class QueryParameterValidator {
 
     private static void isValidTagName(String tagName) {
         if (tagName != null && !tagName.isEmpty() && !tagName.matches(REGEX_TAG_NAME)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_TAG_NAME, tagName);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_TAG_NAME, tagName, IdentifierEntity.TAG);
         }
     }
 
     private static void isValidGiftCertificateName(String giftCertificateName) {
         if (giftCertificateName != null && !giftCertificateName.isEmpty()
                 && !giftCertificateName.matches(REGEX_GIFT_CERTIFICATE_NAME_AND_DESCRIPTION)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_NAME, giftCertificateName);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_NAME, giftCertificateName,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
@@ -43,19 +45,21 @@ public class QueryParameterValidator {
         if (giftCertificateDescription != null && !giftCertificateDescription.isEmpty()
                 && !giftCertificateDescription.matches(REGEX_GIFT_CERTIFICATE_NAME_AND_DESCRIPTION)) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_DESCRIPTION,
-                    giftCertificateDescription);
+                    giftCertificateDescription, IdentifierEntity.CERTIFICATE);
         }
     }
 
     private static void isValidOrderType(String order) {
         if (order != null && !order.isEmpty() && !order.matches(REGEX_ORDER)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_ORDER, order);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_ORDER, order,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
     private static void isValidSortDirection(String direction) {
         if (direction != null && !direction.isEmpty() && !direction.matches(REGEX_DIRECTION)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_DIRECTION, direction);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_DIRECTION, direction,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 }
