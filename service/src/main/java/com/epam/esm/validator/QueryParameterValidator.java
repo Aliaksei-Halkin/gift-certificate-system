@@ -3,7 +3,6 @@ package com.epam.esm.validator;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ValidationException;
-import com.epam.esm.util.QueryParameter;
 
 import java.util.Map;
 

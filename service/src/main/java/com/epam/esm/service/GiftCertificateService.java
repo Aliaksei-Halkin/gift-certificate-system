@@ -2,9 +2,9 @@ package com.epam.esm.service;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.util.QueryParameter;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The interface represents {@code GiftCertificate} service
@@ -18,7 +18,7 @@ public interface GiftCertificateService {
 
     GiftCertificate findGiftCertificateById(Long id);
 
-    List<GiftCertificate> findGiftCertificatesByParameters(QueryParameter queryParameter);
+    List<GiftCertificate> findGiftCertificatesByParameters(Map<String,String> queryParameters);
 
     void deleteGiftCertificateById(Long id);
 

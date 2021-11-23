@@ -2,7 +2,6 @@ package com.epam.esm.validator;
 
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.util.ParameterManager;
-import com.epam.esm.util.QueryParameter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 

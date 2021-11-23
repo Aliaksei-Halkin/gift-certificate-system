@@ -3,13 +3,13 @@ package com.epam.esm.controller;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.util.QueryParameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -121,27 +121,29 @@ public class GiftCertificateController {
 
 
     /**
-     * Find the gift certificate in the storage by various parameter passed as a parameter from body QueryParameter
-     * If there is no parameters method returns all the gift certificates in the storage.
+     * Find gift certificates in the storage by various parameter passed as a parameter in the request URI.
+     * If there is no parameters method returns all gift certificates in the storage.
      * <p>
-     * Accepts optional request parameters in RequestBody:  {@code tagName}, {@code certificateName}, {@code certificateDescription},
-     * {@code order}, {@code direction}. All parameters can be used in conjunction.
+     * Annotated by {@link GetMapping} with no parameters. Therefore, processes GET requests at /certificates.
+     * <p>
+     * Accepts optional request parameters {@code tagNames}, {@code name}, {@code description},
+     * {@code order}, {@code page}, {@code per_page}. All parameters can be used in conjunction.
      * <p>
      * The {@code order} might contain one the following values:
-     * {@code name} or {@code description}. If {@code direction} not defined will be selected {@code direction} by {@code asc}.
+     * {@code name} or {@code -name} and {@code description} or {@code -description}.
+     * Minus sign indicates descending order. Default order is ascending without any signs.
      * <p>
-     * The {@code direction} might contain one the following values: {@code desc} or {@code asc}.
+     * The {@code page} contains number of the page. The {@code per_page} show how many elements will be displayed on the page.
      * <p>
      * The default response status is 200 - OK.
-     * <p>
      *
-     * @param queryParameter The parameters when include {@link QueryParameter} use to find gift certificates by certificate.
+     * @param queryParameters The parameters used to find gift certificates.
      * @return {@link ResponseEntity} with the list of the gift certificates.
      */
     @GetMapping("/selection")
     public ResponseEntity<List<GiftCertificate>> findGiftCertificatesByParameters
-    (@RequestBody QueryParameter queryParameter) {
-        List<GiftCertificate> giftCertificates = giftCertificateService.findGiftCertificatesByParameters(queryParameter);
+    (@RequestBody Map<String,String> queryParameters) {
+        List<GiftCertificate> giftCertificates = giftCertificateService.findGiftCertificatesByParameters(queryParameters);
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }
 

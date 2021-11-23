@@ -9,7 +9,6 @@ import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.ParameterManager;
-import com.epam.esm.util.QueryParameter;
 import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.QueryParameterValidator;
 import com.epam.esm.validator.TagValidator;
@@ -173,8 +172,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @return GiftCertificates
      */
     @Override
-    public List<GiftCertificate> findGiftCertificatesByParameters(QueryParameter parameter) {
-        Map<String, String> queryParameters = ParameterManager.convertQueryParameterToMap(parameter);
+    public List<GiftCertificate> findGiftCertificatesByParameters(Map<String, String> queryParameters) {
         Map<String, String> processedQueryParameters = ParameterManager
                 .giftCertificateQueryParametersProcessing(queryParameters);
         QueryParameterValidator.isValidGiftCertificateQueryParameters(processedQueryParameters);

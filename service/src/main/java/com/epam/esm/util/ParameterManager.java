@@ -50,20 +50,4 @@ public class ParameterManager {
         }
     }
 
-    public static Map<String, String> convertQueryParameterToMap(QueryParameter queryParameter) {
-        Map<String, String> mapQueryParameter = new HashMap<>();
-        String keyTagsName = "tagName";
-        String keyCertificateName = "name";
-        String keyCertificateDescription = "description";
-        String keyOrder = "order";
-        String keyPage = "page";
-        String keyPerPage = "per_page";
-        mapQueryParameter.put(keyTagsName, queryParameter.getTagName());
-        mapQueryParameter.put(keyCertificateName, queryParameter.getCertificateName());
-        mapQueryParameter.put(keyCertificateDescription, queryParameter.getCertificateDescription());
-        mapQueryParameter.put(keyOrder, queryParameter.getOrder().toLowerCase());
-        mapQueryParameter.put(keyPage, queryParameter.getPage());
-        mapQueryParameter.put(keyPerPage, queryParameter.getPer_page());
-        return mapQueryParameter;
-    }
 }
