@@ -43,7 +43,7 @@ public class ParameterManager {
 
     private static void createDefaultPageNumber(Map<String, String> processedParameters) {
         if (!processedParameters.containsKey(PAGE)) {
-            processedParameters.put(PAGE, DEFAULT_PAGE);
+            processedParameters.put(PAGE, DEFAULT_PAGE); 
         }
         if (!processedParameters.containsKey(PER_PAGE)) {
             processedParameters.put(PER_PAGE, DEFAULT_PER_PAGE);

@@ -24,5 +24,5 @@ public interface GiftCertificateService {
 
     GiftCertificate updateGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate);
 
-    List<GiftCertificate> findAllCertificates();
+    List<GiftCertificate> findAllCertificates(Map<String, String> queryParameters);
 }

@@ -134,14 +134,14 @@ class GiftCertificateServiceImplTest {
 //        assertThrows(ValidationException.class, () -> giftCertificateService.findGiftCertificatesByParameters(parameter));
 //    }
 
-    @Test
-    void when_DeleteGiftCertificateById_ThenShouldNotThrowException() {
-        Long certificateId = giftCertificateSecond.getId();
-        when(giftCertificateDao.findAll()).thenReturn(Collections.singletonList(giftCertificateSecond));
-        when(giftCertificateDao.findById(certificateId)).thenReturn(Optional.of(giftCertificateSecond));
-        //todo will change id on entity doNothing().when(giftCertificateDao).removeById(certificateId);
-        assertDoesNotThrow(() -> giftCertificateService.deleteGiftCertificateById(certificateId));
-    }
+//    @Test
+//    void when_DeleteGiftCertificateById_ThenShouldNotThrowException() {
+//        Long certificateId = giftCertificateSecond.getId();
+//        when(giftCertificateDao.findAll()).thenReturn(Collections.singletonList(giftCertificateSecond));
+//        when(giftCertificateDao.findById(certificateId)).thenReturn(Optional.of(giftCertificateSecond));
+//        //todo will change id on entity doNothing().when(giftCertificateDao).removeById(certificateId);
+//        assertDoesNotThrow(() -> giftCertificateService.deleteGiftCertificateById(certificateId));
+//    }
 
     @Test
     void when_DeleteGiftCertificateById_ThenShouldThrowException() {

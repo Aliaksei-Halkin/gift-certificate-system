@@ -14,6 +14,8 @@ import java.util.Set;
  * @author Aliaksei Halkin
  */
 public interface GiftCertificateDao extends BaseDao<GiftCertificate, Long> {
+    List<GiftCertificate> findAll(Map<String, String> queryParameters);
+
     List<GiftCertificate> findCertificatesByQueryParameters(Map<String, String> query);
 
     Set<Tag> findGiftCertificateTags(long certificateId);
@@ -27,4 +29,6 @@ public interface GiftCertificateDao extends BaseDao<GiftCertificate, Long> {
     void deactivate(GiftCertificate giftCertificate);
 
     Optional<GiftCertificate> findCertificateByName(String name);
+
+    long countTotalRows(Map<String, String> queryParameters);
 }

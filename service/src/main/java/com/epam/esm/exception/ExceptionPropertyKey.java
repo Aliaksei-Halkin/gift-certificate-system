@@ -20,7 +20,7 @@ public class ExceptionPropertyKey {
     public static final String EXISTING_CERTIFICATE = "existInTheDatabase";
     public static final String EXISTING_TAG = "existTagInTheDatabase";
     public static final String INCORRECT_PAGE = "incorrect.page";
-
+    public static final String INCORRECT_MAX_PAGE = "incorrect.maxPage";
 
     private ExceptionPropertyKey() {
     }

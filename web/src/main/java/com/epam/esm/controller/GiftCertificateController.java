@@ -193,8 +193,8 @@ public class GiftCertificateController {
      * @return the list of certificates
      */
     @GetMapping
-    public ResponseEntity<List<GiftCertificate>> findAllGiftCertificates() {
-        List<GiftCertificate> giftCertificates = giftCertificateService.findAllCertificates();
+    public ResponseEntity<List<GiftCertificate>> findAllGiftCertificates(@RequestBody Map<String,String> queryParameters) {
+        List<GiftCertificate> giftCertificates = giftCertificateService.findAllCertificates(queryParameters);
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }
 

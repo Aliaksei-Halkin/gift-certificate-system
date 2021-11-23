@@ -52,8 +52,14 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @return {@code List} of all certificates
      */
     @Override
-    public List<GiftCertificate> findAll() {
-        return entityManager.createQuery(SELECT_ALL_CERTIFICATES, GiftCertificate.class).getResultList();
+    public List<GiftCertificate> findAll(Map<String, String> queryParameters) {
+        int page = Integer.parseInt(queryParameters.get(PAGE));
+        int perPage = Integer.parseInt(queryParameters.get(PER_PAGE));
+        int firstResult = page == 1 ? 0 : page * perPage - perPage;
+        return entityManager.createQuery(SELECT_ALL_CERTIFICATES, GiftCertificate.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(perPage)
+                .getResultList();
     }
 
     /**
@@ -107,7 +113,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public Set<Tag> findGiftCertificateTags(long certificateId) {
         return (Set<Tag>) entityManager.createQuery(SELECT_CERTIFICATE_TAGS)
                 .setParameter(1, certificateId).getResultStream().collect(Collectors.toSet());
-
     }
 
     /**
@@ -161,5 +166,11 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         return entityManager.createQuery(SELECT_CERTIFICATE_BY_NAME, GiftCertificate.class)
                 .setParameter(1, name).getResultStream()
                 .findFirst();
+    }
+
+    @Override
+    public long countTotalRows(Map<String, String> queryParameters) {
+        String query = SELECT_ALL_CERTIFICATES + QueryBuilder.createQueryForCertificates(queryParameters);
+        return entityManager.createQuery(query).getResultStream().count();
     }
 }

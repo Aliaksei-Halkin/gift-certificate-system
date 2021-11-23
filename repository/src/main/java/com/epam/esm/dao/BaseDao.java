@@ -1,6 +1,5 @@
 package com.epam.esm.dao;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -10,8 +9,6 @@ import java.util.Optional;
  */
 public interface BaseDao<T, K> {
     Optional<T> findById(K id);
-
-    List<T> findAll();
 
     long add(T entity);
 

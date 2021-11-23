@@ -29,6 +29,9 @@ import java.util.*;
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
     private static final Logger LOGGER = LogManager.getLogger(GiftCertificateService.class);
+    private static final int INITIAL_PAGE_VALUE = 1;
+    private static final String PAGE = "page";
+    private static final String PER_PAGE = "per_page";
     private final GiftCertificateDao giftCertificateDao;
     private final TagDao tagDao;
     private final GiftCertificateValidator giftCertificateValidator;
@@ -168,7 +171,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     /**
      * The method represents finding a gift certificate by query parameters
      *
-     * @param parameter query parameters
+     * @param queryParameters query parameters
      * @return GiftCertificates
      */
     @Override
@@ -177,6 +180,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .giftCertificateQueryParametersProcessing(queryParameters);
         QueryParameterValidator.isValidGiftCertificateQueryParameters(processedQueryParameters);
         LOGGER.debug("Query parameter: {}", processedQueryParameters);
+        countTotalPages(processedQueryParameters);
         return giftCertificateDao.findCertificatesByQueryParameters(processedQueryParameters);
     }
 
@@ -254,8 +258,30 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> findAllCertificates() {
-        return giftCertificateDao.findAll();
+    public List<GiftCertificate> findAllCertificates(Map<String, String> queryParameters) {
+        countTotalPages(queryParameters);
+        return giftCertificateDao.findAll(queryParameters);
     }
 
+    /**
+     * The method  count total page by queryParameters. If the requested page does not exist an error is called
+     *
+     * @param queryParameters
+     */
+    private void countTotalPages(Map<String, String> queryParameters) {
+        Map<String, String> localQueryParameters = new HashMap<>(queryParameters);
+        int page = Integer.parseInt(localQueryParameters.get(PAGE));
+        int perPage = Integer.parseInt(localQueryParameters.get(PER_PAGE));
+        long totalNumbersOfRows = giftCertificateDao.countTotalRows(localQueryParameters);
+        long counterPages = INITIAL_PAGE_VALUE;
+        if (totalNumbersOfRows % perPage == 0) {
+            counterPages = totalNumbersOfRows / perPage;
+        } else {
+            counterPages = totalNumbersOfRows / perPage + 1;
+        }
+        if (page > counterPages) {
+            throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_MAX_PAGE, counterPages,
+                    IdentifierEntity.CERTIFICATE);
+        }
+    }
 }

@@ -2,11 +2,16 @@ package com.epam.esm.util;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * The class represents building query(JPQL) on parameters.
+ *
+ * @author Aliaksei Halkin
+ */
 public class QueryBuilder {
     private static final Logger LOGGER = LogManager.getLogger(QueryBuilder.class);
     private static final String WHERE = "WHERE ";
