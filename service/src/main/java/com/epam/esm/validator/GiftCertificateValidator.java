@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The GiftCertificateValidator class represents certificate data validation
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @Component
 public class GiftCertificateValidator {
-    private static final String REGEX_NAME_AND_DESCRIPTION = "[а-яА-Я\\w\\s\\.,?!']{1,250}";
+    private static final String REGEX_NAME_AND_DESCRIPTION = "[а-яА-Я\\w\\s\\.,?!'-]{1,250}";
     private static final long MIN_ID = 1;
     private static final BigDecimal MIN_PRICE = new BigDecimal("0.01");
     private static final BigDecimal MAX_PRICE = new BigDecimal("1000000");
@@ -54,20 +55,13 @@ public class GiftCertificateValidator {
         }
     }
 
-    public long ifExistName(String name) {
-        long certificateId = -1;
-        String query = FIND_BY_NAME + name +"'";
-        List<GiftCertificate> certificateByName = giftCertificateDao.findCertificatesByQueryParameters(query);
-        boolean checkCertificateByNameOnPresent = (certificateByName != null && !certificateByName.isEmpty());
-        if (checkCertificateByNameOnPresent && certificateByName.get(0).isActive() == true) {
+    public  Optional<GiftCertificate> ifExistName(String name) {
+        Optional<GiftCertificate> certificateByName = giftCertificateDao.findCertificateByName(name);
+        if(certificateByName.isPresent()&&certificateByName.get().isActive()==true){
             throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name,
-                    IdentifierEntity.CERTIFICATE);
+                   IdentifierEntity.CERTIFICATE);
         }
-        if (checkCertificateByNameOnPresent && certificateByName.get(0).isActive() == false) {
-            giftCertificateDao.activateGiftCertificate(name);
-            certificateId = certificateByName.get(0).getId();
-        }
-        return certificateId;
+        return certificateByName;
     }
 
     private void isValidDescription(String description) {

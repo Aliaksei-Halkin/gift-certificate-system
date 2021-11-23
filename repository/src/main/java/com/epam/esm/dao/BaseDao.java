@@ -15,7 +15,5 @@ public interface BaseDao<T, K> {
 
     long add(T entity);
 
-    void removeById(K id);
-
     T update(T entity);
 }

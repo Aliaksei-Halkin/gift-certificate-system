@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS `certificatesdb`.`certificates_has_tags`
             REFERENCES `certificatesdb`.`tags` (`tagId`)
             ON DELETE CASCADE
 );
-CREATE INDEX `fk_gift_certificates_has_tags_tags1_idx`  ON `certificatesdb`.`certificates_has_tags` (`tagId` ASC) VISIBLE;
-CREATE INDEX `fk_gift_certificates_has_tags_gift_certificates_idx`  ON `certificatesdb`.`certificates_has_tags` (`certificateId` ASC) VISIBLE;
+CREATE INDEX `fk_gift_certificates_has_tags_tags1_idx` ON `certificatesdb`.`certificates_has_tags` (`tagId` ASC) VISIBLE;
+CREATE INDEX `fk_gift_certificates_has_tags_gift_certificates_idx` ON `certificatesdb`.`certificates_has_tags` (`certificateId` ASC) VISIBLE;
 
 CREATE TABLE IF NOT EXISTS user
 (
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS user
     email      VARCHAR(50) NOT NULL,
     active     BOOL default true
 );
-CREATE UNIQUE INDEX user_login  ON user (login ASC);
+CREATE UNIQUE INDEX user_login ON user (login ASC);
 
 CREATE TABLE IF NOT EXISTS order
 (
@@ -108,22 +108,22 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `certificatesdb`;
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (1, 'rest');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (2, 'entertainment');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (3, 'vacation');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (4, 'tourism');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (5, 'hike');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (6, 'health');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (7, 'extreme');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (8, 'massage');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('rest5');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('entertainment');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('vacation');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('tourism');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('hike');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('health');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('extreme');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('massage');
 COMMIT;
 
 

@@ -1,11 +1,15 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.exception.ValidationException;
+import com.epam.esm.util.ParameterManager;
 import com.epam.esm.util.QueryParameter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Aliaksei Halkin
@@ -13,17 +17,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class QueryParameterValidatorTest {
     public static Object[][] correctQueryParameter() {
         QueryParameter queryParameter1 =
-                new QueryParameter("Hello1", "Cinema1", "Description1", "name", "asc");
+                new QueryParameter("Hello1", "Cinema1", "Description1", "name");
         QueryParameter queryParameter2 =
-                new QueryParameter("Hello2", "Cinema2", "Description2", "name", null);
+                new QueryParameter("Hello2", "Cinema2", "Description2", "name");
         QueryParameter queryParameter3 =
-                new QueryParameter("Hello3", "Cinema3", "Description3", null, null);
+                new QueryParameter("Hello3", "Cinema3", "Description3", null);
         QueryParameter queryParameter4 =
-                new QueryParameter("Hello4", "Cinema4", null, null, null);
+                new QueryParameter("Hello4", "Cinema4", null, null);
         QueryParameter queryParameter5 =
-                new QueryParameter("Hello4", null, null, null, null);
+                new QueryParameter("Hello4", null, null, null);
         QueryParameter queryParameter6 =
-                new QueryParameter(null, null, null, null, null);
+                new QueryParameter(null, null, null, null);
         return new Object[][]{
                 {queryParameter1},
                 {queryParameter2},
@@ -36,20 +40,22 @@ class QueryParameterValidatorTest {
     @ParameterizedTest
     @MethodSource("correctQueryParameter")
     void whenIsValidQueryParametersThenShouldNotThrowException(QueryParameter queryParameter) {
-        assertDoesNotThrow(() -> QueryParameterValidator.isValidQueryParameters(queryParameter));
+        Map<String, String> parameter = ParameterManager.convertQueryParameterToMap(queryParameter);
+        assertDoesNotThrow(() ->
+                QueryParameterValidator.isValidGiftCertificateQueryParameters(parameter));
     }
 
     public static Object[][] incorrectQueryParameter() {
         QueryParameter queryParameter1 =
-                new QueryParameter("@312", "Cinema1", "Description1", "name", "asc");
+                new QueryParameter("@312", "Cinema1", "Description1", "name");
         QueryParameter queryParameter2 =
-                new QueryParameter("Hello1", "@3??.123##!@", "Description1", "name", "asc");
+                new QueryParameter("Hello1", "@3??.123##!@", "Description1", "name");
         QueryParameter queryParameter3 =
-                new QueryParameter("Hello1", "Cinema1", "$%^%^^", "name", "asc");
+                new QueryParameter("Hello1", "Cinema1", "$%^%^^", "name");
         QueryParameter queryParameter4 =
-                new QueryParameter("Hello1", "Cinema1", "Description1", "asdd", "asc");
+                new QueryParameter("Hello1", "Cinema1", "Description1", "asdd");
         QueryParameter queryParameter5 =
-                new QueryParameter("Hello1", "Cinema1", "Description1", "name", "asdasd");
+                new QueryParameter("Hello1", "Cinema1", "Description1", "name");
         return new Object[][]{
                 {queryParameter1},
                 {queryParameter2},
@@ -61,7 +67,8 @@ class QueryParameterValidatorTest {
     @ParameterizedTest
     @MethodSource("incorrectQueryParameter")
     void whenIsNotValidQueryParametersThenShouldThrowException(QueryParameter queryParameter) {
-        assertThrows(ValidationException.class, () -> QueryParameterValidator.isValidQueryParameters(queryParameter));
+        Map<String, String> parameter = ParameterManager.convertQueryParameterToMap(queryParameter);
+        assertThrows(ValidationException.class, () -> QueryParameterValidator.isValidGiftCertificateQueryParameters(parameter));
     }
 
 }

@@ -1,18 +1,14 @@
 package com.epam.esm.util;
 
-import com.epam.esm.service.GiftCertificateService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * The QueryParameterManager represents constructions for the query. It's addition for the main query.
- *
- * @author Aliaksei Halkin
- */
-public class QueryParameterBuilder {
+
+public class QueryBuilder {
+    private static final Logger LOGGER = LogManager.getLogger(QueryBuilder.class);
     private static final String WHERE = "WHERE ";
     private static final String AND = "AND ";
     private static final String OR = "OR ";
@@ -30,14 +26,27 @@ public class QueryParameterBuilder {
     private static final char MINUS = '-';
     private static final String PAGE = "page";
     private static final String PER_PAGE = "per_page";
+    private static final String ID = "id";
+    private static final String FIRST_NAME = "first_name";
+    private static final String LAST_NAME = "last_name";
+    private static final String LOGIN = "login";
     private static final String JOIN_TAGS = "JOIN g.tags t ";
+    private static final String FIRST_NAME_LIKE = "u.firstName LIKE '%";
+    private static final String LAST_NAME_LIKE = "u.lastName LIKE '%";
+    private static final String LOGIN_LIKE = "u.login LIKE '%";
+    private static final String ORDER_BY_LOGIN = "ORDER BY u.login ";
+    private static final String ORDER_BY_FIRST_NAME = "ORDER BY u.firstName ";
+    private static final String ORDER_BY_LAST_NAME = "ORDER BY u.lastName ";
+    private static final String ORDER_BY_TAG_ID = "ORDER BY t.tagId ";
+    private static final String ORDER_BY_TAG_NAME = "ORDER BY t.name ";
     private static final String GIFT_CERTIFICATES_NAME_LIKE = "g.name LIKE '%";
     private static final String TAG_NAME_LIKE = "t.name LIKE '%";
     private static final String GIFT_CERTIFICATES_DESCRIPTION_LIKE = "g.description LIKE '%";
     private static final String ORDER_BY_GIFT_CERTIFICATE_NAME = "ORDER BY g.name ";
     private static final String ORDER_BY_GIFT_CERTIFICATE_DESCRIPTION = "ORDER BY g.description ";
-    private static final Logger LOGGER = LogManager.getLogger(GiftCertificateService.class);
 
+    private QueryBuilder() {
+    }
 
     public static String createQueryForCertificates(Map<String, String> queryParameters) {
         removePageParameters(queryParameters);
@@ -87,6 +96,7 @@ public class QueryParameterBuilder {
         LOGGER.debug("Created query: {}", query);
         return query.toString();
     }
+
 
     private static Map<String, String> removePageParameters(Map<String, String> queryParameters) {
         queryParameters.remove(PAGE);

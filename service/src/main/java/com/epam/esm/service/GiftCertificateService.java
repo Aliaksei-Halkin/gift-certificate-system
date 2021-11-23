@@ -23,4 +23,6 @@ public interface GiftCertificateService {
     void deleteGiftCertificateById(Long id);
 
     GiftCertificate updateGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate);
+
+    List<GiftCertificate> findAllCertificates();
 }

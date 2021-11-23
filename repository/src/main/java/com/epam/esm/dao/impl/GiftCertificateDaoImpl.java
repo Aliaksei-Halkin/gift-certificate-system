@@ -3,13 +3,14 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.util.QueryBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,18 +23,14 @@ import java.util.stream.Collectors;
  */
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
-
-    public static final String SELECT_CERTIFICATES_BY_PARAMETERS =
-            "SELECT DISTINCT gift_certificates.certificateId, gift_certificates.name, gift_certificates.description, " +
-                    "gift_certificates.price, gift_certificates.duration, gift_certificates.create_date, " +
-                    "gift_certificates.last_update_date, gift_certificates.active FROM gift_certificates ";
+    private static final String PAGE = "page";
+    private static final String PER_PAGE = "per_page";
     public static final String SELECT_CERTIFICATE_TAGS =
             "SELECT tags FROM GiftCertificate WHERE GiftCertificate.id = ?1";
-    public static final String DELETE_CERTIFICATE =
-            "UPDATE GiftCertificate SET active=false WHERE id = ?1";
     public static final String RETURN_DELETED_CERTIFICATE =
             "UPDATE GiftCertificate  SET active=true WHERE name = ?1";
-        private static final String SELECT_ALL_CERTIFICATES = "SELECT g FROM GiftCertificate g";
+    private static final String SELECT_ALL_CERTIFICATES = "SELECT g FROM GiftCertificate g ";
+    private static final String SELECT_CERTIFICATE_BY_NAME = "FROM GiftCertificate WHERE name = ?1";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -71,17 +68,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     /**
-     * The method delete certificate by id
-     *
-     * @param id of certificate
-     */
-    @Override
-    public void removeById(Long id) {
-        entityManager.createQuery(DELETE_CERTIFICATE)
-                .setParameter(1, id).executeUpdate();
-    }
-
-    /**
      * The method update certificate by id
      *
      * @param entity GiftCertificate for update
@@ -98,13 +84,17 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     /**
      * The method update certificate by id
      *
-     * @param query represents additional query to main quiery {@code SELECT_CERTIFICATES_BY_PARAMETERS}
+     * @param queryParameters represents additional query to main quiery {@code SELECT_CERTIFICATES_BY_PARAMETERS}
      * @return {@code List} of certificates
      */
     @Override
-    public List<GiftCertificate> findCertificatesByQueryParameters(String query) {//todo
-   //     return jdbcTemplate.query(SELECT_CERTIFICATES_BY_PARAMETERS + query, giftCertificateMapper);
-        return new ArrayList<>();
+    public List<GiftCertificate> findCertificatesByQueryParameters(Map<String, String> queryParameters) {
+        int page = Integer.parseInt(queryParameters.get(PAGE));
+        int perPage = Integer.parseInt(queryParameters.get(PER_PAGE));
+        int firstResult = page == 1 ? 0 : page * perPage - perPage;
+        String query = QueryBuilder.createQueryForCertificates(queryParameters);
+        return entityManager.createQuery(SELECT_ALL_CERTIFICATES + query, GiftCertificate.class)
+                .setFirstResult(firstResult).setMaxResults(perPage).getResultList();
     }
 
     /**
@@ -154,4 +144,22 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         entityManager.clear();
     }
 
+    /**
+     * The method deactivate certificate by id
+     *
+     * @param giftCertificate - the certificate
+     */
+    @Override
+    public void deactivate(GiftCertificate giftCertificate) {
+        giftCertificate.setActive(false);
+        entityManager.flush();
+        entityManager.clear();
+    }
+
+    @Override
+    public Optional<GiftCertificate> findCertificateByName(String name) {
+        return entityManager.createQuery(SELECT_CERTIFICATE_BY_NAME, GiftCertificate.class)
+                .setParameter(1, name).getResultStream()
+                .findFirst();
+    }
 }
