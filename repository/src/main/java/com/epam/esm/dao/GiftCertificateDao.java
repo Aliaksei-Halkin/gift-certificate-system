@@ -20,15 +20,9 @@ public interface GiftCertificateDao extends BaseDao<GiftCertificate, Long> {
 
     Set<Tag> findGiftCertificateTags(long certificateId);
 
-    void attachTag(long tagId, long giftCertificateId);
-
-    void activateGiftCertificate(String name);
-
-    void removeTag(long giftCertificateId, long tagId);
-
     void deactivate(GiftCertificate giftCertificate);
 
-    Optional<GiftCertificate> findCertificateByName(String name);
+    Optional<GiftCertificate> findByName(String name);
 
     long countTotalRows(Map<String, String> queryParameters);
 }

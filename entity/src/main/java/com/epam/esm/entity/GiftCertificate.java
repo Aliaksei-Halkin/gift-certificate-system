@@ -17,13 +17,13 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "gift_certificates")
+@Where(clause = "active = 1")
 public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "certificateId",
             nullable = false, unique = true)
     private Long id;
-
     @Column(name = "active", nullable = false)
     private boolean active;
     /**
@@ -68,7 +68,6 @@ public class GiftCertificate {
             joinColumns = @JoinColumn(name = "certificateId"),
             inverseJoinColumns = @JoinColumn(name = "tagId")
     )
-    @Where(clause = "active = 1")
     private Set<Tag> tags;
 
     /**

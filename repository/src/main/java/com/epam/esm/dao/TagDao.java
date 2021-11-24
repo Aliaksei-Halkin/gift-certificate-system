@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface TagDao extends BaseDao<Tag, Long> {
     void removeById(Long id);
 
-    Optional<Tag> findTagByName(String name);
+    Optional<Tag> findByName(String name);
 
     void changeActiveForTag(String name);
 

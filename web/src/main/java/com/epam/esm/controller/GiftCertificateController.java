@@ -142,7 +142,7 @@ public class GiftCertificateController {
      */
     @GetMapping("/selection")
     public ResponseEntity<List<GiftCertificate>> findGiftCertificatesByParameters
-    (@RequestBody Map<String,String> queryParameters) {
+    (@RequestBody Map<String, String> queryParameters) {
         List<GiftCertificate> giftCertificates = giftCertificateService.findGiftCertificatesByParameters(queryParameters);
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }
@@ -193,7 +193,7 @@ public class GiftCertificateController {
      * @return the list of certificates
      */
     @GetMapping
-    public ResponseEntity<List<GiftCertificate>> findAllGiftCertificates(@RequestBody Map<String,String> queryParameters) {
+    public ResponseEntity<List<GiftCertificate>> findAllGiftCertificates(@RequestBody Map<String, String> queryParameters) {
         List<GiftCertificate> giftCertificates = giftCertificateService.findAllCertificates(queryParameters);
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }

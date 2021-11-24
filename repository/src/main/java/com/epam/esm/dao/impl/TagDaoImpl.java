@@ -21,7 +21,7 @@ public class TagDaoImpl implements TagDao {
     /**
      * This is the query SELECT to database
      */
-    public static final String SELECT_ALL_TAGS = "  FROM Tag WHERE  active = true";
+    public static final String SELECT_ALL_TAGS = "  FROM Tag  ";
     /**
      * This is the query SELECT to database
      */
@@ -85,7 +85,7 @@ public class TagDaoImpl implements TagDao {
         throw new UnsupportedOperationException("Update is not available action for Tag");
     }
 
-    /**
+      /**
      * The method find all tags
      *
      * @return {@code List} of all tags
@@ -102,7 +102,7 @@ public class TagDaoImpl implements TagDao {
      * @return {@code Optional<Tag>} tag
      */
     @Override
-    public Optional<Tag> findTagByName(String name) {
+    public Optional<Tag> findByName(String name) {
         return entityManager.createQuery(SELECT_TAG_BY_NAME, Tag.class)
                 .setParameter(NAME_PARAMETER, name)
                 .getResultStream()

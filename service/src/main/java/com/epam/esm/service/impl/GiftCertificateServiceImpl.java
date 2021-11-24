@@ -85,7 +85,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Set<Tag> updatedTags = new HashSet<>();
         for (Tag tag : tags) {
             if (tag.isActive()) {
-                Optional<Tag> optionalTag = tagDao.findTagByName(tag.getName());
+                Optional<Tag> optionalTag = tagDao.findByName(tag.getName());
                 if (optionalTag.isPresent()) {
                     Tag receivedTag = optionalTag.get();
                     if (!receivedTag.isActive()) {
@@ -106,7 +106,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private Tag findTag(Tag tag) {
-        Optional<Tag> tagByName = tagDao.findTagByName(tag.getName());
+        Optional<Tag> tagByName = tagDao.findByName(tag.getName());
         Tag movableTag = new Tag();
         if (!tagByName.isPresent()) {
             tag.setId(null);
@@ -259,6 +259,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificate> findAllCertificates(Map<String, String> queryParameters) {
+        QueryParameterValidator.isValidPage(queryParameters.get(PAGE));
+        QueryParameterValidator.isValidPage(queryParameters.get(PER_PAGE));
         countTotalPages(queryParameters);
         return giftCertificateDao.findAll(queryParameters);
     }

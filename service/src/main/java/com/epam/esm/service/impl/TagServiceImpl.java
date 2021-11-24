@@ -57,7 +57,7 @@ public class TagServiceImpl implements TagService {
 
     private long checkOnExist(String nameTag) {
         long idTag = NO_EXIST_ID;
-        Optional<Tag> tag = tagDao.findTagByName(nameTag);
+        Optional<Tag> tag = tagDao.findByName(nameTag);
         if (tag.isPresent() && tag.get().isActive() == true) {
             throw new ValidationException(ExceptionPropertyKey.EXISTING_TAG, nameTag, IdentifierEntity.TAG);
         }

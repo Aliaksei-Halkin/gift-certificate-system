@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -56,7 +55,7 @@ public class GiftCertificateValidator {
     }
 
     public  Optional<GiftCertificate> ifExistName(String name) {
-        Optional<GiftCertificate> certificateByName = giftCertificateDao.findCertificateByName(name);
+        Optional<GiftCertificate> certificateByName = giftCertificateDao.findByName(name);
         if(certificateByName.isPresent()&&certificateByName.get().isActive()==true){
             throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name,
                    IdentifierEntity.CERTIFICATE);

@@ -71,14 +71,14 @@ class TagDaoImplIntegTest {
 
     @Test
     void whenFindTagByExistNameThenShouldReturnTrue() {
-        Optional<Tag> optionalTag = tagDao.findTagByName("rest");
+        Optional<Tag> optionalTag = tagDao.findByName("rest");
         boolean condition = optionalTag.isPresent();
         assertTrue(condition);
     }
 
     @Test
     void whenFindTagByNotExistNameThenShouldReturnFalse() {
-        Optional<Tag> optionalTag = tagDao.findTagByName("game");
+        Optional<Tag> optionalTag = tagDao.findByName("game");
         boolean condition = optionalTag.isPresent();
         assertFalse(condition);
     }

@@ -27,8 +27,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     private static final String PER_PAGE = "per_page";
     public static final String SELECT_CERTIFICATE_TAGS =
             "SELECT tags FROM GiftCertificate WHERE GiftCertificate.id = ?1";
-    public static final String RETURN_DELETED_CERTIFICATE =
-            "UPDATE GiftCertificate  SET active=true WHERE name = ?1";
     private static final String SELECT_ALL_CERTIFICATES = "SELECT g FROM GiftCertificate g ";
     private static final String SELECT_CERTIFICATE_BY_NAME = "FROM GiftCertificate WHERE name = ?1";
 
@@ -115,39 +113,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
                 .setParameter(1, certificateId).getResultStream().collect(Collectors.toSet());
     }
 
-    /**
-     * The method add certificate and tags to certificate_has_tag table.
-     *
-     * @param tagId             id of tag
-     * @param giftCertificateId id of certificate
-     */
-    @Override
-    public void attachTag(long tagId, long giftCertificateId) {
-        GiftCertificate giftCertificate = entityManager.find(GiftCertificate.class, giftCertificateId);
-        Tag tag = entityManager.find(Tag.class, tagId);
-        Set<Tag> tags = giftCertificate.getTags();
-        tags.add(tag);
-        giftCertificate.setTags(tags);
-        entityManager.merge(giftCertificate);
-        entityManager.flush();
-        entityManager.clear();
-    }
-
-    @Override
-    public void activateGiftCertificate(String name) {
-        entityManager.createQuery(RETURN_DELETED_CERTIFICATE).setParameter(1, name).executeUpdate();
-    }
-
-    @Override
-    public void removeTag(long giftCertificateId, long tagId) {
-        GiftCertificate giftCertificate = entityManager.find(GiftCertificate.class, giftCertificateId);
-        Set<Tag> tags = giftCertificate.getTags();
-        Set<Tag> tagsUpdate = tags.stream().filter(tag -> tag.getId() != tagId).collect(Collectors.toSet());
-        giftCertificate.setTags(tagsUpdate);
-        entityManager.merge(giftCertificate);
-        entityManager.flush();
-        entityManager.clear();
-    }
 
     /**
      * The method deactivate certificate by id
@@ -162,7 +127,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public Optional<GiftCertificate> findCertificateByName(String name) {
+    public Optional<GiftCertificate> findByName(String name) {
         return entityManager.createQuery(SELECT_CERTIFICATE_BY_NAME, GiftCertificate.class)
                 .setParameter(1, name).getResultStream()
                 .findFirst();
