@@ -1,8 +1,10 @@
 package com.epam.esm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -18,12 +20,13 @@ import java.util.Set;
 @Entity
 @Table(name = "gift_certificates")
 @Where(clause = "active = 1")
-public class GiftCertificate {
+public class GiftCertificate extends RepresentationModel<GiftCertificate> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "certificateId",
             nullable = false, unique = true)
     private Long id;
+    @JsonIgnore
     @Column(name = "active", nullable = false)
     private boolean active;
     /**
@@ -63,7 +66,7 @@ public class GiftCertificate {
      * The set of tags in this Gift certificate
      */
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     @JoinTable(name = "certificates_has_tags",
             joinColumns = @JoinColumn(name = "certificateId"),
             inverseJoinColumns = @JoinColumn(name = "tagId")

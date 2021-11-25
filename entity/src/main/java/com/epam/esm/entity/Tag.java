@@ -23,6 +23,7 @@ public class Tag {
     private Long id;
     @Column(name = "tagName", unique = true)
     private String name;
+    @JsonIgnore
     @Column(name = "active")
     private boolean active;
     @JsonIgnore

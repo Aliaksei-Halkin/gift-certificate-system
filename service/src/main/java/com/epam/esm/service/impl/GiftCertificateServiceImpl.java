@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -263,6 +264,49 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         QueryParameterValidator.isValidPage(queryParameters.get(PER_PAGE));
         countTotalPages(queryParameters);
         return giftCertificateDao.findAll(queryParameters);
+    }
+
+    @Override
+    @Transactional
+    public GiftCertificate updateField(Long id, Map<String, String> field) {
+        GiftCertificate giftCertificate = checkAndGetGiftCertificate(id);
+        changeValueOfField(giftCertificate, field);
+        GiftCertificate updatedCertificate = giftCertificateDao.update(giftCertificate);
+        return updatedCertificate;
+    }
+
+    private void changeValueOfField(GiftCertificate giftCertificate, Map<String, String> field) {
+        if (field.size() > 1) {
+            throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_FIELD, null,
+                    IdentifierEntity.CERTIFICATE);
+        }
+        if (field.containsKey("price")) {
+            BigDecimal price = new BigDecimal(field.get("price").trim());
+            giftCertificateValidator.isValidPrice(price);
+            giftCertificate.setPrice(price);
+            return;
+        }
+        if (field.containsKey("duration")) {
+            int duration = Integer.parseInt(field.get("duration").trim());
+            giftCertificateValidator.isValidDuration(duration);
+            giftCertificate.setDuration(duration);
+            return;
+        }
+        if (field.containsKey("description")) {
+            String description = field.get("description").trim();
+            giftCertificateValidator.isValidDescription(description);
+            giftCertificate.setDescription(description);
+            return;
+        }
+        if (field.containsKey("name")) {
+            String name = field.get("name").trim();
+            giftCertificateValidator.isValidName(name);
+            giftCertificateValidator.ifExistName(name);
+            giftCertificate.setName(name);
+            return;
+        }
+        throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_FIELD, null,
+                IdentifierEntity.CERTIFICATE);
     }
 
     /**

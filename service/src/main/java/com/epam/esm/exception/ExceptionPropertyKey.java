@@ -21,6 +21,7 @@ public class ExceptionPropertyKey {
     public static final String EXISTING_TAG = "existTagInTheDatabase";
     public static final String INCORRECT_PAGE = "incorrect.page";
     public static final String INCORRECT_MAX_PAGE = "incorrect.maxPage";
+    public static final String INCORRECT_FIELD = "incorrect.field";
 
     private ExceptionPropertyKey() {
     }

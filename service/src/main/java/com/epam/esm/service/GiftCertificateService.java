@@ -18,11 +18,13 @@ public interface GiftCertificateService {
 
     GiftCertificate findGiftCertificateById(Long id);
 
-    List<GiftCertificate> findGiftCertificatesByParameters(Map<String,String> queryParameters);
+    List<GiftCertificate> findGiftCertificatesByParameters(Map<String, String> queryParameters);
 
     void deleteGiftCertificateById(Long id);
 
     GiftCertificate updateGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate);
 
     List<GiftCertificate> findAllCertificates(Map<String, String> queryParameters);
+
+    GiftCertificate updateField(Long id, Map<String, String> field);
 }

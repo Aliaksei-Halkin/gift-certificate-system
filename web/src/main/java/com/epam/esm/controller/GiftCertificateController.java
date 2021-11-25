@@ -198,4 +198,18 @@ public class GiftCertificateController {
         return new ResponseEntity<>(giftCertificates, HttpStatus.OK);
     }
 
+    /**
+     * The method represents updating one value from next fields: name, description, price or duration.
+     *
+     * @param id    GiftCertificate id
+     * @param field key-field for changing, value- new value
+     * @return updated GiftCertificate
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<GiftCertificate> updateGiftCertificateField(@PathVariable Long id,
+                                                                      @RequestBody Map<String, String> field) {
+        GiftCertificate updatedGiftCertificate = giftCertificateService.updateField(id, field);
+        return new ResponseEntity<>(updatedGiftCertificate, HttpStatus.OK);
+    }
+
 }
