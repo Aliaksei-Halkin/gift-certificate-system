@@ -1,7 +1,9 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.GiftCertificateField;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -26,5 +28,5 @@ public interface GiftCertificateService {
 
     List<GiftCertificate> findAllCertificates(Map<String, String> queryParameters);
 
-    GiftCertificate updateField(Long id, Map<String, String> field);
+    GiftCertificate updateGiftCertificateField(Long id, GiftCertificateField giftCertificateField);
 }

@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.dto.GiftCertificateField;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.GiftCertificateService;
@@ -202,13 +203,13 @@ public class GiftCertificateController {
      * The method represents updating one value from next fields: name, description, price or duration.
      *
      * @param id    GiftCertificate id
-     * @param field key-field for changing, value- new value
+     * @param giftCertificateField field with value for changing
      * @return updated GiftCertificate
      */
     @PatchMapping("/{id}")
     public ResponseEntity<GiftCertificate> updateGiftCertificateField(@PathVariable Long id,
-                                                                      @RequestBody Map<String, String> field) {
-        GiftCertificate updatedGiftCertificate = giftCertificateService.updateField(id, field);
+                                                                      @RequestBody GiftCertificateField giftCertificateField) {
+        GiftCertificate updatedGiftCertificate = giftCertificateService.updateGiftCertificateField(id, giftCertificateField);
         return new ResponseEntity<>(updatedGiftCertificate, HttpStatus.OK);
     }
 

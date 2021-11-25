@@ -22,6 +22,7 @@ public class ExceptionPropertyKey {
     public static final String INCORRECT_PAGE = "incorrect.page";
     public static final String INCORRECT_MAX_PAGE = "incorrect.maxPage";
     public static final String INCORRECT_FIELD = "incorrect.field";
+    public static final String INCORRECT_FIELD_VALUE = "incorrect.field.value";
 
     private ExceptionPropertyKey() {
     }

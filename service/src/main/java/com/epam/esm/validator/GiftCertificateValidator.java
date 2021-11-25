@@ -1,6 +1,7 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dto.GiftCertificateField;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
@@ -54,11 +55,11 @@ public class GiftCertificateValidator {
         }
     }
 
-    public  Optional<GiftCertificate> ifExistName(String name) {
+    public Optional<GiftCertificate> ifExistName(String name) {
         Optional<GiftCertificate> certificateByName = giftCertificateDao.findByName(name);
-        if(certificateByName.isPresent()&&certificateByName.get().isActive()==true){
+        if (certificateByName.isPresent() && certificateByName.get().isActive() == true) {
             throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name,
-                   IdentifierEntity.CERTIFICATE);
+                    IdentifierEntity.CERTIFICATE);
         }
         return certificateByName;
     }
@@ -80,6 +81,33 @@ public class GiftCertificateValidator {
     public void isValidDuration(int duration) {
         if (duration < MIN_DURATION || duration > MAX_DURATION) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_DURATION, duration,
+                    IdentifierEntity.CERTIFICATE);
+        }
+    }
+
+    public void isValidField(GiftCertificateField giftCertificateField) {
+        try {
+            GiftCertificateField.FieldName fieldName = GiftCertificateField.FieldName.valueOf(giftCertificateField.getFieldName().toUpperCase());
+            switch (fieldName) {
+                case NAME:
+                    isValidName(giftCertificateField.getFieldValue());
+                    ifExistName(giftCertificateField.getFieldValue());
+                    break;
+                case DESCRIPTION:
+                    isValidDescription(giftCertificateField.getFieldValue());
+                    break;
+                case PRICE:
+                    isValidPrice(new BigDecimal(giftCertificateField.getFieldValue()));
+                    break;
+                case DURATION:
+                    isValidDuration(Integer.parseInt(giftCertificateField.getFieldValue()));
+                    break;
+            }
+        } catch (NumberFormatException exception) {
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_FIELD_VALUE,
+                    giftCertificateField.getFieldName(), IdentifierEntity.CERTIFICATE);
+        } catch (IllegalArgumentException exception) {
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_FIELD, giftCertificateField.getFieldName(),
                     IdentifierEntity.CERTIFICATE);
         }
     }

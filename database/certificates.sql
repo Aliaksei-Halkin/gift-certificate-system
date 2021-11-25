@@ -48,20 +48,20 @@ CREATE INDEX `fk_gift_certificates_has_tags_gift_certificates_idx` ON `certifica
 CREATE TABLE IF NOT EXISTS user
 (
     user_id    BIGINT      NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    login      VARCHAR(50) NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name  VARCHAR(50) NOT NULL,
+    password   VARCHAR(50) NOT NULL,
     email      VARCHAR(50) NOT NULL,
     active     BOOL default true
 );
-CREATE UNIQUE INDEX user_login ON user (login ASC);
+CREATE UNIQUE INDEX user_email ON user (email ASC);
 
 CREATE TABLE IF NOT EXISTS order
 (
     order_id    BIGINT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
     user_id     BIGINT    NOT NULL,
     create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    cost        DECIMAL(20, 2),
+    total_cost  DECIMAL(20, 2),
     active      BOOL               default true,
     CONSTRAINT fk_order_user
         FOREIGN KEY (user_id) REFERENCES user (user_id)
@@ -71,8 +71,10 @@ CREATE TABLE IF NOT EXISTS order
 
 CREATE TABLE IF NOT EXISTS orders_has_gift_certificate
 (
-    order_id       BIGINT NOT NULL,
-    certificate_id BIGINT NOT NULL,
+    order_id       BIGINT         NOT NULL,
+    certificate_id BIGINT         NOT NULL,
+    number_of_item INT            NOT NULL,
+    item_cost      DECIMAL(10, 2) NOT NULL,
     PRIMARY KEY (order_id, certificate_id),
     CONSTRAINT fk_orders_has_gift_certificates_order1
         FOREIGN KEY (order_id) REFERENCES order (order_id)

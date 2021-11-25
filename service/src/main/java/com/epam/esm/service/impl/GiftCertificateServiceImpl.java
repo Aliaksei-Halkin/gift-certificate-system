@@ -2,6 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dto.GiftCertificateField;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionPropertyKey;
@@ -268,45 +269,64 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional
-    public GiftCertificate updateField(Long id, Map<String, String> field) {
+    public GiftCertificate updateGiftCertificateField(Long id, GiftCertificateField giftCertificateField) {
+        giftCertificateValidator.isValidId(id);
+        giftCertificateValidator.isValidField(giftCertificateField);
         GiftCertificate giftCertificate = checkAndGetGiftCertificate(id);
-        changeValueOfField(giftCertificate, field);
+        updateField(giftCertificateField, giftCertificate);
         GiftCertificate updatedCertificate = giftCertificateDao.update(giftCertificate);
+        LOGGER.info("Gift certificate with id = {} updated", id);
         return updatedCertificate;
     }
 
-    private void changeValueOfField(GiftCertificate giftCertificate, Map<String, String> field) {
-        if (field.size() > 1) {
-            throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_FIELD, null,
-                    IdentifierEntity.CERTIFICATE);
+    private void updateField(GiftCertificateField giftCertificateField, GiftCertificate updatedGiftCertificate) {
+        GiftCertificateField.FieldName fieldName = GiftCertificateField.FieldName.valueOf(giftCertificateField
+                .getFieldName().toUpperCase());
+        switch (fieldName) {
+            case NAME:
+                updatedGiftCertificate.setName(giftCertificateField.getFieldValue());
+                break;
+            case DESCRIPTION:
+                updatedGiftCertificate.setDescription(giftCertificateField.getFieldValue());
+                break;
+            case PRICE:
+                updatedGiftCertificate.setPrice(new BigDecimal(giftCertificateField.getFieldValue()));
+                break;
+            case DURATION:
+                updatedGiftCertificate.setDuration(Integer.parseInt(giftCertificateField.getFieldValue()));
+                break;
         }
-        if (field.containsKey("price")) {
-            BigDecimal price = new BigDecimal(field.get("price").trim());
-            giftCertificateValidator.isValidPrice(price);
-            giftCertificate.setPrice(price);
-            return;
-        }
-        if (field.containsKey("duration")) {
-            int duration = Integer.parseInt(field.get("duration").trim());
-            giftCertificateValidator.isValidDuration(duration);
-            giftCertificate.setDuration(duration);
-            return;
-        }
-        if (field.containsKey("description")) {
-            String description = field.get("description").trim();
-            giftCertificateValidator.isValidDescription(description);
-            giftCertificate.setDescription(description);
-            return;
-        }
-        if (field.containsKey("name")) {
-            String name = field.get("name").trim();
-            giftCertificateValidator.isValidName(name);
-            giftCertificateValidator.ifExistName(name);
-            giftCertificate.setName(name);
-            return;
-        }
-        throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_FIELD, null,
-                IdentifierEntity.CERTIFICATE);
+//        if (field.size() > 1) {
+//            throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_FIELD, null,
+//                    IdentifierEntity.CERTIFICATE);
+//        }
+//        if (field.containsKey("price")) {
+//            BigDecimal price = new BigDecimal(field.get("price").trim());
+//            giftCertificateValidator.isValidPrice(price);
+//            giftCertificate.setPrice(price);
+//            return;
+//        }
+//        if (field.containsKey("duration")) {
+//            int duration = Integer.parseInt(field.get("duration").trim());
+//            giftCertificateValidator.isValidDuration(duration);
+//            giftCertificate.setDuration(duration);
+//            return;
+//        }
+//        if (field.containsKey("description")) {
+//            String description = field.get("description").trim();
+//            giftCertificateValidator.isValidDescription(description);
+//            giftCertificate.setDescription(description);
+//            return;
+//        }
+//        if (field.containsKey("name")) {
+//            String name = field.get("name").trim();
+//            giftCertificateValidator.isValidName(name);
+//            giftCertificateValidator.ifExistName(name);
+//            giftCertificate.setName(name);
+//            return;
+//        }
+//        throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_FIELD, null,
+//                IdentifierEntity.CERTIFICATE);
     }
 
     /**
