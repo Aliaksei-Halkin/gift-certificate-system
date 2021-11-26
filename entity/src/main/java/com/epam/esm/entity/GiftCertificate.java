@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -20,7 +19,7 @@ import java.util.Set;
 @Entity
 @Table(name = "gift_certificates")
 @Where(clause = "active = 1")
-public class GiftCertificate extends RepresentationModel<GiftCertificate> {
+public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "certificateId",
