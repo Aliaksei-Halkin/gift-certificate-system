@@ -296,37 +296,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 updatedGiftCertificate.setDuration(Integer.parseInt(giftCertificateField.getFieldValue()));
                 break;
         }
-//        if (field.size() > 1) {
-//            throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_FIELD, null,
-//                    IdentifierEntity.CERTIFICATE);
-//        }
-//        if (field.containsKey("price")) {
-//            BigDecimal price = new BigDecimal(field.get("price").trim());
-//            giftCertificateValidator.isValidPrice(price);
-//            giftCertificate.setPrice(price);
-//            return;
-//        }
-//        if (field.containsKey("duration")) {
-//            int duration = Integer.parseInt(field.get("duration").trim());
-//            giftCertificateValidator.isValidDuration(duration);
-//            giftCertificate.setDuration(duration);
-//            return;
-//        }
-//        if (field.containsKey("description")) {
-//            String description = field.get("description").trim();
-//            giftCertificateValidator.isValidDescription(description);
-//            giftCertificate.setDescription(description);
-//            return;
-//        }
-//        if (field.containsKey("name")) {
-//            String name = field.get("name").trim();
-//            giftCertificateValidator.isValidName(name);
-//            giftCertificateValidator.ifExistName(name);
-//            giftCertificate.setName(name);
-//            return;
-//        }
-//        throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_FIELD, null,
-//                IdentifierEntity.CERTIFICATE);
     }
 
     /**

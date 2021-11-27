@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS user
 );
 CREATE UNIQUE INDEX user_email ON user (email ASC);
 
-CREATE TABLE IF NOT EXISTS order
+CREATE TABLE IF NOT EXISTS `order`
 (
     order_id    BIGINT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
     user_id     BIGINT    NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS order
             ON UPDATE NO ACTION
 );
 
-CREATE TABLE IF NOT EXISTS orders_has_gift_certificate
+CREATE TABLE IF NOT EXISTS `orders_has_gift_certificate`
 (
     order_id       BIGINT         NOT NULL,
     certificate_id BIGINT         NOT NULL,
@@ -77,11 +77,11 @@ CREATE TABLE IF NOT EXISTS orders_has_gift_certificate
     item_cost      DECIMAL(10, 2) NOT NULL,
     PRIMARY KEY (order_id, certificate_id),
     CONSTRAINT fk_orders_has_gift_certificates_order1
-        FOREIGN KEY (order_id) REFERENCES order (order_id)
+        FOREIGN KEY (order_id) REFERENCES `order` (order_id)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     CONSTRAINT fk_orders_has_gift_certificates_gift_certificates2
-        FOREIGN KEY (certificate_id) REFERENCES gift_certificates (certificateId)
+        FOREIGN KEY (certificate_id) REFERENCES `gift_certificates` (certificateId)
             ON DELETE NO ACTION
             ON UPDATE NO ACTION
 );

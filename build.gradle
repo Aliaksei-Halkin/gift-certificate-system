@@ -14,6 +14,7 @@ allprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
     repositories {
         mavenCentral()
+        mavenLocal()
     }
     dependencies {
         implementation('org.springframework.boot:spring-boot-starter-hateoas')

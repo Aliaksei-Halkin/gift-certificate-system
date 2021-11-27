@@ -71,6 +71,9 @@ public class RestExceptionHandler {
             case CERTIFICATE:
                 errorCode = ErrorCode.BAD_REQUEST_CERTIFICATE;
                 break;
+            case USER:
+                errorCode = ErrorCode.BAD_REQUEST_USER;
+                break;
             default:
                 errorCode = ErrorCode.BAD_REQUEST_ALL;
         }
@@ -106,11 +109,15 @@ public class RestExceptionHandler {
             case CERTIFICATE:
                 errorCode = ErrorCode.NOT_FOUND_CERTIFICATE;
                 break;
+            case USER:
+                errorCode = ErrorCode.NOT_FOUND_USER;
+                break;
             default:
                 errorCode = ErrorCode.NOT_FOUND_ALL;
         }
         return errorCode;
     }
+
     /**
      * Exception thrown on a type mismatch when trying to set a bean property.
      *
