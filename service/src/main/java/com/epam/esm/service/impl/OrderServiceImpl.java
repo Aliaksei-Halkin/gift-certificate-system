@@ -56,8 +56,14 @@ public class OrderServiceImpl implements OrderService {
         order.setGiftCertificates(giftCertificates);
         order.setTotalCost(cost);
         order.setUser(user);
-        long id =orderDao.add(order);//todo help me
+        long id = orderDao.add(order);//todo help me
         order.setOrderId(id);
         return order;
+    }
+
+    @Override
+    public List<Order> findUserOrders(Long userId) {
+        UserValidator.isValidId(userId);
+        return orderDao.findUserOrders(userId);
     }
 }

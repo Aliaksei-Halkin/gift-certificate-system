@@ -7,4 +7,6 @@ import java.util.Map;
 
 public interface OrderService {
     Order makeOrder(Long userId, List<Long> certificates);
+
+    List<Order> findUserOrders(Long userId);
 }

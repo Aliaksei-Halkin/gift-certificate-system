@@ -43,4 +43,10 @@ public class UserController {
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{id}/orders")
+    public ResponseEntity<List<Order>> findUserOrders(@PathVariable("id") Long userId) {
+        List<Order> orders = orderService.findUserOrders(userId);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
 }
