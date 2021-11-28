@@ -16,6 +16,7 @@ public final class ErrorCode {
     public static final int BAD_REQUEST_USER = 400_03;
     public static final int METHOD_NOT_ALLOWED = 405;
     public static final int INTERNAL_ERROR = 500;
+    public static final int BAD_REQUEST_ORDER = 400_04;
 
     private ErrorCode() {
     }

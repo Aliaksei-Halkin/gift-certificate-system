@@ -2,7 +2,6 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.UserDao;
-import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
@@ -10,7 +9,7 @@ import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.validator.QueryParameterValidator;
-import com.epam.esm.validator.UserValadator;
+import com.epam.esm.validator.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(long id) {
-        UserValadator.isValidId(id);
+        UserValidator.isValidId(id);
         User user = checkAndGetUser(id);
         return user;
     }

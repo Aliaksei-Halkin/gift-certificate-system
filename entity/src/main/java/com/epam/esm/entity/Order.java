@@ -13,8 +13,8 @@ import java.util.Objects;
 @Table(name = "order")
 public class Order {
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY)
-    @Column(name="order_id",nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id", nullable = false, unique = true)
     private long orderId;
     @CreationTimestamp
     @Column(name = "create_date")
@@ -91,23 +91,13 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return orderId == order.orderId && active == order.active && Objects.equals(createDate, order.createDate) && Objects.equals(totalCost, order.totalCost) && Objects.equals(giftCertificates, order.giftCertificates) && Objects.equals(user, order.user);
+        return orderId == order.orderId && active == order.active
+                && createDate.equals(order.createDate) && totalCost.equals(order.totalCost)
+                && giftCertificates.equals(order.giftCertificates) && user.equals(order.user);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(orderId, createDate, totalCost, active, giftCertificates, user);
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "orderId=" + orderId +
-                ", createDate=" + createDate +
-                ", totalCost=" + totalCost +
-                ", active=" + active +
-                ", giftCertificates=" + giftCertificates +
-                ", user=" + user +
-                '}';
     }
 }

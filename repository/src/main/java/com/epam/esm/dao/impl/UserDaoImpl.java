@@ -26,7 +26,8 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public long add(User entity) {
-        throw new UnsupportedOperationException("Update is not available action for User");
+        entityManager.persist(entity);
+        return entity.getUserId();
     }
 
     @Override

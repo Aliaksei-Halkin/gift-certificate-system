@@ -36,5 +36,11 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PostMapping("/{id}/order")
+    public ResponseEntity<Order> makeOrder(@PathVariable("id") Long userId,
+                                           @RequestBody List<Long> certificatesIDs) {
+        Order order = orderService.makeOrder(userId, certificatesIDs);
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
+    }
 
 }

@@ -25,6 +25,8 @@ public class ExceptionPropertyKey {
     public static final String INCORRECT_FIELD_VALUE = "incorrect.field.value";
     public static final String USER_WITH_ID_NOT_FOUND = "user.id.not.found";
     public static final String USER_ORDER_NOT_FOUND = "user.order.not.found";;
+    public static final String INCORRECT_QUANTITY_IN_ORDER = "incorrect.quantity.order";
+    public static final String GIFT_CERTIFICATES_NOT_FOUND = "certificates.notFound";
 
     private ExceptionPropertyKey() {
     }

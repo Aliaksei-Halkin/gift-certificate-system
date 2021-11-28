@@ -21,8 +21,8 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public long add(Order entity) {
-        throw new UnsupportedOperationException("NO ACTION");
-
+        entityManager.persist(entity);
+        return entity.getOrderId();
     }
 
     @Override

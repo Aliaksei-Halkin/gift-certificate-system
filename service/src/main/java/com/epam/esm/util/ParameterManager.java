@@ -28,7 +28,10 @@ public class ParameterManager {
                         processedParameters.put(key + count++, tag.trim());
                     }
                 } else {
-                    processedParameters.put(key, value.trim());
+                    value.trim();
+                    if (!value.isEmpty()) {
+                        processedParameters.put(key, value);
+                    }
                 }
             }
         });

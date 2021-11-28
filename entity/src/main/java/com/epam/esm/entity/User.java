@@ -13,10 +13,10 @@ import java.util.Objects;
 public class User {
 
     @Id
-    @Column(name="user_id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
-       @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
     @Column(name = "last_name", nullable = false)
     private String lastName;
@@ -28,9 +28,6 @@ public class User {
     @JsonIgnore
     @Column(name = "active", nullable = false)
     boolean active;
-    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH},
-            mappedBy = "user")
-    private List<Order> orders;
 
     public User() {
     }
@@ -83,8 +80,8 @@ public class User {
         this.active = active;
     }
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public boolean isActive() {
+        return active;
     }
 
     @Override
@@ -92,12 +89,12 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return userId == user.userId && active == user.active && Objects.equals(email, user.email) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(password, user.password) && Objects.equals(orders, user.orders);
+        return userId == user.userId && active == user.active && Objects.equals(email, user.email) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, email, firstName, lastName, password, active, orders);
+        return Objects.hash(userId, email, firstName, lastName, password, active);
     }
 
     @Override
@@ -109,7 +106,6 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", password='" + password + '\'' +
                 ", active=" + active +
-                ", orders=" + orders +
                 '}';
     }
 }

@@ -4,7 +4,7 @@ import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ValidationException;
 
-public class UserValadator {
+public class UserValidator {
     private static final long MIN_ID = 1;
 
     public static void isValidId(long id) {
