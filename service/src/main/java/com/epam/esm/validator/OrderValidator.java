@@ -7,7 +7,7 @@ import com.epam.esm.exception.ValidationException;
 public class OrderValidator {
     private static final long MIN_ID = 1;
 
-    public void isValidId(long id) {
+    public static void isValidId(long id) {
         if (id < MIN_ID) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_ID, id, IdentifierEntity.ORDER);
         }

@@ -2,18 +2,22 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.UserDao;
+import com.epam.esm.dto.OrderDto;
+import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.UserService;
+import com.epam.esm.validator.OrderValidator;
 import com.epam.esm.validator.QueryParameterValidator;
 import com.epam.esm.validator.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.modelmapper.ModelMapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,11 +32,13 @@ public class UserServiceImpl implements UserService {
     private static final String PER_PAGE = "per_page";
     private final UserDao userDao;
     private final OrderDao orderDao;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, OrderDao orderDao) {
+    public UserServiceImpl(UserDao userDao, OrderDao orderDao,ModelMapper modelMapper) {
         this.userDao = userDao;
         this.orderDao = orderDao;
+        this.modelMapper=modelMapper;
     }
 
     @Override
@@ -49,6 +55,17 @@ public class UserServiceImpl implements UserService {
         UserValidator.isValidId(id);
         User user = checkAndGetUser(id);
         return user;
+    }
+
+    @Override
+    public OrderDto findUserOrder(Long userId, Long orderId) {
+        UserValidator.isValidId(userId);
+        OrderValidator.isValidId(orderId);
+        Optional<Order> orderOptional = orderDao.findUserOrder(userId, orderId);
+        Order order = orderOptional.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.USER_WITH_ID_NOT_FOUND, userId,
+                IdentifierEntity.USER));
+        OrderDto orderDto=modelMapper.map(order, OrderDto.class);
+        return orderDto;
     }
 
 

@@ -12,6 +12,8 @@ import java.util.Optional;
 @Repository
 public class OrderDaoImpl implements OrderDao {
     public static final String SELECT_USER_ORDERS = "SELECT o FROM Order o WHERE  o.user.userId =?1";
+    private static final String SELECT_USER_ORDER = "SELECT o FROM Order o WHERE  o.user.userId =?1 " +
+            " AND o.orderId =?2 ";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -36,5 +38,14 @@ public class OrderDaoImpl implements OrderDao {
     public List<Order> findUserOrders(Long userId) {
         return entityManager.createQuery(SELECT_USER_ORDERS, Order.class)
                 .setParameter(1, userId).getResultList();
+    }
+
+    @Override
+    public Optional<Order> findUserOrder(Long userId, Long orderId) {
+        return entityManager.createQuery(SELECT_USER_ORDER, Order.class)
+                .setParameter(1, userId)
+                .setParameter(2, orderId)
+                .getResultStream()
+                .findFirst();
     }
 }
