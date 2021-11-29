@@ -17,5 +17,6 @@ public interface TagDao extends BaseDao<Tag, Long> {
 
     void changeActiveForTag(String name);
 
-    List<Tag> findAll();
+    List<Tag> findAll(int page, int perPage);
+    long countTotalRows(int page,int perPage);
 }

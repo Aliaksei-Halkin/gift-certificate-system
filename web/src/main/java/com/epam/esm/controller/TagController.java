@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -84,8 +86,8 @@ public class TagController {
      * @return {@link ResponseEntity} with the list of the gift certificates.
      */
     @GetMapping
-    public ResponseEntity<Set<Tag>> findAllTags() {
-        Set<Tag> tags = tagService.findAllTags();
+    public ResponseEntity<Set<Tag>> findAllTags(@RequestBody Map<String, String> pages) {
+        Set<Tag> tags = tagService.findAllTags(pages);
         return new ResponseEntity<>(tags, HttpStatus.OK);
     }
 

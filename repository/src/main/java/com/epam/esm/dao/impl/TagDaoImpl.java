@@ -91,8 +91,16 @@ public class TagDaoImpl implements TagDao {
      * @return {@code List} of all tags
      */
     @Override
-    public List<Tag> findAll() {
-        return entityManager.createQuery(SELECT_ALL_TAGS, Tag.class).getResultList();
+    public List<Tag> findAll(int page, int perPage) {
+        int firstResult = page == 1 ? 0 : page * perPage - perPage;
+        return entityManager.createQuery(SELECT_ALL_TAGS, Tag.class)
+                .setFirstResult(firstResult).setMaxResults(perPage).getResultList();
+    }
+
+    @Override
+    public long countTotalRows(int page, int perPage) {
+        return entityManager.createQuery(SELECT_ALL_TAGS, Tag.class)
+               .getResultStream().count();
     }
 
     /**

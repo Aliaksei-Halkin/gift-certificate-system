@@ -13,7 +13,7 @@
 9. [Auditing with JPA](https://www.baeldung.com/database-auditing-jpa#auditing)
 
 ## Practice
-
+![img.png](img.png)
 #### Recommended Timeline
 The recommended timeline for the whole module is 2 weeks.
 
