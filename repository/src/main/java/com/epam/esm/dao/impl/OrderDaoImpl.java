@@ -2,6 +2,8 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -14,6 +16,15 @@ public class OrderDaoImpl implements OrderDao {
     public static final String SELECT_USER_ORDERS = "SELECT o FROM Order o WHERE  o.user.userId =?1";
     private static final String SELECT_USER_ORDER = "SELECT o FROM Order o WHERE  o.user.userId =?1 " +
             " AND o.orderId =?2 ";
+    private static final String SELECT_TOP_USER =
+            "SELECT o.user FROM Order o GROUP BY o.user.userId ORDER BY SUM(o.totalCost) DESC ";
+    private static final String SELECT_TOP_TAG =
+            "SELECT t FROM Order o " +
+                    " JOIN o.giftCertificates g " +
+                    " JOIN g.tags t " +
+                    " JOIN o.user u WHERE u.userId =?1 " +
+                    " GROUP BY t.id " +
+                    " ORDER BY count(t.id) DESC ";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -47,5 +58,21 @@ public class OrderDaoImpl implements OrderDao {
                 .setParameter(2, orderId)
                 .getResultStream()
                 .findFirst();
+    }
+
+    @Override
+    public User findTopUser() {
+        return entityManager.createQuery(SELECT_TOP_USER, User.class)
+                .setMaxResults(1)
+                .getSingleResult();
+    }
+
+    @Override
+    public Tag findPopularTag(long userId) {
+        Tag tag = entityManager.createQuery(SELECT_TOP_TAG, Tag.class)
+                .setParameter(1, userId)
+                .setMaxResults(1)
+                .getSingleResult();
+        return tag;
     }
 }

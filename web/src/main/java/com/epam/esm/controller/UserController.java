@@ -2,6 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
@@ -49,10 +50,17 @@ public class UserController {
         List<Order> orders = orderService.findUserOrders(userId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
+
     @GetMapping("/{id}/order/{orderId}")
     public ResponseEntity<OrderDto> findUserOrder(@PathVariable("id") Long userId,
-                                                  @PathVariable("orderId") Long orderId){
+                                                  @PathVariable("orderId") Long orderId) {
         OrderDto order = userService.findUserOrder(userId, orderId);
         return new ResponseEntity<>(order, HttpStatus.OK);
+    }
+
+    @GetMapping("/tag")
+    public ResponseEntity<Tag> findMostWidlyUsedTag() {
+        Tag tag = orderService.findMostWidelyUsedTag();
+        return new ResponseEntity<>(tag, HttpStatus.OK);
     }
 }

@@ -2,9 +2,11 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.OrderDao;
+import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
@@ -26,14 +28,16 @@ public class OrderServiceImpl implements OrderService {
     private final GiftCertificateValidator giftCertificateValidator;
     private final UserDao userDao;
     private final OrderDao orderDao;
+    private final TagDao tagDao;
 
     @Autowired
     public OrderServiceImpl(GiftCertificateDao giftCertificateDao, GiftCertificateValidator giftCertificateValidator,
-                            UserDao userDao, OrderDao orderDao) {
+                            UserDao userDao, OrderDao orderDao, TagDao tagDao) {
         this.giftCertificateDao = giftCertificateDao;
         this.giftCertificateValidator = giftCertificateValidator;
         this.userDao = userDao;
         this.orderDao = orderDao;
+        this.tagDao = tagDao;
     }
 
     @Transactional
@@ -56,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
         order.setGiftCertificates(giftCertificates);
         order.setTotalCost(cost);
         order.setUser(user);
-        long id = orderDao.add(order);//todo help me
+        long id = orderDao.add(order);
         order.setOrderId(id);
         return order;
     }
@@ -65,5 +69,12 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findUserOrders(Long userId) {
         UserValidator.isValidId(userId);
         return orderDao.findUserOrders(userId);
+    }
+
+    @Override
+    public Tag findMostWidelyUsedTag() {
+        User user = orderDao.findTopUser();
+        Tag topTag = orderDao.findPopularTag(user.getUserId());
+        return topTag;
     }
 }

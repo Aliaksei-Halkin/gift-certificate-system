@@ -15,9 +15,9 @@ import com.epam.esm.validator.QueryParameterValidator;
 import com.epam.esm.validator.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.modelmapper.ModelMapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,10 +35,10 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, OrderDao orderDao,ModelMapper modelMapper) {
+    public UserServiceImpl(UserDao userDao, OrderDao orderDao, ModelMapper modelMapper) {
         this.userDao = userDao;
         this.orderDao = orderDao;
-        this.modelMapper=modelMapper;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -64,10 +64,9 @@ public class UserServiceImpl implements UserService {
         Optional<Order> orderOptional = orderDao.findUserOrder(userId, orderId);
         Order order = orderOptional.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.USER_WITH_ID_NOT_FOUND, userId,
                 IdentifierEntity.USER));
-        OrderDto orderDto=modelMapper.map(order, OrderDto.class);
+        OrderDto orderDto = modelMapper.map(order, OrderDto.class);
         return orderDto;
     }
-
 
     private User checkAndGetUser(long id) {
         Optional<User> userOptional = userDao.findById(id);
