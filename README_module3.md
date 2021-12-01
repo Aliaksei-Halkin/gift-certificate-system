@@ -36,7 +36,7 @@ The recommended timeline for the whole module is 2 weeks.
         • }
 
    where *errorCode” is your custom code (it can be based on http status and requested resource - certificate or tag)
-8. Abstraction should be used everywhere to avoid code duplication.
+8. Abstraction should be used everywhere to avoid code duplication☺.
 9. Several configurations should be implemented.
 
 #### Part 1

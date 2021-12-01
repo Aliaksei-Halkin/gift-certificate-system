@@ -4,7 +4,6 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.util.QueryBuilder;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * The class represents GiftCertificate dao implementation.
- * This class use {@link JdbcTemplate} to do standard CRUD operations in a database with table GiftCertificate.
+ * This class use JPA to do standard CRUD operations in a database with table GiftCertificate.
  *
  * @author Aliaksei Halkin
  */

@@ -40,7 +40,7 @@ class TagDaoImplIntegTest {
 
     @Test
     void whenFindAllThenShouldReturnListTags() {
-        List<Tag> tagList = tagDao.findAll();
+        List<Tag> tagList = tagDao.findAll(1,100);
         assertEquals(8, tagList.size());
     }
 
@@ -61,10 +61,10 @@ class TagDaoImplIntegTest {
 
     @Test
     void whenRemoveByIdThenShouldListTagsLessOne() {
-        List<Tag> tagList = tagDao.findAll();
+        List<Tag> tagList = tagDao.findAll(1,100);
         int expected = tagList.size();
         tagDao.removeById(1L);
-        List<Tag> tagListAfterRemove = tagDao.findAll();
+        List<Tag> tagListAfterRemove = tagDao.findAll(1,100);
         int actual = tagListAfterRemove.size();
         assertNotEquals(expected, actual);
     }
