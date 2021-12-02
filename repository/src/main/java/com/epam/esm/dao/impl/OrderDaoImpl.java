@@ -2,7 +2,6 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +18,7 @@ public class OrderDaoImpl implements OrderDao {
     private static final String SELECT_TOP_USER =
             "SELECT o.user FROM Order o GROUP BY o.user.userId ORDER BY SUM(o.totalCost) DESC ";
     private static final String SELECT_TOP_TAG =
-            "SELECT t FROM Order o " +
+            "SELECT t, count(t.id) AS quantity FROM Order o " +
                     " JOIN o.giftCertificates g " +
                     " JOIN g.tags t " +
                     " JOIN o.user u WHERE u.userId =?1 " +
@@ -69,12 +68,12 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Tag findPopularTag(long userId) {
-        Tag tag = entityManager.createQuery(SELECT_TOP_TAG, Tag.class)
+    public List<Object[]> findPopularTag(long userId) {
+        List<Object[]> tag = entityManager.createQuery(SELECT_TOP_TAG)
                 .setParameter(1, userId)
-                .setMaxResults(1)
-                .getSingleResult();
+                .getResultList();
         return tag;
+
     }
 
     @Override

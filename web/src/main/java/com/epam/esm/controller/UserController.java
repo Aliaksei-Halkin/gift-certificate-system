@@ -59,8 +59,8 @@ public class UserController {
     }
 
     @GetMapping("/tag")
-    public ResponseEntity<Tag> findMostWidlyUsedTag() {
-        Tag tag = orderService.findMostWidelyUsedTag();
+    public ResponseEntity<List<Tag>> findMostWidelyUsedTag() {
+        List<Tag> tag = orderService.findMostWidelyUsedTag();
         return new ResponseEntity<>(tag, HttpStatus.OK);
     }
 }

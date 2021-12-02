@@ -21,11 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -79,10 +75,39 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Tag findMostWidelyUsedTag() {
+    public List<Tag> findMostWidelyUsedTag() {
         User user = orderDao.findTopUser();
-        Tag topTag = orderDao.findPopularTag(user.getUserId());
-        return topTag;
+        List<Object[]> listOfTagsAndQuantity = orderDao.findPopularTag(user.getUserId());
+        Map<Tag, Long> resultMap = extractTagsAndValues(listOfTagsAndQuantity);
+        return getPopularTagFromSortedMap(resultMap);
+    }
+
+    private List<Tag> getPopularTagFromSortedMap(Map<Tag, Long> sortedResultMap) {
+        List<Tag> tags = new ArrayList<>();
+        Long maxQuantity = -1L;
+        for (Map.Entry<Tag, Long> entry : sortedResultMap.entrySet()) {
+            if (tags.isEmpty()) {
+                tags.add(entry.getKey());
+                maxQuantity = entry.getValue();
+                continue;
+            }
+            if (entry.getValue().equals(maxQuantity)) {
+                tags.add(entry.getKey());
+            } else {
+                break;
+            }
+        }
+        return tags;
+    }
+
+    private Map<Tag, Long> extractTagsAndValues(List<Object[]> listOfTagsAndQuantity) {
+        Map<Tag, Long> resultMap = new LinkedHashMap<>();
+        listOfTagsAndQuantity.stream().forEach(result -> {
+            Tag tag1 = (Tag) result[0];
+            Long quantity = (Long) result[1];
+            resultMap.put(tag1, quantity);
+        });
+        return resultMap;
     }
 
     @Override

@@ -12,7 +12,7 @@ public interface OrderService {
 
     List<Order> findUserOrders(Long userId);
 
-    Tag findMostWidelyUsedTag();
+    List<Tag> findMostWidelyUsedTag();
 
     Order findOrderById(long orderId);
 
