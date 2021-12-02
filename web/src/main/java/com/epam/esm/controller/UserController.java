@@ -46,14 +46,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}/orders")
-    public ResponseEntity<List<Order>> findUserOrders(@PathVariable("id") Long userId) {
+    public ResponseEntity<List<Order>> findOrdersByUserId(@PathVariable("id") Long userId) {
         List<Order> orders = orderService.findUserOrders(userId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/order/{orderId}")
-    public ResponseEntity<OrderDto> findUserOrder(@PathVariable("id") Long userId,
-                                                  @PathVariable("orderId") Long orderId) {
+    public ResponseEntity<OrderDto> findOrder(@PathVariable("id") Long userId,
+                                              @PathVariable("orderId") Long orderId) {
         OrderDto order = userService.findUserOrder(userId, orderId);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }

@@ -16,4 +16,8 @@ public interface OrderDao extends BaseDao<Order, Long> {
     User findTopUser();
 
     Tag findPopularTag(long userId);
+
+    List<Order> findAll(int firstPage, int numberOfRowOnPage);
+
+    long countTotalRows(int page, int perPage);
 }

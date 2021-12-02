@@ -74,7 +74,7 @@ public class RestExceptionHandler {
             case USER:
                 errorCode = ErrorCode.BAD_REQUEST_USER;
                 break;
-                case ORDER:
+            case ORDER:
                 errorCode = ErrorCode.BAD_REQUEST_ORDER;
                 break;
             default:
@@ -114,6 +114,9 @@ public class RestExceptionHandler {
                 break;
             case USER:
                 errorCode = ErrorCode.NOT_FOUND_USER;
+                break;
+            case ORDER:
+                errorCode = ErrorCode.NOT_FOUND_ORDER;
                 break;
             default:
                 errorCode = ErrorCode.NOT_FOUND_ALL;

@@ -13,6 +13,8 @@ import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.validator.GiftCertificateValidator;
+import com.epam.esm.validator.OrderValidator;
+import com.epam.esm.validator.QueryParameterValidator;
 import com.epam.esm.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +23,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+    private static final String REGEX_PAGE_KEY = "page";
+    private static final String REGEX_PER_PAGE_KEY = "per_page";
     private final GiftCertificateDao giftCertificateDao;
     private final GiftCertificateValidator giftCertificateValidator;
     private final UserDao userDao;
@@ -76,5 +83,40 @@ public class OrderServiceImpl implements OrderService {
         User user = orderDao.findTopUser();
         Tag topTag = orderDao.findPopularTag(user.getUserId());
         return topTag;
+    }
+
+    @Override
+    public Order findOrderById(long orderId) {
+        OrderValidator.isValidId(orderId);
+        Optional<Order> order = orderDao.findById(orderId);
+        return order.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.ORDER_WITH_ID_NOT_FOUND,
+                orderId, IdentifierEntity.ORDER));
+    }
+
+    @Override
+    public List<Order> findAll(Map<String, String> pages) {
+        String page = pages.get(REGEX_PAGE_KEY);
+        String perPage = pages.get(REGEX_PER_PAGE_KEY);
+        QueryParameterValidator.isValidPage(page);
+        QueryParameterValidator.isValidPage(perPage);
+        int firstPage = Integer.parseInt(page);
+        int numberOfRowOnPage = Integer.parseInt(perPage);
+        countTotalPages(firstPage, numberOfRowOnPage);
+        List<Order> orders = orderDao.findAll(firstPage, numberOfRowOnPage);
+        return orders;
+    }
+
+    private void countTotalPages(int page, int perPage) {
+        long totalNumbersOfRows = orderDao.countTotalRows(page, perPage);
+        long counterPages;
+        if (totalNumbersOfRows % perPage == 0) {
+            counterPages = totalNumbersOfRows / perPage;
+        } else {
+            counterPages = totalNumbersOfRows / perPage + 1;
+        }
+        if (page > counterPages) {
+            throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_MAX_PAGE, counterPages,
+                    IdentifierEntity.ORDER);
+        }
     }
 }

@@ -25,13 +25,14 @@ public class OrderDaoImpl implements OrderDao {
                     " JOIN o.user u WHERE u.userId =?1 " +
                     " GROUP BY t.id " +
                     " ORDER BY count(t.id) DESC ";
+    private static final String SELECT_ALL_ORDERS = "SELECT o FROM Order o";
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public Optional<Order> findById(Long id) {
-        throw new UnsupportedOperationException("NO ACTION");
+        return Optional.ofNullable(entityManager.find(Order.class, id));
     }
 
     @Override
@@ -74,5 +75,17 @@ public class OrderDaoImpl implements OrderDao {
                 .setMaxResults(1)
                 .getSingleResult();
         return tag;
+    }
+
+    @Override
+    public List<Order> findAll(int page, int perPage) {
+        int firstResult = page == 1 ? 0 : page * perPage - perPage;
+        return entityManager.createQuery(SELECT_ALL_ORDERS, Order.class)
+                .setFirstResult(firstResult).setMaxResults(perPage).getResultList();
+    }
+
+    @Override
+    public long countTotalRows(int page, int perPage) {
+        return entityManager.createQuery(SELECT_ALL_ORDERS, Order.class).getResultStream().count();
     }
 }
