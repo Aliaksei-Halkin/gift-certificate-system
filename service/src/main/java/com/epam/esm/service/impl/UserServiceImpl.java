@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public OrderDto findUserOrder(Long userId, Long orderId) {
+    public OrderDto findPartOfOrder(Long userId, Long orderId) {
         UserValidator.isValidId(userId);
         OrderValidator.isValidId(orderId);
         Optional<Order> orderOptional = orderDao.findUserOrder(userId, orderId);

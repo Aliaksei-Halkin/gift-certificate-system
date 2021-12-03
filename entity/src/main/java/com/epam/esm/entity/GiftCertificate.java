@@ -19,7 +19,7 @@ import java.util.Set;
 @Entity
 @Table(name = "gift_certificates")
 @Where(clause = "active = 1")
-public class GiftCertificate extends RepresentationModel<GiftCertificate> {
+public class GiftCertificate extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "certificateId",

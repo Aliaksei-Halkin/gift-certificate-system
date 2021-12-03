@@ -3,43 +3,58 @@ package com.epam.esm.controller.assembler;
 import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.controller.TagController;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.swing.text.html.parser.Entity;
+import java.util.HashMap;
+import java.util.Set;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class GiftCertificateAssembler implements SimpleRepresentationModelAssembler<GiftCertificate> {
+public class GiftCertificateAssembler extends RepresentationModelAssemblerSupport<GiftCertificate, GiftCertificate> {
+
+
+    public GiftCertificateAssembler() {
+        super(GiftCertificateController.class, GiftCertificate.class);
+    }
+
 
     @Override
-    public void addLinks(EntityModel<GiftCertificate> resource) {
-        resource.add(linkTo(methodOn(GiftCertificateController.class)
-                .findGiftCertificateById(resource.getContent().getId())).withSelfRel());
-        resource.add(linkTo(methodOn(GiftCertificateController.class)
-                .findGiftCertificateTags(resource.getContent().getId())).withRel("tags"));
-        resource.add(linkTo(methodOn(GiftCertificateController.class)
-                .updateGiftCertificate(resource.getContent().getId(), null)).withRel("update"));
-        resource.add(linkTo(methodOn(GiftCertificateController.class)
-                .updateGiftCertificateField(resource.getContent().getId(), null)).withRel("update_field"));
-        resource.add(linkTo(methodOn(GiftCertificateController.class)
-                .deleteGiftCertificateById(resource.getContent().getId())).withRel("delete"));
-        resource.add(linkTo(methodOn(GiftCertificateController.class)
-                .addGiftCertificate(null)).withRel("add_new_certificate"));
-
-        resource.getContent().getTags().forEach(tag -> {
-            tag.add(linkTo(methodOn(TagController.class).findTagById(tag.getId())).withSelfRel());
-            tag.add(linkTo(methodOn(TagController.class).deleteTagById(tag.getId())).withRel("delete_tag"));
-        });
+    public CollectionModel toCollectionModel(Iterable<? extends GiftCertificate> entities) {
+        CollectionModel<GiftCertificate> certificateModels = super.toCollectionModel(entities);
+        certificateModels.add(linkTo(methodOn(GiftCertificateController.class).findAllGiftCertificates(new HashMap<>())).withSelfRel());
+        return certificateModels;
     }
 
     @Override
-    public void addLinks(CollectionModel<EntityModel<GiftCertificate>> resources) {
+    public GiftCertificate toModel(GiftCertificate entity) {
+        entity.add(linkTo(methodOn(GiftCertificateController.class)
+                .findGiftCertificateById(entity.getId())).withSelfRel());
+        entity.add(linkTo(methodOn(GiftCertificateController.class)
+                .findGiftCertificateTags(entity.getId())).withRel("tags"));
+        entity.add(linkTo(methodOn(GiftCertificateController.class)
+                .updateGiftCertificate(entity.getId(), null)).withRel("update"));
+        entity.add(linkTo(methodOn(GiftCertificateController.class)
+                .updateGiftCertificateField(entity.getId(), null)).withRel("update_field"));
+        entity.add(linkTo(methodOn(GiftCertificateController.class)
+                .deleteGiftCertificateById(entity.getId())).withRel("delete"));
+        entity.add(linkTo(methodOn(GiftCertificateController.class)
+                .addGiftCertificate(null)).withRel("add_new_certificate"));
+        toCertificateModel(entity.getTags());
+        return entity;
+    }
+
+    private void toCertificateModel(Set<Tag> tags) {
+        if (tags.isEmpty()) {
+            return;
+        }
+        for (Tag entity : tags) {
+            entity.add(linkTo(methodOn(TagController.class).findTagById(entity.getId())).withSelfRel());
+            entity.add(linkTo(methodOn(TagController.class).deleteTagById(entity.getId())).withRel("delete"));
+        }
     }
 }

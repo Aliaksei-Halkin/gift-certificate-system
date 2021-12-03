@@ -57,7 +57,7 @@ public class TagController {
      * @return {@link ResponseEntity} with the inserted tag and its location included.
      */
     @PostMapping
-    public ResponseEntity<EntityModel<Tag>> addTag(@RequestBody Tag tag) {
+    public ResponseEntity<Tag> addTag(@RequestBody Tag tag) {
         Tag addedTag = tagService.addTag(tag);
         return new ResponseEntity<>(tagAssembler.toModel(addedTag), HttpStatus.CREATED);
     }
@@ -75,7 +75,7 @@ public class TagController {
      * @return {@link ResponseEntity} with found tag.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<Tag>> findTagById(@PathVariable("id") long id) {
+    public ResponseEntity<Tag> findTagById(@PathVariable("id") long id) {
         Tag tag = tagService.findTagById(id);
         return new ResponseEntity<>(tagAssembler.toModel(tag), HttpStatus.OK);
     }

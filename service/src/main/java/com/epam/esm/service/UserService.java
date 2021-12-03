@@ -1,7 +1,6 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 
 import java.util.List;
@@ -12,5 +11,5 @@ public interface UserService {
 
     User findById(long id);
 
-    OrderDto findUserOrder(Long userId, Long orderId);
+    OrderDto findPartOfOrder(Long userId, Long orderId);
 }

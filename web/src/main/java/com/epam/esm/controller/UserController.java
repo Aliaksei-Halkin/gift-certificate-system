@@ -54,7 +54,7 @@ public class UserController {
     @GetMapping("/{id}/order/{orderId}")
     public ResponseEntity<OrderDto> findOrder(@PathVariable("id") Long userId,
                                               @PathVariable("orderId") Long orderId) {
-        OrderDto order = userService.findUserOrder(userId, orderId);
+        OrderDto order = userService.findPartOfOrder(userId, orderId);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 

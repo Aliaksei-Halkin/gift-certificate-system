@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 /**
  * The {@code GiftCertificateController} class is an endpoint of the API
  * which allows its users to perform CRUD operations on gift certificates.
@@ -68,7 +65,7 @@ public class GiftCertificateController {
      * @return {@link ResponseEntity} with the inserted gift certificate and its location included.
      */
     @PostMapping
-    public ResponseEntity<EntityModel<GiftCertificate>> addGiftCertificate(@RequestBody GiftCertificate giftCertificate) {
+    public ResponseEntity<GiftCertificate> addGiftCertificate(@RequestBody GiftCertificate giftCertificate) {
         GiftCertificate addedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificate);
         return new ResponseEntity<>(giftCertificateAssembler.toModel(addedGiftCertificate), HttpStatus.CREATED);
     }
@@ -108,7 +105,7 @@ public class GiftCertificateController {
      * @return {@link ResponseEntity} with found gift certificate.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<GiftCertificate>> findGiftCertificateById(@PathVariable("id") long id) {
+    public ResponseEntity<GiftCertificate> findGiftCertificateById(@PathVariable("id") long id) {
         GiftCertificate giftCertificate = giftCertificateService.findGiftCertificateById(id);
         Set<Tag> tags = giftCertificate.getTags();
         return new ResponseEntity<>(giftCertificateAssembler.toModel(giftCertificate), HttpStatus.OK);
@@ -176,8 +173,8 @@ public class GiftCertificateController {
      * @return {@link ResponseEntity} with the updated gift certificate.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<GiftCertificate>> updateGiftCertificate(@PathVariable("id") long giftCertificateId,
-                                                                              @RequestBody GiftCertificate giftCertificate) {
+    public ResponseEntity<GiftCertificate> updateGiftCertificate(@PathVariable("id") long giftCertificateId,
+                                                                 @RequestBody GiftCertificate giftCertificate) {
         GiftCertificate updatedGiftCertificate = giftCertificateService
                 .updateGiftCertificate(giftCertificateId, giftCertificate);
         return new ResponseEntity<>(giftCertificateAssembler.toModel(updatedGiftCertificate), HttpStatus.OK);
@@ -221,7 +218,7 @@ public class GiftCertificateController {
      * @return updated GiftCertificate
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<EntityModel<GiftCertificate>> updateGiftCertificateField(@PathVariable Long id,
+    public ResponseEntity<GiftCertificate> updateGiftCertificateField(@PathVariable Long id,
                                                                                    @RequestBody GiftCertificateField giftCertificateField) {
         GiftCertificate updatedGiftCertificate = giftCertificateService.updateGiftCertificateField(id, giftCertificateField);
         return new ResponseEntity<>(giftCertificateAssembler.toModel(updatedGiftCertificate), HttpStatus.OK);
