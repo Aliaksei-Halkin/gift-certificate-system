@@ -1,16 +1,11 @@
 package com.epam.esm.controller.assembler;
 
 import com.epam.esm.controller.GiftCertificateController;
-import com.epam.esm.controller.TagController;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import javax.swing.text.html.parser.Entity;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -32,11 +27,6 @@ public class GiftCertificateAssembler implements SimpleRepresentationModelAssemb
                 .deleteGiftCertificateById(resource.getContent().getId())).withRel("delete"));
         resource.add(linkTo(methodOn(GiftCertificateController.class)
                 .addGiftCertificate(null)).withRel("add_new_certificate"));
-
-        resource.getContent().getTags().forEach(tag -> {
-            tag.add(linkTo(methodOn(TagController.class).findTagById(tag.getId())).withSelfRel());
-            tag.add(linkTo(methodOn(TagController.class).deleteTagById(tag.getId())).withRel("delete_tag"));
-        });
     }
 
     @Override

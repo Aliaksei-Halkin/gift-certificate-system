@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 /**
  * The {@code GiftCertificateController} class is an endpoint of the API
  * which allows its users to perform CRUD operations on gift certificates.
@@ -110,7 +107,6 @@ public class GiftCertificateController {
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<GiftCertificate>> findGiftCertificateById(@PathVariable("id") long id) {
         GiftCertificate giftCertificate = giftCertificateService.findGiftCertificateById(id);
-        Set<Tag> tags = giftCertificate.getTags();
         return new ResponseEntity<>(giftCertificateAssembler.toModel(giftCertificate), HttpStatus.OK);
     }
 
