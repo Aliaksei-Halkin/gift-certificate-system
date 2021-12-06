@@ -182,11 +182,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .giftCertificateQueryParametersProcessing(queryParameters);
         QueryParameterValidator.isValidGiftCertificateQueryParameters(processedQueryParameters);
         LOGGER.debug("Query parameter: {}", processedQueryParameters);
-        List<GiftCertificate> giftCertificates =giftCertificateDao
+        List<GiftCertificate> giftCertificates = giftCertificateDao
                 .findCertificatesByQueryParameters(new HashMap<>(processedQueryParameters));
-        if(giftCertificates.isEmpty()){
+        if (giftCertificates.isEmpty()) {
             throw new ResourceNotFoundException(ExceptionPropertyKey
-                    .GIFT_CERTIFICATES_NOT_FOUND,null,IdentifierEntity.CERTIFICATE);
+                    .GIFT_CERTIFICATES_NOT_FOUND, null, IdentifierEntity.CERTIFICATE);
         }
         countTotalPages(processedQueryParameters);
         return giftCertificates;

@@ -1,6 +1,7 @@
 package com.epam.esm.controller.assembler;
 
 import com.epam.esm.controller.OrderController;
+import com.epam.esm.dto.OrderDto;
 import com.epam.esm.entity.Order;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;

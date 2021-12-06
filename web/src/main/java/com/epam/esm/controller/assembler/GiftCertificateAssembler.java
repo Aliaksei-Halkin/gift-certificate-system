@@ -1,6 +1,7 @@
 package com.epam.esm.controller.assembler;
 
 import com.epam.esm.controller.GiftCertificateController;
+import com.epam.esm.controller.TagController;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -27,6 +28,10 @@ public class GiftCertificateAssembler implements SimpleRepresentationModelAssemb
                 .deleteGiftCertificateById(resource.getContent().getId())).withRel("delete"));
         resource.add(linkTo(methodOn(GiftCertificateController.class)
                 .addGiftCertificate(null)).withRel("add_new_certificate"));
+        resource.getContent().getTags().forEach(tag -> {
+            resource.add(linkTo(methodOn(TagController.class).findTagById(tag.getId())).withSelfRel());
+            resource.add(linkTo(methodOn(TagController.class).deleteTagById(tag.getId())).withRel("delete"));
+        });
     }
 
     @Override
