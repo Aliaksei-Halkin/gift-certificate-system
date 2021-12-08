@@ -1,64 +1,49 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.config.RepositoryTestConfig;
 import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.mapper.ColumnNameGiftCertificate;
-import com.epam.esm.dao.mapper.GiftCertificateMapper;
-import com.epam.esm.dao.mapper.TagMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.BadSqlGrammarException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Aliaksei Halkin
  */
+@SpringBootTest(classes = {RepositoryTestConfig.class})
+@ActiveProfiles("test")
+@Transactional
 class GiftCertificateDaoImplIntegTest {
-    private EmbeddedDatabase database;
+    @Autowired
     private GiftCertificateDao giftCertificateDao;
-
-    @BeforeEach
-    void setData() {
-        database = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-                .addScript("classpath:schema.sql").addScript("classpath:test-data.sql").build();
-        giftCertificateDao = new GiftCertificateDaoImpl(new JdbcTemplate(database), new GiftCertificateMapper(),
-                new TagMapper());
-    }
-
-    @AfterEach
-    void tearDown() {
-        database.shutdown();
-        giftCertificateDao = null;
-    }
 
     @Test
     void when_AddCorrectGiftCertificate_ThenShouldReturn_CorrectGiftCertificate() {
-        String nameGiftCertificate = "TestCertificate";
-        String addingQuery = " WHERE " + ColumnNameGiftCertificate.NAME + " = \'" + nameGiftCertificate + "\'";
+        String nameGiftCertificate = "TestCertificate UNIQUE UNIQUE UNIQUE";
+        String description = "test description";
+        Map<String, String> queryParameters = new HashMap<>();
+        queryParameters.put("name", nameGiftCertificate);
+        queryParameters.put("page", "1");
+        queryParameters.put("per_page", "100");
         int firstGiftCertificate = 0;
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setName(nameGiftCertificate);
-        giftCertificate.setDescription("test description");
+        giftCertificate.setDescription(description);
         giftCertificate.setPrice(new BigDecimal("13.0"));
-        giftCertificate.setCreatedDate(LocalDateTime.now());
-        giftCertificate.setUpdateDate(LocalDateTime.now());
+        giftCertificate.setActive(true);
         long actual = giftCertificateDao.add(giftCertificate);
-        long expected = giftCertificateDao.findCertificatesByQueryParameters(addingQuery)
+        List<GiftCertificate> certificatesByQueryParameters =
+                giftCertificateDao.findCertificatesByQueryParameters(queryParameters);
+        long expected = certificatesByQueryParameters
                 .get(firstGiftCertificate).getId();
         assertEquals(expected, actual);
     }
@@ -75,69 +60,77 @@ class GiftCertificateDaoImplIntegTest {
     }
 
     @Test
-    void when_FindByExistId_ThenShoul_dReturnTrue() {
+    void when_FindByExistId_ThenShould_ReturnTrue() {
         Optional<GiftCertificate> giftCertificateOptional = giftCertificateDao.findById(1L);
         assertTrue(giftCertificateOptional.isPresent());
     }
 
     @Test
     void when_GetByNoExistId_ThenShould_ReturnFalse() {
-        giftCertificateDao.removeById(10L);
-        Optional<GiftCertificate> giftCertificateOptional = giftCertificateDao.findById(10L);
-        assertFalse(giftCertificateOptional.isPresent());
+        long id = 10L;
+        Optional<GiftCertificate> giftCertificate = giftCertificateDao.findById(id);
+        if (giftCertificate.isPresent()) {
+            giftCertificateDao.deactivate(giftCertificate.get());
+            Optional<GiftCertificate> giftCertificateOptional = giftCertificateDao.findById(10L);
+            assertFalse(giftCertificateOptional.isPresent());
+        }
     }
 
     @Test
-    void whenRemoveByExistIdThenShouldListCertificatesLessOne() {
+    void when_RemoveByExistId_ThenShouldReturn_ListCertificates_LessOne() {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("page", "1");
+        param.put("per_page", "500");
+        List<GiftCertificate> allGiftCertificate = giftCertificateDao.findAll(param);
+        int expected = allGiftCertificate.size();
         Optional<GiftCertificate> certificateById = giftCertificateDao.findById(1L);
-        boolean expected = certificateById.get().isActive();
-        giftCertificateDao.removeById(1L);
-        Optional<GiftCertificate> certificateByIdActual = giftCertificateDao.findById(1L);
-        boolean actual = certificateByIdActual.get().isActive();
-        assertNotEquals(expected, actual);
+        if (certificateById.isPresent()) {
+            GiftCertificate giftCertificate = certificateById.get();
+            giftCertificateDao.deactivate(giftCertificate);
+        }
+        int actual = giftCertificateDao.findAll(param).size();
+        assertEquals(expected, actual + 1);
     }
 
     @Test
     void whenUpdateGiftCertificateThenShouldReturnUpdatedCertificate() {
-        GiftCertificate giftCertificate = new GiftCertificate(1L, "Sauna", "Russian sauna",
-                new BigDecimal(25.22), 22, LocalDateTime.now(), LocalDateTime.now(), new HashSet<Tag>() {
-        },true);
-        GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificate);
-        assertEquals(giftCertificate, updatedGiftCertificate);
+        long id = 1L;
+        Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.findById(id);
+        if (optionalGiftCertificate.isPresent()) {
+            GiftCertificate oldCertificate = optionalGiftCertificate.get();
+            oldCertificate.setDescription("new new new new");
+            GiftCertificate updatedGiftCertificate = giftCertificateDao.update(oldCertificate);
+            assertEquals(oldCertificate, updatedGiftCertificate);
+        }
     }
 
     @Test
     void whenUpdateIncorrectGiftCertificateThenShouldThrowException() {
         GiftCertificate giftCertificate = new GiftCertificate(1L, null, "American sauna",
                 new BigDecimal(15.22), 22, LocalDateTime.now(), LocalDateTime.now(), new HashSet<Tag>() {
-        },true);
+        }, true);
         assertThrows(RuntimeException.class, () -> giftCertificateDao.update(giftCertificate));
     }
 
     @Test
-    void whenFindCertificatesByQueryParametersThenShouldReturnListCertificates() {
-        List<GiftCertificate> allCertificates = giftCertificateDao.findCertificatesByQueryParameters("");
+    void when_FindCertificatesByQueryParameters_ThenShouldReturn_ListCertificates() {
+        Map<String, String> param = new HashMap<>();
+        param.put("page", "1");
+        param.put("per_page", "5");
+        List<GiftCertificate> allCertificates = giftCertificateDao.findCertificatesByQueryParameters(param);
         assertEquals(5, allCertificates.size());
     }
 
     @Test
-    void whenFindCertificatesByQueryParametersThenShouldThrowException() {
-        assertThrows(BadSqlGrammarException.class, () -> giftCertificateDao.findCertificatesByQueryParameters("helloJDBC"));
+    void when_FindCertificatesByQueryParameters_ThenShould_ThrowException() {
+        Map<String, String> param = new HashMap<>();
+        param.put("page", "-5");
+        assertThrows(Exception.class, () -> giftCertificateDao.findCertificatesByQueryParameters(param));
     }
 
     @Test
     void whenFindGiftCertificateTagsThenShouldReturnSetTags() {
-        Set<Tag> tagSet = giftCertificateDao.findGiftCertificateTags(1);
+        Set<Tag> tagSet = giftCertificateDao.findGiftCertificateTags(4);
         assertEquals(3, tagSet.size());
-    }
-
-    @Test
-    void whenAddRelationBetweenTagAndGiftCertificateThenShouldNotThrowException() {
-        assertDoesNotThrow(() -> giftCertificateDao.attachTag(2, 2));
-    }
-
-    @Test
-    void whenAddRelationBetweenTagAndGiftCertificateThenShouldThrowException() {
-        assertThrows(DuplicateKeyException.class, () -> giftCertificateDao.attachTag(1, 2));
     }
 }

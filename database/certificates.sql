@@ -1,6 +1,6 @@
 DROP SCHEMA IF EXISTS `certificatesdb`;
 
-CREATE SCHEMA IF NOT EXISTS `certificatesdb`;
+CREATE DATABASE IF NOT EXISTS `certificatesdb`;
 USE `certificatesdb`;
 
 CREATE TABLE IF NOT EXISTS `certificatesdb`.`gift_certificates`
@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS `certificatesdb`.`gift_certificates`
     `duration`         INT            NOT NULL,
     `create_date`      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `last_update_date` TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `active`           boolean        default true,
-        PRIMARY KEY (`certificateId`)
+    `active`           boolean                 default true,
+    PRIMARY KEY (`certificateId`)
 );
 
 CREATE UNIQUE INDEX `name_UNIQUE` ON `certificatesdb`.`gift_certificates` (`name` ASC) VISIBLE;
@@ -22,11 +22,11 @@ CREATE TABLE IF NOT EXISTS `certificatesdb`.`tags`
 (
     `tagId`   BIGINT      NOT NULL AUTO_INCREMENT,
     `tagName` VARCHAR(45) NOT NULL,
-    `active`           boolean        default true,
+    `active`  boolean default true,
     PRIMARY KEY (`tagId`)
 );
 
-CREATE UNIQUE INDEX `tagName_UNIQUE` ON `certificatesdb`.`tags` (`tagName` ASC) VISIBLE;
+CREATE UNIQUE INDEX `tagName_UNIQUE` USING HASH ON `certificatesdb`.`tags` (`tagName` ASC) VISIBLE;
 
 CREATE TABLE IF NOT EXISTS `certificatesdb`.`certificates_has_tags`
 (
@@ -44,6 +44,45 @@ CREATE TABLE IF NOT EXISTS `certificatesdb`.`certificates_has_tags`
 );
 CREATE INDEX `fk_gift_certificates_has_tags_tags1_idx` ON `certificatesdb`.`certificates_has_tags` (`tagId` ASC) VISIBLE;
 CREATE INDEX `fk_gift_certificates_has_tags_gift_certificates_idx` ON `certificatesdb`.`certificates_has_tags` (`certificateId` ASC) VISIBLE;
+
+CREATE TABLE IF NOT EXISTS user
+(
+    user_id    BIGINT      NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    login      VARCHAR(50) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name  VARCHAR(50) NOT NULL,
+    email      VARCHAR(50) NOT NULL,
+    active     BOOL default true
+);
+CREATE UNIQUE INDEX user_login ON user (login ASC);
+
+CREATE TABLE IF NOT EXISTS order
+(
+    order_id    BIGINT    NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    user_id     BIGINT    NOT NULL,
+    create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    cost        DECIMAL(20, 2),
+    active      BOOL               default true,
+    CONSTRAINT fk_order_user
+        FOREIGN KEY (user_id) REFERENCES user (user_id)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
+);
+
+CREATE TABLE IF NOT EXISTS orders_has_gift_certificate
+(
+    order_id       BIGINT NOT NULL,
+    certificate_id BIGINT NOT NULL,
+    PRIMARY KEY (order_id, certificate_id),
+    CONSTRAINT fk_orders_has_gift_certificates_order1
+        FOREIGN KEY (order_id) REFERENCES order (order_id)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
+    CONSTRAINT fk_orders_has_gift_certificates_gift_certificates2
+        FOREIGN KEY (certificate_id) REFERENCES gift_certificates (certificateId)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
+);
 
 -- -----------------------------------------------------
 -- Data for table `certificatesdb`.`gift_certificates`
@@ -69,23 +108,22 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `certificatesdb`;
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (1, 'rest');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (2, 'entertainment');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (3, 'vacation');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (4, 'tourism');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (5, 'hike');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (6, 'health');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (7, 'extreme');
-INSERT INTO `certificatesdb`.`tags` (`tagId`, `tagName`)
-VALUES (8, 'massage');
-
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('rest5');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('entertainment');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('vacation');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('tourism');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('hike');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('health');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('extreme');
+INSERT INTO `certificatesdb`.`tags` (`tagName`)
+VALUES ('massage');
 COMMIT;
 
 

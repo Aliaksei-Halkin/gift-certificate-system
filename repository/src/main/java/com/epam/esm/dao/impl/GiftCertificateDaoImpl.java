@@ -1,23 +1,19 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.mapper.GiftCertificateMapper;
-import com.epam.esm.dao.mapper.TagMapper;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.epam.esm.util.QueryBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.HashSet;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The class represents GiftCertificate dao implementation.
@@ -27,60 +23,15 @@ import java.util.Set;
  */
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
-    public static final String SELECT_CERTIFICATE_BY_ID = "SELECT * FROM gift_certificates WHERE certificateId = ?";
-    public static final String SELECT_CERTIFICATES_BY_PARAMETERS =
-            "SELECT DISTINCT gift_certificates.certificateId, gift_certificates.name, gift_certificates.description, " +
-                    "gift_certificates.price, gift_certificates.duration, gift_certificates.create_date, " +
-                    "gift_certificates.last_update_date, gift_certificates.active FROM gift_certificates ";
+    private static final String PAGE = "page";
+    private static final String PER_PAGE = "per_page";
     public static final String SELECT_CERTIFICATE_TAGS =
-            "SELECT tags.tagId, tags.tagName, tags.active " +
-                    "FROM tags " +
-                    "JOIN certificates_has_tags ON tags.tagId = certificates_has_tags.tagId " +
-                    "JOIN gift_certificates ON gift_certificates.certificateId = certificates_has_tags.certificateId " +
-                    "WHERE gift_certificates.certificateId = ?";
-    public static final String INSERT_CERTIFICATE =
-            "INSERT INTO gift_certificates (name, description, price, duration, create_date, last_update_date) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
-    public static final String UPDATE_CERTIFICATE =
-            "UPDATE gift_certificates " +
-                    "SET name = ?, description = ?, price = ?, duration = ?, create_date = ?, last_update_date = ?, " +
-                    "active = ? WHERE certificateId = ?";
-    public static final String DELETE_CERTIFICATE =
-            "UPDATE gift_certificates SET active=false WHERE certificateId = ?";
-    public static final String INSERT_RELATION_BETWEEN_TAG_AND_GIFT_CERTIFICATE =
-            "INSERT INTO certificates_has_tags (certificateId, tagId) VALUES (?, ?)";
-    public static final String RETURN_DELETED_CERTIFICATE =
-            "UPDATE gift_certificates  SET active=true WHERE name = ?";
-    public static final String DELETE_CERTIFICATES_FROM_CERTIFICATES_HAS_TAGS =
-            "DELETE FROM certificates_has_tags WHERE certificateId = ?";
-    public static final String DELETE_TAG_FROM_CERTIFICATES_HAS_TAGS = "DELETE FROM certificates_has_tags WHERE certificateId = ? AND tagId = ?";
-    /**
-     * The {@link JdbcTemplate} object
-     */
-    private final JdbcTemplate jdbcTemplate;
-    /**
-     * The {@link GiftCertificateMapper} object
-     */
-    private final GiftCertificateMapper giftCertificateMapper;
-    /**
-     * The {@link TagMapper} object
-     */
-    private final TagMapper tagMapper;
+            "SELECT tags FROM GiftCertificate WHERE GiftCertificate.id = ?1";
+    private static final String SELECT_ALL_CERTIFICATES = "SELECT g FROM GiftCertificate g ";
+    private static final String SELECT_CERTIFICATE_BY_NAME = "FROM GiftCertificate WHERE name = ?1";
 
-    /**
-     * The constructor with all parameters, used to create instance of {@code TagDaoImpl}
-     *
-     * @param jdbcTemplate          The {@link JdbcTemplate} object
-     * @param giftCertificateMapper The {@link GiftCertificateMapper} object
-     * @param tagMapper             The {@link TagMapper} object
-     */
-    @Autowired
-    public GiftCertificateDaoImpl(JdbcTemplate jdbcTemplate, GiftCertificateMapper giftCertificateMapper,
-                                  TagMapper tagMapper) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.giftCertificateMapper = giftCertificateMapper;
-        this.tagMapper = tagMapper;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * The method find  certificate by id
@@ -90,7 +41,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public Optional<GiftCertificate> findById(Long id) {
-        return jdbcTemplate.query(SELECT_CERTIFICATE_BY_ID, giftCertificateMapper, id).stream().findFirst();
+        return Optional.ofNullable(entityManager.find(GiftCertificate.class, id));
     }
 
     /**
@@ -99,8 +50,14 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      * @return {@code List} of all certificates
      */
     @Override
-    public List<GiftCertificate> findAll() {
-        return jdbcTemplate.query(SELECT_CERTIFICATES_BY_PARAMETERS, giftCertificateMapper);
+    public List<GiftCertificate> findAll(Map<String, String> queryParameters) {
+        int page = Integer.parseInt(queryParameters.get(PAGE));
+        int perPage = Integer.parseInt(queryParameters.get(PER_PAGE));
+        int firstResult = page == 1 ? 0 : page * perPage - perPage;
+        return entityManager.createQuery(SELECT_ALL_CERTIFICATES, GiftCertificate.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(perPage)
+                .getResultList();
     }
 
     /**
@@ -110,32 +67,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public long add(GiftCertificate entity) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement(INSERT_CERTIFICATE, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, entity.getName());
-            preparedStatement.setString(2, entity.getDescription());
-            preparedStatement.setBigDecimal(3, entity.getPrice());
-            preparedStatement.setInt(4, entity.getDuration());
-            preparedStatement.setTimestamp(5, Timestamp.valueOf(entity.getCreatedDate()));
-            preparedStatement.setTimestamp(6, Timestamp.valueOf(entity.getUpdateDate()));
-            return preparedStatement;
-        }, keyHolder);
-        if (keyHolder.getKey() != null) {
-            return keyHolder.getKey().longValue();
-        }
-        throw new RuntimeException("Generated id not found");
-    }
-
-    /**
-     * The method delete certificate by id
-     *
-     * @param id of certificate
-     */
-    @Override
-    public void removeById(Long id) {
-        jdbcTemplate.update(DELETE_CERTIFICATE, id);
-        jdbcTemplate.update(DELETE_CERTIFICATES_FROM_CERTIFICATES_HAS_TAGS, id);
+        entityManager.persist(entity);
+        return entity.getId();
     }
 
     /**
@@ -146,21 +79,26 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public GiftCertificate update(GiftCertificate entity) {
-        jdbcTemplate.update(UPDATE_CERTIFICATE, entity.getName(), entity.getDescription(), entity.getPrice(),
-                entity.getDuration(), Timestamp.valueOf(entity.getCreatedDate()),
-                Timestamp.valueOf(entity.getUpdateDate()), entity.isActive(), entity.getId());
-        return entity;
+        GiftCertificate updatedGiftCertificate = entityManager.merge(entity);
+        entityManager.flush();
+        entityManager.clear();
+        return updatedGiftCertificate;
     }
 
     /**
      * The method update certificate by id
      *
-     * @param query represents additional query to main quiery {@code SELECT_CERTIFICATES_BY_PARAMETERS}
+     * @param queryParameters represents additional query to main quiery {@code SELECT_CERTIFICATES_BY_PARAMETERS}
      * @return {@code List} of certificates
      */
     @Override
-    public List<GiftCertificate> findCertificatesByQueryParameters(String query) {
-        return jdbcTemplate.query(SELECT_CERTIFICATES_BY_PARAMETERS + query, giftCertificateMapper);
+    public List<GiftCertificate> findCertificatesByQueryParameters(Map<String, String> queryParameters) {
+        int page = Integer.parseInt(queryParameters.get(PAGE));
+        int perPage = Integer.parseInt(queryParameters.get(PER_PAGE));
+        int firstResult = page == 1 ? 0 : page * perPage - perPage;
+        String query = SELECT_ALL_CERTIFICATES + QueryBuilder.createQueryForCertificates(queryParameters);
+        return entityManager.createQuery(query, GiftCertificate.class)
+                .setFirstResult(firstResult).setMaxResults(perPage).getResultList();
     }
 
     /**
@@ -171,33 +109,33 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
      */
     @Override
     public Set<Tag> findGiftCertificateTags(long certificateId) {
-        return new HashSet<>(jdbcTemplate.query(SELECT_CERTIFICATE_TAGS, tagMapper, certificateId));
+        return (Set<Tag>) entityManager.createQuery(SELECT_CERTIFICATE_TAGS)
+                .setParameter(1, certificateId).getResultStream().collect(Collectors.toSet());
     }
+
 
     /**
-     * The method add certificate and tags to certificate_has_tag table.
+     * The method deactivate certificate by id
      *
-     * @param tagId             id of tag
-     * @param giftCertificateId id of certificate
+     * @param giftCertificate - the certificate
      */
     @Override
-    public void attachTag(long tagId, long giftCertificateId) {
-        jdbcTemplate.update(con -> {
-            PreparedStatement preparedStatement = con.prepareStatement(INSERT_RELATION_BETWEEN_TAG_AND_GIFT_CERTIFICATE);
-            preparedStatement.setLong(1, giftCertificateId);
-            preparedStatement.setLong(2, tagId);
-            return preparedStatement;
-        });
+    public void deactivate(GiftCertificate giftCertificate) {
+        giftCertificate.setActive(false);
+        entityManager.flush();
+        entityManager.clear();
     }
 
     @Override
-    public void returnDeletedCertificate(String name) {
-        jdbcTemplate.update(RETURN_DELETED_CERTIFICATE, name);
+    public Optional<GiftCertificate> findByName(String name) {
+        return entityManager.createQuery(SELECT_CERTIFICATE_BY_NAME, GiftCertificate.class)
+                .setParameter(1, name).getResultStream()
+                .findFirst();
     }
 
     @Override
-    public void removeTag(long giftCertificateId, long tagId) {
-        jdbcTemplate.update(DELETE_TAG_FROM_CERTIFICATES_HAS_TAGS, giftCertificateId, tagId);
+    public long countTotalRows(Map<String, String> queryParameters) {
+        String query = SELECT_ALL_CERTIFICATES + QueryBuilder.createQueryForCertificates(queryParameters);
+        return entityManager.createQuery(query).getResultStream().count();
     }
-
 }

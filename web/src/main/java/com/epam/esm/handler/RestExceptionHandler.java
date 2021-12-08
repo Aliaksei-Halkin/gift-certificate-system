@@ -1,5 +1,6 @@
 package com.epam.esm.handler;
 
+import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
@@ -55,9 +56,25 @@ public class RestExceptionHandler {
     public ResponseEntity<ErrorHandler> handleValidationException(ValidationException exception, Locale locale) {
         String message = messageSource.getMessage(exception.getMessageKey(), new Object[]{exception.getMessageValue()},
                 locale);
-        ErrorHandler errorHandler = new ErrorHandler(message, ErrorCode.BAD_REQUEST);
+        int errorCode = getErrorCodeBadRequest(exception.getIdentification());
+        ErrorHandler errorHandler = new ErrorHandler(message, errorCode);
         LOGGER.log(Level.ERROR, "ValidationException message: {}", message);
         return new ResponseEntity<>(errorHandler, HttpStatus.BAD_REQUEST);
+    }
+
+    private int getErrorCodeBadRequest(IdentifierEntity identifierEntity) {
+        int errorCode;
+        switch (identifierEntity) {
+            case TAG:
+                errorCode = ErrorCode.BAD_REQUEST_TAG;
+                break;
+            case CERTIFICATE:
+                errorCode = ErrorCode.BAD_REQUEST_CERTIFICATE;
+                break;
+            default:
+                errorCode = ErrorCode.BAD_REQUEST_ALL;
+        }
+        return errorCode;
     }
 
     /**
@@ -73,11 +90,27 @@ public class RestExceptionHandler {
                                                                         Locale locale) {
         String message = messageSource.getMessage(exception.getMessageKey(), new Object[]{exception.getMessageValue()},
                 locale);
-        ErrorHandler errorHandler = new ErrorHandler(message, ErrorCode.NOT_FOUND);
+        int errorCode = getErrorCodeNotFound(exception.getIdentification());
+        ErrorHandler errorHandler = new ErrorHandler(message, errorCode);
         LOGGER.log(Level.ERROR, "ResourceNotFoundException message: {}", message);
         return new ResponseEntity<>(errorHandler, HttpStatus.NOT_FOUND);
     }
 
+
+    private int getErrorCodeNotFound(IdentifierEntity identifierEntity) {
+        int errorCode;
+        switch (identifierEntity) {
+            case TAG:
+                errorCode = ErrorCode.NOT_FOUND_TAG;
+                break;
+            case CERTIFICATE:
+                errorCode = ErrorCode.NOT_FOUND_CERTIFICATE;
+                break;
+            default:
+                errorCode = ErrorCode.NOT_FOUND_ALL;
+        }
+        return errorCode;
+    }
     /**
      * Exception thrown on a type mismatch when trying to set a bean property.
      *
@@ -88,7 +121,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(TypeMismatchException.class)
     public ResponseEntity<ErrorHandler> handleTypeMismatchException(TypeMismatchException exception, Locale locale) {
         String message = messageSource.getMessage(INCORRECT_TYPE, null, locale);
-        ErrorHandler errorHandler = new ErrorHandler(message, ErrorCode.BAD_REQUEST);
+        ErrorHandler errorHandler = new ErrorHandler(message, ErrorCode.BAD_REQUEST_ALL);
         LOGGER.log(Level.ERROR, "TypeMismatchException message: {}", exception.getMessage());
         return new ResponseEntity<>(errorHandler, HttpStatus.BAD_REQUEST);
     }
@@ -106,7 +139,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<ErrorHandler> handleNoHandlerFoundException(NoHandlerFoundException exception, Locale locale) {
         String message = messageSource.getMessage(PAGE_NOT_FOUND, null, locale);
-        ErrorHandler errorHandler = new ErrorHandler(message, ErrorCode.NOT_FOUND);
+        ErrorHandler errorHandler = new ErrorHandler(message, ErrorCode.NOT_FOUND_ALL);
         LOGGER.log(Level.ERROR, "NoHandlerFoundException message: {}", exception.getMessage());
         return new ResponseEntity<>(errorHandler, HttpStatus.NOT_FOUND);
     }
@@ -138,7 +171,7 @@ public class RestExceptionHandler {
     public ResponseEntity<ErrorHandler> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException exception, Locale locale) {
         String message = messageSource.getMessage(BODY_MISSING, null, locale);
-        ErrorHandler errorHandler = new ErrorHandler(message, ErrorCode.BAD_REQUEST);
+        ErrorHandler errorHandler = new ErrorHandler(message, ErrorCode.BAD_REQUEST_ALL);
         LOGGER.log(Level.ERROR, "HttpMessageNotReadableException message: {}", exception.getMessage());
         return new ResponseEntity<>(errorHandler, HttpStatus.BAD_REQUEST);
     }

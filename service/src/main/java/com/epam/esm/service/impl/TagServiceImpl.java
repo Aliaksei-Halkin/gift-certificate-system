@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionPropertyKey;
+import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,25 +39,27 @@ public class TagServiceImpl implements TagService {
         this.tagValidator = tagValidator;
     }
 
+    @Transactional
     @Override
     public Tag addTag(Tag tag) {
+        tag.setId(null);
+        tag.setActive(true);
         long tagId;
         tagValidator.isValidTag(tag);
-        tagId = ifExist(tag.getName());
+        tagId = checkOnExist(tag.getName());
         if (tagId < 0) {
             tagId = tagDao.add(tag);
         }
         tag.setId(tagId);
-        tag.setActive(true);
         LOGGER.log(Level.INFO, "Tag added: {}", tag);
         return tag;
     }
 
-    private long ifExist(String nameTag) {
+    private long checkOnExist(String nameTag) {
         long idTag = NO_EXIST_ID;
-        Optional<Tag> tag = tagDao.findTagByName(nameTag);
+        Optional<Tag> tag = tagDao.findByName(nameTag);
         if (tag.isPresent() && tag.get().isActive() == true) {
-            throw new ValidationException(ExceptionPropertyKey.EXISTING_TAG, nameTag);
+            throw new ValidationException(ExceptionPropertyKey.EXISTING_TAG, nameTag, IdentifierEntity.TAG);
         }
         if (tag.isPresent() && tag.get().isActive() == false) {
             idTag = tag.get().getId();
@@ -78,6 +82,7 @@ public class TagServiceImpl implements TagService {
         return tag;
     }
 
+    @Transactional
     @Override
     public void deleteTagById(long tagId) {
         tagValidator.isValidId(tagId);
@@ -90,14 +95,14 @@ public class TagServiceImpl implements TagService {
         Tag tag = retrieveTag(tagId);
         if (tag.isActive() == false) {
             throw new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_ID_NOT_FOUND,
-                    tagId);
+                    tagId, IdentifierEntity.TAG);
         }
     }
 
     private Tag retrieveTag(long tagId) {
         Optional<Tag> optionalTag = tagDao.findById(tagId);
         return optionalTag.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_ID_NOT_FOUND,
-                tagId));
+                tagId, IdentifierEntity.TAG));
     }
 
 }

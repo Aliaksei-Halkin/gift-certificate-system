@@ -9,7 +9,6 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.util.QueryParameter;
 import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.TagValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,22 +64,18 @@ class GiftCertificateServiceImplTest {
     @Test
     void when_addGiftCertificate_ThenShouldReturnGiftCertificate() {
         when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificateSecond.getId());
-        when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
         GiftCertificate mockedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificateSecond);
         giftCertificateSecond.setCreatedDate(mockedGiftCertificate.getCreatedDate());
         giftCertificateSecond.setUpdateDate(mockedGiftCertificate.getUpdateDate());
-        verify(giftCertificateDao, Mockito.times(1)).add(any(GiftCertificate.class));
-        verify(tagDao, Mockito.times(2)).findTagByName(tag.getName());
+        verify(giftCertificateDao).add(any(GiftCertificate.class));
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 
     @Test
     void when_addGiftCertificate_ThenShouldThrowException() {
-        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificateSecond.getId());
-        when(tagDao.findTagByName(tag.getName())).thenThrow(ResourceNotFoundException.class);
+        when(giftCertificateDao.findByName(giftCertificateSecond.getName())).thenThrow(ResourceNotFoundException.class);
         assertThrows(ResourceNotFoundException.class, () -> giftCertificateService.addGiftCertificate(giftCertificateFirst));
-        verify(giftCertificateDao, Mockito.times(1)).add(any(GiftCertificate.class));
-        verify(tagDao, Mockito.times(1)).findTagByName(tag.getName());
+        verify(giftCertificateDao).findByName(anyString());
     }
 
     @Test
@@ -89,13 +84,11 @@ class GiftCertificateServiceImplTest {
         tagDto.setName("Hi");
         when(giftCertificateDao.findById(giftCertificateSecond.getId())).thenReturn(Optional.of(giftCertificateSecond));
         when(giftCertificateDao.update(giftCertificateSecond)).thenReturn(giftCertificateSecond);
-        when(giftCertificateDao.findGiftCertificateTags(giftCertificateSecond.getId())).thenReturn(giftCertificateSecond.getTags());
-        when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.ofNullable(tag));
+        when(tagDao.findByName(tag.getName())).thenReturn(Optional.ofNullable(tag));
         GiftCertificate mockedGiftCertificate = giftCertificateService.addTagToGiftCertificate(giftCertificateSecond.getId(), tag);
         verify(giftCertificateDao).findById(anyLong());
-        verify(tagDao, Mockito.times(2)).findTagByName(anyString());
+        verify(tagDao).findByName(anyString());
         verify(giftCertificateDao).update(any(GiftCertificate.class));
-        verify(giftCertificateDao, Mockito.times(2)).findGiftCertificateTags(anyLong());
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 
@@ -108,10 +101,8 @@ class GiftCertificateServiceImplTest {
     @Test
     void when_FindGiftCertificateById_ThenShouldReturnGiftCertificate() {
         when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.of(giftCertificateSecond));
-        when(giftCertificateDao.findGiftCertificateTags(giftCertificateSecond.getId())).thenReturn(giftCertificateSecond.getTags());
         GiftCertificate mockedGiftCertificate = giftCertificateService.findGiftCertificateById(giftCertificateSecond.getId());
         verify(giftCertificateDao).findById(anyLong());
-        verify(giftCertificateDao).findGiftCertificateTags(anyLong());
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 
@@ -122,47 +113,52 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void when_FindGiftCertificatesByParameters_ThenShouldReturnListOfGiftCertificate() {
-        QueryParameter parameter = new QueryParameter("Hi", null, null, null, null);
-        when(giftCertificateDao.findCertificatesByQueryParameters(anyString())).thenReturn(Collections.singletonList(giftCertificateSecond));
-        List<GiftCertificate> giftCertificateDtos = giftCertificateService.findGiftCertificatesByParameters(parameter);
-        verify(giftCertificateDao).findCertificatesByQueryParameters(anyString());
+        Map<String, String> queryParameter1 = new HashMap<>();
+        queryParameter1.put("name", "Hello2");
+        queryParameter1.put("tagName", "Hello, test,fresh");
+        queryParameter1.put("description", "Movies");
+        queryParameter1.put("order", "-name");
+        queryParameter1.put("page", "1");
+        queryParameter1.put("per_page", "1");
+        when(giftCertificateDao.countTotalRows(anyMap())).thenReturn(1L);
+        when(giftCertificateDao.findCertificatesByQueryParameters(anyMap())).thenReturn(Collections.singletonList(giftCertificateSecond));
+        List<GiftCertificate> giftCertificateDtos = giftCertificateService.findGiftCertificatesByParameters(queryParameter1);
+        verify(giftCertificateDao).findCertificatesByQueryParameters(anyMap());
+        verify(giftCertificateDao).countTotalRows(anyMap());
         assertEquals(Collections.singletonList(giftCertificateSecond), giftCertificateDtos);
     }
 
     @Test
     void when_FindGiftCertificatesByParameters_ThenShouldThrowException() {
-        QueryParameter parameter = new QueryParameter("@@#", null, null, null, null);
-        assertThrows(ValidationException.class, () -> giftCertificateService.findGiftCertificatesByParameters(parameter));
+        Map<String, String> param = new HashMap<>();
+        param.put("page", "-1");
+        param.put("per_page", "-5");
+        assertThrows(ValidationException.class, () -> giftCertificateService.findGiftCertificatesByParameters(param));
     }
 
     @Test
     void when_DeleteGiftCertificateById_ThenShouldNotThrowException() {
         Long certificateId = giftCertificateSecond.getId();
-        when(giftCertificateDao.findAll()).thenReturn(Collections.singletonList(giftCertificateSecond));
         when(giftCertificateDao.findById(certificateId)).thenReturn(Optional.of(giftCertificateSecond));
-        doNothing().when(giftCertificateDao).removeById(certificateId);
+        doNothing().when(giftCertificateDao).deactivate(giftCertificateFirst);
         assertDoesNotThrow(() -> giftCertificateService.deleteGiftCertificateById(certificateId));
+        verify(giftCertificateDao).findById(anyLong());
     }
 
     @Test
     void when_DeleteGiftCertificateById_ThenShouldThrowException() {
-        Long certificateId = -1L;
-        doNothing().when(giftCertificateDao).removeById(certificateId);
-        assertThrows(ValidationException.class, () -> giftCertificateService.deleteGiftCertificateById(certificateId));
+        assertThrows(ResourceNotFoundException.class, () -> giftCertificateService
+                .deleteGiftCertificateById(giftCertificateSecond.getId()));
     }
 
     @Test
     void when_UpdateGiftCertificate_ThenShouldReturnUpdatedGiftCertificate() {
         when(giftCertificateDao.findById(giftCertificateSecond.getId())).thenReturn(Optional.of(giftCertificateSecond));
         when(giftCertificateDao.update(giftCertificateSecond)).thenReturn(giftCertificateSecond);
-        when(giftCertificateDao.findGiftCertificateTags(giftCertificateSecond.getId())).thenReturn(giftCertificateSecond.getTags());
-        when(tagDao.findTagByName(tag.getName())).thenReturn(Optional.of(tag));
         GiftCertificate mockedGiftCertificate = giftCertificateService
                 .updateGiftCertificate(giftCertificateSecond.getId(), giftCertificateSecond);
-        verify(tagDao, Mockito.times(2)).findTagByName(anyString());
-        verify(giftCertificateDao,Mockito.times(2)).findById(anyLong());
+        verify(giftCertificateDao).findById(anyLong());
         verify(giftCertificateDao).update(any(GiftCertificate.class));
-        verify(giftCertificateDao, Mockito.times(3)).findGiftCertificateTags(anyLong());
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 

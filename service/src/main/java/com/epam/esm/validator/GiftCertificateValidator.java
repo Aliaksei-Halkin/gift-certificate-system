@@ -3,12 +3,13 @@ package com.epam.esm.validator;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.ExceptionPropertyKey;
+import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Optional;
 
 /**
  * The GiftCertificateValidator class represents certificate data validation
@@ -17,7 +18,7 @@ import java.util.List;
  */
 @Component
 public class GiftCertificateValidator {
-    private static final String REGEX_NAME_AND_DESCRIPTION = "[‡-ˇ¿-ﬂ\\w\\s\\.,?!']{1,250}";
+    private static final String REGEX_NAME_AND_DESCRIPTION = "[–∞-—è–ê-–Ø\\w\\s\\.,?!'-]{1,250}";
     private static final long MIN_ID = 1;
     private static final BigDecimal MIN_PRICE = new BigDecimal("0.01");
     private static final BigDecimal MAX_PRICE = new BigDecimal("1000000");
@@ -41,46 +42,45 @@ public class GiftCertificateValidator {
 
     public void isValidId(long id) {
         if (id < MIN_ID) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_ID, id);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_ID, id,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
     private void isValidName(String name) {
         if (name == null || name.isEmpty() || !name.matches(REGEX_NAME_AND_DESCRIPTION)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_NAME, name);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_NAME, name,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
-    public long ifExistName(String name) {
-        long certificateId = -1;
-        String query = FIND_BY_NAME + name +"'";
-        List<GiftCertificate> certificateByName = giftCertificateDao.findCertificatesByQueryParameters(query);
-        boolean checkCertificateByNameOnPresent = (certificateByName != null && !certificateByName.isEmpty());
-        if (checkCertificateByNameOnPresent && certificateByName.get(0).isActive() == true) {
-            throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name);
+    public  Optional<GiftCertificate> ifExistName(String name) {
+        Optional<GiftCertificate> certificateByName = giftCertificateDao.findByName(name);
+        if(certificateByName.isPresent()&&certificateByName.get().isActive()==true){
+            throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name,
+                   IdentifierEntity.CERTIFICATE);
         }
-        if (checkCertificateByNameOnPresent && certificateByName.get(0).isActive() == false) {
-            giftCertificateDao.returnDeletedCertificate(name);
-            certificateId = certificateByName.get(0).getId();
-        }
-        return certificateId;
+        return certificateByName;
     }
 
     private void isValidDescription(String description) {
         if (description != null && !description.isEmpty() && !description.matches(REGEX_NAME_AND_DESCRIPTION)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_DESCRIPTION, description);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_DESCRIPTION, description,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
     private void isValidPrice(BigDecimal price) {
         if (price == null || price.compareTo(MIN_PRICE) < 0 || price.compareTo(MAX_PRICE) > 0) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_PRICE, price);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_PRICE, price,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 
     private void isValidDuration(int duration) {
         if (duration < MIN_DURATION || duration > MAX_DURATION) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_DURATION, duration);
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_DURATION, duration,
+                    IdentifierEntity.CERTIFICATE);
         }
     }
 }
