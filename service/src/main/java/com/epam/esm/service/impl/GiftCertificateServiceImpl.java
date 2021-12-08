@@ -2,6 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dto.GiftCertificateField;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionPropertyKey;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -180,8 +182,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .giftCertificateQueryParametersProcessing(queryParameters);
         QueryParameterValidator.isValidGiftCertificateQueryParameters(processedQueryParameters);
         LOGGER.debug("Query parameter: {}", processedQueryParameters);
+        List<GiftCertificate> giftCertificates = giftCertificateDao
+                .findCertificatesByQueryParameters(new HashMap<>(processedQueryParameters));
+        if (giftCertificates.isEmpty()) {
+            throw new ResourceNotFoundException(ExceptionPropertyKey
+                    .GIFT_CERTIFICATES_NOT_FOUND, null, IdentifierEntity.CERTIFICATE);
+        }
         countTotalPages(processedQueryParameters);
-        return giftCertificateDao.findCertificatesByQueryParameters(processedQueryParameters);
+        return giftCertificates;
     }
 
     /**
@@ -263,6 +271,37 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         QueryParameterValidator.isValidPage(queryParameters.get(PER_PAGE));
         countTotalPages(queryParameters);
         return giftCertificateDao.findAll(queryParameters);
+    }
+
+    @Override
+    @Transactional
+    public GiftCertificate updateGiftCertificateField(Long id, GiftCertificateField giftCertificateField) {
+        giftCertificateValidator.isValidId(id);
+        giftCertificateValidator.isValidField(giftCertificateField);
+        GiftCertificate giftCertificate = checkAndGetGiftCertificate(id);
+        updateField(giftCertificateField, giftCertificate);
+        GiftCertificate updatedCertificate = giftCertificateDao.update(giftCertificate);
+        LOGGER.info("Gift certificate with id = {} updated", id);
+        return updatedCertificate;
+    }
+
+    private void updateField(GiftCertificateField giftCertificateField, GiftCertificate updatedGiftCertificate) {
+        GiftCertificateField.FieldName fieldName = GiftCertificateField.FieldName.valueOf(giftCertificateField
+                .getFieldName().toUpperCase());
+        switch (fieldName) {
+            case NAME:
+                updatedGiftCertificate.setName(giftCertificateField.getFieldValue());
+                break;
+            case DESCRIPTION:
+                updatedGiftCertificate.setDescription(giftCertificateField.getFieldValue());
+                break;
+            case PRICE:
+                updatedGiftCertificate.setPrice(new BigDecimal(giftCertificateField.getFieldValue()));
+                break;
+            case DURATION:
+                updatedGiftCertificate.setDuration(Integer.parseInt(giftCertificateField.getFieldValue()));
+                break;
+        }
     }
 
     /**

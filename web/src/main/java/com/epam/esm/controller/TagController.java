@@ -1,12 +1,16 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.controller.assembler.TagAssembler;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -27,6 +31,7 @@ import java.util.Set;
 @RequestMapping("/tags")
 public class TagController {
     private final TagService tagService;
+    private final TagAssembler tagAssembler;
 
     /**
      * Injects an object of a class implementing {@link TagService}.
@@ -34,8 +39,9 @@ public class TagController {
      * @param tagService An object of a class implementing {@link TagService}.
      */
     @Autowired
-    public TagController(TagService tagService) {
+    public TagController(TagService tagService, TagAssembler tagAssembler) {
         this.tagService = tagService;
+        this.tagAssembler = tagAssembler;
     }
 
     /**
@@ -51,9 +57,9 @@ public class TagController {
      * @return {@link ResponseEntity} with the inserted tag and its location included.
      */
     @PostMapping
-    public ResponseEntity<Tag> addTag(@RequestBody Tag tag) {
+    public ResponseEntity<EntityModel<Tag>> addTag(@RequestBody Tag tag) {
         Tag addedTag = tagService.addTag(tag);
-        return new ResponseEntity<>(addedTag, HttpStatus.CREATED);
+        return new ResponseEntity<>(tagAssembler.toModel(addedTag), HttpStatus.CREATED);
     }
 
     /**
@@ -69,9 +75,9 @@ public class TagController {
      * @return {@link ResponseEntity} with found tag.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> findTagById(@PathVariable("id") long id) {
+    public ResponseEntity<EntityModel<Tag>> findTagById(@PathVariable("id") long id) {
         Tag tag = tagService.findTagById(id);
-        return new ResponseEntity<>(tag, HttpStatus.OK);
+        return new ResponseEntity<>(tagAssembler.toModel(tag), HttpStatus.OK);
     }
 
     /**
@@ -84,9 +90,9 @@ public class TagController {
      * @return {@link ResponseEntity} with the list of the gift certificates.
      */
     @GetMapping
-    public ResponseEntity<Set<Tag>> findAllTags() {
-        Set<Tag> tags = tagService.findAllTags();
-        return new ResponseEntity<>(tags, HttpStatus.OK);
+    public ResponseEntity<CollectionModel<EntityModel<Tag>>> findAllTags(@RequestBody Map<String, String> pages) {
+        Set<Tag> tags = tagService.findAllTags(pages);
+        return new ResponseEntity<>(tagAssembler.toCollectionModel(tags), HttpStatus.OK);
     }
 
     /**
@@ -103,7 +109,8 @@ public class TagController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteTagById(@PathVariable("id") long id) {
+    public ResponseEntity<HttpStatus> deleteTagById(@PathVariable("id") long id) {
         tagService.deleteTagById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

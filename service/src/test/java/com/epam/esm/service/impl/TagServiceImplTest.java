@@ -10,9 +10,7 @@ import com.epam.esm.validator.TagValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -54,9 +52,14 @@ class TagServiceImplTest {
 
     @Test
     void when_FindAllTags_ThenShouldReturnSetTags() {
-        when(tagDao.findAll()).thenReturn(Collections.singletonList(tag));
-        Set<Tag> allTags = tagService.findAllTags();
-        verify(tagDao).findAll();
+        Map<String, String> queryParam = new HashMap<>();
+        queryParam.put("page", "1");
+        queryParam.put("per_page", "1");
+        when(tagDao.findAll(1, 1)).thenReturn(Collections.singletonList(tag));
+        when(tagDao.countTotalRows(1, 1)).thenReturn(1L);
+        Set<Tag> allTags = tagService.findAllTags(queryParam);
+        verify(tagDao).findAll(1, 1);
+        verify(tagDao).countTotalRows(1, 1);
         assertEquals(1, allTags.size());
     }
 

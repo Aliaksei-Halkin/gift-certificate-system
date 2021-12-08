@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 import com.epam.esm.entity.Tag;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Set;
  */
 public interface TagService {
 
-    Set<Tag> findAllTags();
+    Set<Tag> findAllTags(Map<String,String> pages);
 
     Tag findTagById(long id);
 

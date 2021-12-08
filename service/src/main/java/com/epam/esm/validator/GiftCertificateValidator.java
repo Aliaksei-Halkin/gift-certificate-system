@@ -1,6 +1,7 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.dto.GiftCertificateField;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
@@ -47,39 +48,66 @@ public class GiftCertificateValidator {
         }
     }
 
-    private void isValidName(String name) {
+    public void isValidName(String name) {
         if (name == null || name.isEmpty() || !name.matches(REGEX_NAME_AND_DESCRIPTION)) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_NAME, name,
                     IdentifierEntity.CERTIFICATE);
         }
     }
 
-    public  Optional<GiftCertificate> ifExistName(String name) {
+    public Optional<GiftCertificate> ifExistName(String name) {
         Optional<GiftCertificate> certificateByName = giftCertificateDao.findByName(name);
-        if(certificateByName.isPresent()&&certificateByName.get().isActive()==true){
+        if (certificateByName.isPresent() && certificateByName.get().isActive() == true) {
             throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name,
-                   IdentifierEntity.CERTIFICATE);
+                    IdentifierEntity.CERTIFICATE);
         }
         return certificateByName;
     }
 
-    private void isValidDescription(String description) {
+    public void isValidDescription(String description) {
         if (description != null && !description.isEmpty() && !description.matches(REGEX_NAME_AND_DESCRIPTION)) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_GIFT_CERTIFICATE_DESCRIPTION, description,
                     IdentifierEntity.CERTIFICATE);
         }
     }
 
-    private void isValidPrice(BigDecimal price) {
+    public void isValidPrice(BigDecimal price) {
         if (price == null || price.compareTo(MIN_PRICE) < 0 || price.compareTo(MAX_PRICE) > 0) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_PRICE, price,
                     IdentifierEntity.CERTIFICATE);
         }
     }
 
-    private void isValidDuration(int duration) {
+    public void isValidDuration(int duration) {
         if (duration < MIN_DURATION || duration > MAX_DURATION) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_DURATION, duration,
+                    IdentifierEntity.CERTIFICATE);
+        }
+    }
+
+    public void isValidField(GiftCertificateField giftCertificateField) {
+        try {
+            GiftCertificateField.FieldName fieldName = GiftCertificateField.FieldName.valueOf(giftCertificateField.getFieldName().toUpperCase());
+            switch (fieldName) {
+                case NAME:
+                    isValidName(giftCertificateField.getFieldValue());
+                    ifExistName(giftCertificateField.getFieldValue());
+                    break;
+                case DESCRIPTION:
+                    isValidDescription(giftCertificateField.getFieldValue());
+                    break;
+                case PRICE:
+                    isValidPrice(new BigDecimal(giftCertificateField.getFieldValue()));
+                    break;
+                case DURATION:
+                    isValidDuration(Integer.parseInt(giftCertificateField.getFieldValue()));
+                    break;
+            }
+        } catch (NumberFormatException exception) {
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_FIELD_VALUE,
+                    giftCertificateField.getFieldName(), IdentifierEntity.CERTIFICATE);
+        } catch (IllegalArgumentException exception) {
+            throw new ValidationException(ExceptionPropertyKey.INCORRECT_FIELD, giftCertificateField.getFieldName(),
                     IdentifierEntity.CERTIFICATE);
         }
     }

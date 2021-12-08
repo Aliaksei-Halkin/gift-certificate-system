@@ -2,6 +2,7 @@ package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Where;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "tags")
 @Where(clause = "active = 1")
-public class Tag {
+public class Tag extends RepresentationModel<Tag> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tagId",

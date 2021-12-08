@@ -2,5 +2,7 @@ package com.epam.esm.exception;
 
 public enum IdentifierEntity {
     TAG,
-    CERTIFICATE
+    CERTIFICATE,
+    USER,
+    ORDER;
 }

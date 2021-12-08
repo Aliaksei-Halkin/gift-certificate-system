@@ -69,10 +69,7 @@ public class QueryParameterValidator {
     }
 
     public static void isValidPage(String page) {
-        if (page != null && !page.isEmpty() && !page.matches(REGEX_PAGE_VALUE)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_PAGE, page, IdentifierEntity.CERTIFICATE);
-        }
-        if (page == null || page.isEmpty()) {
+        if (page == null || page.isEmpty() || !page.matches(REGEX_PAGE_VALUE)) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_PAGE, page, IdentifierEntity.CERTIFICATE);
         }
     }

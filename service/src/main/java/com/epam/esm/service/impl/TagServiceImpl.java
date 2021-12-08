@@ -8,6 +8,7 @@ import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
+import com.epam.esm.validator.QueryParameterValidator;
 import com.epam.esm.validator.TagValidator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -16,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +28,8 @@ import java.util.stream.Collectors;
 @Service
 public class TagServiceImpl implements TagService {
     private static final Logger LOGGER = LogManager.getLogger(GiftCertificateService.class);
+    private static final String REGEX_PAGE_KEY = "page";
+    private static final String REGEX_PER_PAGE_KEY = "per_page";
     private static final long NO_EXIST_ID = -1;
     private final TagDao tagDao;
     private final TagValidator tagValidator;
@@ -69,8 +70,15 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Set<Tag> findAllTags() {
-        List<Tag> tags = tagDao.findAll();
+    public Set<Tag> findAllTags(Map<String, String> pages) {
+        String page = pages.get(REGEX_PAGE_KEY);
+        String perPage = pages.get(REGEX_PER_PAGE_KEY);
+        QueryParameterValidator.isValidPage(page);
+        QueryParameterValidator.isValidPage(perPage);
+        int firstPage = Integer.parseInt(page);
+        int numberOfRowOnPage = Integer.parseInt(perPage);
+        countTotalPages(firstPage, numberOfRowOnPage);
+        List<Tag> tags = tagDao.findAll(firstPage, numberOfRowOnPage);
         return tags.stream().collect(Collectors.toSet());
     }
 
@@ -103,6 +111,20 @@ public class TagServiceImpl implements TagService {
         Optional<Tag> optionalTag = tagDao.findById(tagId);
         return optionalTag.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_ID_NOT_FOUND,
                 tagId, IdentifierEntity.TAG));
+    }
+
+    private void countTotalPages(int page, int perPage) {
+        long totalNumbersOfRows = tagDao.countTotalRows(page, perPage);
+        long counterPages;
+        if (totalNumbersOfRows % perPage == 0) {
+            counterPages = totalNumbersOfRows / perPage;
+        } else {
+            counterPages = totalNumbersOfRows / perPage + 1;
+        }
+        if (page > counterPages) {
+            throw new ResourceNotFoundException(ExceptionPropertyKey.INCORRECT_MAX_PAGE, counterPages,
+                    IdentifierEntity.TAG);
+        }
     }
 
 }
