@@ -4,6 +4,8 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.UserDao;
+import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificateEntity;
 import com.epam.esm.entity.OrderEntity;
 import com.epam.esm.entity.TagEntity;
@@ -16,12 +18,14 @@ import com.epam.esm.validator.GiftCertificateValidator;
 import com.epam.esm.validator.OrderValidator;
 import com.epam.esm.validator.QueryParameterValidator;
 import com.epam.esm.validator.UserValidator;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -32,20 +36,22 @@ public class OrderServiceImpl implements OrderService {
     private final UserDao userDao;
     private final OrderDao orderDao;
     private final TagDao tagDao;
+    private final ModelMapper modelMapper;
 
     @Autowired
     public OrderServiceImpl(GiftCertificateDao giftCertificateDao, GiftCertificateValidator giftCertificateValidator,
-                            UserDao userDao, OrderDao orderDao, TagDao tagDao) {
+                            UserDao userDao, OrderDao orderDao, TagDao tagDao, ModelMapper modelMapper) {
         this.giftCertificateDao = giftCertificateDao;
         this.giftCertificateValidator = giftCertificateValidator;
         this.userDao = userDao;
         this.orderDao = orderDao;
         this.tagDao = tagDao;
+        this.modelMapper = modelMapper;
     }
 
     @Transactional
     @Override
-    public OrderEntity makeOrder(Long userId, List<Long> certificatesIds) {
+    public OrderDto makeOrder(Long userId, List<Long> certificatesIds) {
         List<GiftCertificateEntity> giftCertificates = new ArrayList<>();
         UserValidator.isValidId(userId);
         certificatesIds.forEach((id) -> {
@@ -65,24 +71,27 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         long id = orderDao.add(order);
         order.setOrderId(id);
-        return order;
+        return modelMapper.map(order, OrderDto.class);
     }
 
     @Override
-    public List<OrderEntity> findUserOrders(Long userId) {
+    public List<OrderDto> findUserOrders(Long userId) {
         UserValidator.isValidId(userId);
-        return orderDao.findUserOrders(userId);
+        List<OrderEntity> userOrders = orderDao.findUserOrders(userId);
+        return userOrders.stream()
+                .map(orderEntity -> modelMapper.map(orderEntity, OrderDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<TagEntity> findMostWidelyUsedTag() {
+    public List<TagDto> findMostWidelyUsedTag() {
         UserEntity user = orderDao.findTopUser();
         List<Object[]> listOfTagsAndQuantity = orderDao.findPopularTag(user.getUserId());
         Map<TagEntity, Long> resultMap = extractTagsAndValues(listOfTagsAndQuantity);
         return getPopularTagFromSortedMap(resultMap);
     }
 
-    private List<TagEntity> getPopularTagFromSortedMap(Map<TagEntity, Long> sortedResultMap) {
+    private List<TagDto> getPopularTagFromSortedMap(Map<TagEntity, Long> sortedResultMap) {
         List<TagEntity> tags = new ArrayList<>();
         Long maxQuantity = -1L;
         for (Map.Entry<TagEntity, Long> entry : sortedResultMap.entrySet()) {
@@ -97,7 +106,10 @@ public class OrderServiceImpl implements OrderService {
                 break;
             }
         }
-        return tags;
+        return tags
+                .stream()
+                .map(tagEntity -> modelMapper.map(tagEntity, TagDto.class))
+                .collect(Collectors.toList());
     }
 
     private Map<TagEntity, Long> extractTagsAndValues(List<Object[]> listOfTagsAndQuantity) {
@@ -111,15 +123,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderEntity findOrderById(long orderId) {
+    public OrderDto findOrderById(long orderId) {
         OrderValidator.isValidId(orderId);
         Optional<OrderEntity> order = orderDao.findById(orderId);
-        return order.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.ORDER_WITH_ID_NOT_FOUND,
+        OrderEntity orderEntity = order.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.ORDER_WITH_ID_NOT_FOUND,
                 orderId, IdentifierEntity.ORDER));
+        return modelMapper.map(orderEntity, OrderDto.class);
     }
 
     @Override
-    public List<OrderEntity> findAll(Map<String, String> pages) {
+    public List<OrderDto> findAll(Map<String, String> pages) {
         String page = pages.get(REGEX_PAGE_KEY);
         String perPage = pages.get(REGEX_PER_PAGE_KEY);
         QueryParameterValidator.isValidPage(page);
@@ -128,7 +141,10 @@ public class OrderServiceImpl implements OrderService {
         int numberOfRowOnPage = Integer.parseInt(perPage);
         countTotalPages(firstPage, numberOfRowOnPage);
         List<OrderEntity> orders = orderDao.findAll(firstPage, numberOfRowOnPage);
-        return orders;
+        return orders
+                .stream()
+                .map(orderEntity -> modelMapper.map(orderEntity, OrderDto.class))
+                .collect(Collectors.toList());
     }
 
     private void countTotalPages(int page, int perPage) {

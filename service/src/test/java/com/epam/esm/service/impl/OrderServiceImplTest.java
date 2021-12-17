@@ -33,7 +33,7 @@ class OrderServiceImplTest {
     private UserDao userDao = mock(UserDao.class);
     private OrderService orderService =
             new OrderServiceImpl(giftCertificateDao, new GiftCertificateValidator(giftCertificateDao),
-                    userDao, orderDao, tagDao);
+                    userDao, orderDao, tagDao, modelMapper);
     GiftCertificateEntity giftCertificate = new GiftCertificateEntity();
     UserEntity user = new UserEntity();
     OrderEntity order = new OrderEntity();

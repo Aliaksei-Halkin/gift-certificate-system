@@ -1,6 +1,7 @@
 package com.epam.esm.controller.assembler;
 
 import com.epam.esm.controller.UserController;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.UserEntity;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -11,9 +12,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class UserAssembler implements SimpleRepresentationModelAssembler<UserEntity> {
+public class UserAssembler implements SimpleRepresentationModelAssembler<UserDto> {
     @Override
-    public void addLinks(EntityModel<UserEntity> resource) {
+    public void addLinks(EntityModel<UserDto> resource) {
         resource.add(linkTo(methodOn(UserController.class).findById(resource.getContent().getUserId())).withSelfRel());
         resource.add(linkTo(methodOn(UserController.class).findOrdersByUserId(resource.getContent().getUserId())).withRel("orders"));
         resource.add(linkTo(methodOn(UserController.class).makeOrder(resource.getContent().getUserId(), null)).withRel("make_order"));
@@ -23,7 +24,7 @@ public class UserAssembler implements SimpleRepresentationModelAssembler<UserEnt
     }
 
     @Override
-    public void addLinks(CollectionModel<EntityModel<UserEntity>> resources) {
+    public void addLinks(CollectionModel<EntityModel<UserDto>> resources) {
 
     }
 }

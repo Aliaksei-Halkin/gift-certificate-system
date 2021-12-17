@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.OrderEntity;
 import com.epam.esm.entity.UserEntity;
 import com.epam.esm.exception.ExceptionPropertyKey;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -42,19 +44,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserEntity> findAll(Map<String, String> queryParameters) {
+    public List<UserDto> findAll(Map<String, String> queryParameters) {
         QueryParameterValidator.isValidPage(queryParameters.get(PAGE));
         QueryParameterValidator.isValidPage(queryParameters.get(PER_PAGE));
         countTotalPages(queryParameters);
         List<UserEntity> users = userDao.findAll(queryParameters);
-        return users;
+        return users
+                .stream()
+                .map(userEntity -> modelMapper.map(userEntity, UserDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public UserEntity findById(long id) {
+    public UserDto findById(long id) {
         UserValidator.isValidId(id);
         UserEntity user = checkAndGetUser(id);
-        return user;
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override

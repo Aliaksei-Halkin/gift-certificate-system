@@ -4,6 +4,8 @@ import com.epam.esm.controller.assembler.OrderAssembler;
 import com.epam.esm.controller.assembler.TagAssembler;
 import com.epam.esm.controller.assembler.UserAssembler;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.OrderEntity;
 import com.epam.esm.entity.TagEntity;
 import com.epam.esm.entity.UserEntity;
@@ -83,8 +85,8 @@ public class UserController {
      * @return {@link ResponseEntity} with the list of the users.
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<UserEntity>>> findAll(@RequestBody Map<String, String> queryParameters) {
-        List<UserEntity> allUsers = userService.findAll(queryParameters);
+    public ResponseEntity<CollectionModel<EntityModel<UserDto>>> findAll(@RequestBody Map<String, String> queryParameters) {
+        List<UserDto> allUsers = userService.findAll(queryParameters);
         return new ResponseEntity<>(userAssembler.toCollectionModel(allUsers), HttpStatus.OK);
     }
 
@@ -101,8 +103,8 @@ public class UserController {
      * @return {@link ResponseEntity} with found user.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<UserEntity>> findById(@PathVariable long id) {
-        UserEntity user = userService.findById(id);
+    public ResponseEntity<EntityModel<UserDto>> findById(@PathVariable long id) {
+        UserDto user = userService.findById(id);
         return new ResponseEntity<>(userAssembler.toModel(user), HttpStatus.OK);
     }
 
@@ -121,9 +123,9 @@ public class UserController {
      * @return {@link ResponseEntity} with the made order and its location included.
      */
     @PostMapping("/{id}/order")
-    public ResponseEntity<EntityModel<OrderEntity>> makeOrder(@PathVariable("id") Long userId,
-                                                              @RequestBody List<Long> certificatesIDs) {
-        OrderEntity order = orderService.makeOrder(userId, certificatesIDs);
+    public ResponseEntity<EntityModel<OrderDto>> makeOrder(@PathVariable("id") Long userId,
+                                                           @RequestBody List<Long> certificatesIDs) {
+        OrderDto order = orderService.makeOrder(userId, certificatesIDs);
         return new ResponseEntity<>(orderAssembler.toModel(order), HttpStatus.CREATED);
     }
 
@@ -140,8 +142,8 @@ public class UserController {
      * @return {@link ResponseEntity} with found orders.
      */
     @GetMapping("/{id}/orders")
-    public ResponseEntity<List<OrderEntity>> findOrdersByUserId(@PathVariable("id") Long userId) {
-        List<OrderEntity> orders = orderService.findUserOrders(userId);
+    public ResponseEntity<List<OrderDto>> findOrdersByUserId(@PathVariable("id") Long userId) {
+        List<OrderDto> orders = orderService.findUserOrders(userId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
@@ -159,14 +161,10 @@ public class UserController {
      * @return {@link ResponseEntity} with found order.
      */
     @GetMapping("/{id}/order/{orderId}")
-    public ResponseEntity<EntityModel<OrderEntity>> findOrder(@PathVariable("id") Long userId,
-                                                              @PathVariable("orderId") Long orderId) {
+    public ResponseEntity<EntityModel<OrderDto>> findOrder(@PathVariable("id") Long userId,
+                                                           @PathVariable("orderId") Long orderId) {
         OrderDto orderDto = userService.findUserOrder(userId, orderId);
-        OrderEntity order = new OrderEntity();
-        order.setOrderId(orderDto.getOrderId());
-        order.setCreateDate(orderDto.getCreateDate());
-        order.setTotalCost(orderDto.getTotalCost());
-        return new ResponseEntity<>(orderAssembler.toModel(order), HttpStatus.OK);
+        return new ResponseEntity<>(orderAssembler.toModel(orderDto), HttpStatus.OK);
     }
 
     /**
@@ -180,8 +178,8 @@ public class UserController {
      * @return {@link ResponseEntity} with the most widely used tags of a user with the highest cost of all orders.
      */
     @GetMapping("/tag")
-    public ResponseEntity<CollectionModel<EntityModel<TagEntity>>> findMostWidelyUsedTag() {
-        List<TagEntity> tags = orderService.findMostWidelyUsedTag();
+    public ResponseEntity<CollectionModel<EntityModel<TagDto>>> findMostWidelyUsedTag() {
+        List<TagDto> tags = orderService.findMostWidelyUsedTag();
         return new ResponseEntity<>(tagAssembler.toCollectionModel(tags), HttpStatus.OK);
     }
 }
