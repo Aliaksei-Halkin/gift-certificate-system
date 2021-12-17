@@ -1,6 +1,5 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.entity.TagEntity;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
@@ -16,9 +15,18 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     private int duration;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
-    private Set<TagEntity> tags;
+    private Set<TagDto> tags;
+    private boolean active;
 
     public GiftCertificateDto() {
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public Long getId() {
@@ -77,11 +85,11 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
         this.updateDate = updateDate;
     }
 
-    public Set<TagEntity> getTags() {
+    public Set<TagDto> getTags() {
         return tags;
     }
 
-    public void setTags(Set<TagEntity> tags) {
+    public void setTags(Set<TagDto> tags) {
         this.tags = tags;
     }
 
@@ -89,13 +97,14 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         GiftCertificateDto that = (GiftCertificateDto) o;
-        return duration == that.duration && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(createdDate, that.createdDate) && Objects.equals(updateDate, that.updateDate) && Objects.equals(tags, that.tags);
+        return duration == that.duration && active == that.active && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(createdDate, that.createdDate) && Objects.equals(updateDate, that.updateDate) && Objects.equals(tags, that.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createdDate, updateDate, tags);
+        return Objects.hash(super.hashCode(), id, name, description, price, duration, createdDate, updateDate, tags, active);
     }
 
     @Override
@@ -109,6 +118,7 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
                 ", createdDate=" + createdDate +
                 ", updateDate=" + updateDate +
                 ", tags=" + tags +
+                ", active=" + active +
                 '}';
     }
 }

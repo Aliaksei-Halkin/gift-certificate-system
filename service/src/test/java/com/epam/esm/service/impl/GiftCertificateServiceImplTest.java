@@ -29,7 +29,7 @@ class GiftCertificateServiceImplTest {
     private GiftCertificateDao giftCertificateDao = mock(GiftCertificateDaoImpl.class);
     private TagDao tagDao = mock(TagDaoImpl.class);
     private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateDao, tagDao,
-            new GiftCertificateValidator(giftCertificateDao), new TagValidator());
+            new GiftCertificateValidator(giftCertificateDao), new TagValidator(), modelMapper);
     private GiftCertificateEntity giftCertificateFirst = new GiftCertificateEntity();
     private GiftCertificateEntity giftCertificateSecond = new GiftCertificateEntity();
     private TagEntity tag = new TagEntity();

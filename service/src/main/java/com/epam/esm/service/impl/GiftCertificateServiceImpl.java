@@ -2,7 +2,9 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.GiftCertificateField;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.entity.GiftCertificateEntity;
 import com.epam.esm.entity.TagEntity;
 import com.epam.esm.exception.ExceptionPropertyKey;
@@ -16,12 +18,14 @@ import com.epam.esm.validator.TagValidator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The class represents service methods witch work with dao level, validation
@@ -38,33 +42,35 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final TagDao tagDao;
     private final GiftCertificateValidator giftCertificateValidator;
     private final TagValidator tagValidator;
-
+    private final ModelMapper modelMapper;
 
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, TagDao tagDao,
-                                      GiftCertificateValidator giftCertificateValidator, TagValidator tagValidator) {
+                                      GiftCertificateValidator giftCertificateValidator, TagValidator tagValidator, ModelMapper modelMapper) {
         this.giftCertificateDao = giftCertificateDao;
         this.tagDao = tagDao;
         this.giftCertificateValidator = giftCertificateValidator;
         this.tagValidator = tagValidator;
+        this.modelMapper = modelMapper;
     }
 
     /**
      * The method represents adding a new {@link GiftCertificateEntity }to the database
      *
-     * @param giftCertificate new {@link GiftCertificateEntity }
-     * @return updated and added {@link GiftCertificateEntity }
+     * @param giftCertificateDto new {@link GiftCertificateDto }
+     * @return updated and added {@link GiftCertificateDto }
      */
     @Override
     @Transactional
-    public GiftCertificateEntity addGiftCertificate(GiftCertificateEntity giftCertificate) {
+    public GiftCertificateDto addGiftCertificate(GiftCertificateDto giftCertificateDto) {
+        GiftCertificateEntity giftCertificate = modelMapper.map(giftCertificateDto, GiftCertificateEntity.class);
         giftCertificateValidator.isValidGiftCertificate(giftCertificate);
         Optional<GiftCertificateEntity> optionalCertificate = giftCertificateValidator.ifExistName(giftCertificate.getName());
         if (optionalCertificate.isPresent()) {
             GiftCertificateEntity updatedCertificate = optionalCertificate.get();
             updatedCertificate.setActive(true);
             giftCertificateDao.update(updatedCertificate);
-            return updatedCertificate;
+            return modelMapper.map(updatedCertificate, GiftCertificateDto.class);
         }
         giftCertificate.setId(null);
         giftCertificate.setActive(true);
@@ -74,7 +80,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         giftCertificateDao.add(giftCertificate);
         LOGGER.info("Gift certificate added: " + giftCertificate);
-        return giftCertificate;
+        return modelMapper.map(giftCertificate, GiftCertificateDto.class);
     }
 
     /**
@@ -127,12 +133,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * The method represents adding the {@link TagEntity} to the {@link GiftCertificateEntity }
      *
      * @param giftCertificateId id of gift certificate
-     * @param tag               {@link TagEntity}
+     * @param tagDto               {@link TagEntity}
      * @return {@link GiftCertificateEntity } with all tags
      */
     @Override
     @Transactional
-    public GiftCertificateEntity addTagToGiftCertificate(Long giftCertificateId, TagEntity tag) {
+    public GiftCertificateDto addTagToGiftCertificate(Long giftCertificateId, TagDto tagDto) {
+        TagEntity tag = modelMapper.map(tagDto, TagEntity.class);
         giftCertificateValidator.isValidId(giftCertificateId);
         tagValidator.isValidTag(tag);
         GiftCertificateEntity giftCertificate = checkAndGetGiftCertificate(giftCertificateId);
@@ -140,7 +147,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificate.getTags().add(updatedTag);
         GiftCertificateEntity updatedGiftCertificate = giftCertificateDao.update(giftCertificate);
         LOGGER.info("Tag added to gift certificate: " + tag);
-        return updatedGiftCertificate;
+        return modelMapper.map(updatedGiftCertificate, GiftCertificateDto.class);
     }
 
     /**
@@ -163,11 +170,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @return GiftCertificate
      */
     @Override
-    public GiftCertificateEntity findGiftCertificateById(Long id) {
+    public GiftCertificateDto findGiftCertificateById(Long id) {
         giftCertificateValidator.isValidId(id);
         GiftCertificateEntity giftCertificate = checkAndGetGiftCertificate(id);
         LOGGER.log(Level.INFO, "Found gift certificate by id: ", giftCertificate);
-        return giftCertificate;
+        return modelMapper.map(giftCertificate, GiftCertificateDto.class);
     }
 
     /**
@@ -177,7 +184,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @return GiftCertificates
      */
     @Override
-    public List<GiftCertificateEntity> findGiftCertificatesByParameters(Map<String, String> queryParameters) {
+    public List<GiftCertificateDto> findGiftCertificatesByParameters(Map<String, String> queryParameters) {
         Map<String, String> processedQueryParameters = ParameterManager
                 .giftCertificateQueryParametersProcessing(queryParameters);
         QueryParameterValidator.isValidGiftCertificateQueryParameters(processedQueryParameters);
@@ -189,7 +196,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                     .GIFT_CERTIFICATES_NOT_FOUND, null, IdentifierEntity.CERTIFICATE);
         }
         countTotalPages(processedQueryParameters);
-        return giftCertificates;
+        return giftCertificates
+                .stream()
+                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -210,12 +220,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * The method represents updating
      *
      * @param giftCertificateId the unique id of the gift certificate
-     * @param giftCertificate   giftCertificate with new data
+     * @param giftCertificateDto   giftCertificate with new data
      * @return updatedGiftCertificate
      */
     @Override
     @Transactional
-    public GiftCertificateEntity updateGiftCertificate(Long giftCertificateId, GiftCertificateEntity giftCertificate) {
+    public GiftCertificateDto updateGiftCertificate(Long giftCertificateId, GiftCertificateDto giftCertificateDto) {
+        GiftCertificateEntity giftCertificate = modelMapper.map(giftCertificateDto, GiftCertificateEntity.class);
         giftCertificateValidator.isValidId(giftCertificateId);
         GiftCertificateEntity giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);
         updateFields(giftCertificate, giftCertificateVerified);
@@ -224,7 +235,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         giftCertificateVerified.setTags(giftCertificate.getTags());
         giftCertificateDao.update(giftCertificateVerified);
-        return giftCertificateVerified;
+        return modelMapper.map(giftCertificateVerified, GiftCertificateDto.class);
     }
 
     /**
@@ -257,32 +268,36 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private GiftCertificateEntity checkCertificateOnDoubleDelete(long id) {
-        GiftCertificateEntity giftCertificate = findGiftCertificateById(id);
+        GiftCertificateDto giftCertificate = findGiftCertificateById(id);
         if (!giftCertificate.isActive()) {
             throw new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND, id,
                     IdentifierEntity.CERTIFICATE);
         }
-        return giftCertificate;
+        return modelMapper.map(giftCertificate, GiftCertificateEntity.class);
     }
 
     @Override
-    public List<GiftCertificateEntity> findAllCertificates(Map<String, String> queryParameters) {
+    public List<GiftCertificateDto> findAllCertificates(Map<String, String> queryParameters) {
         QueryParameterValidator.isValidPage(queryParameters.get(PAGE));
         QueryParameterValidator.isValidPage(queryParameters.get(PER_PAGE));
         countTotalPages(queryParameters);
-        return giftCertificateDao.findAll(queryParameters);
+        List<GiftCertificateEntity> giftCertificateEntitys = giftCertificateDao.findAll(queryParameters);
+        return giftCertificateEntitys
+                .stream()
+                .map(entity -> modelMapper.map(entity, GiftCertificateDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public GiftCertificateEntity updateGiftCertificateField(Long id, GiftCertificateField giftCertificateField) {
+    public GiftCertificateDto updateGiftCertificateField(Long id, GiftCertificateField giftCertificateField) {
         giftCertificateValidator.isValidId(id);
         giftCertificateValidator.isValidField(giftCertificateField);
         GiftCertificateEntity giftCertificate = checkAndGetGiftCertificate(id);
         updateField(giftCertificateField, giftCertificate);
         GiftCertificateEntity updatedCertificate = giftCertificateDao.update(giftCertificate);
         LOGGER.info("Gift certificate with id = {} updated", id);
-        return updatedCertificate;
+        return modelMapper.map(updatedCertificate, GiftCertificateDto.class);
     }
 
     private void updateField(GiftCertificateField giftCertificateField, GiftCertificateEntity updatedGiftCertificate) {
