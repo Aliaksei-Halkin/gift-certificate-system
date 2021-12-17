@@ -11,7 +11,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "user")
 @Where(clause = "active = 1")
-public class User {
+public class UserEntity {
 
     @Id
     @Column(name = "user_id", nullable = false)
@@ -31,9 +31,9 @@ public class User {
     boolean active;
     @JsonBackReference
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "user")
-    private List<Order> orders;
+    private List<OrderEntity> orders;
 
-    public User() {
+    public UserEntity() {
     }
 
     public boolean getActive() {
@@ -88,11 +88,11 @@ public class User {
         return active;
     }
 
-    public List<Order> getOrders() {
+    public List<OrderEntity> getOrders() {
         return orders;
     }
 
-    public void setOrders(List<Order> orders) {
+    public void setOrders(List<OrderEntity> orders) {
         this.orders = orders;
     }
 
@@ -100,7 +100,7 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        UserEntity user = (UserEntity) o;
         return userId == user.userId && active == user.active && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(orders, user.orders);
     }
 

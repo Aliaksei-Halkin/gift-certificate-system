@@ -1,20 +1,19 @@
 package com.epam.esm.service;
 
-import com.epam.esm.dto.OrderDto;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.OrderEntity;
+import com.epam.esm.entity.TagEntity;
 
 import java.util.List;
 import java.util.Map;
 
 public interface OrderService {
-    Order makeOrder(Long userId, List<Long> certificates);
+    OrderEntity makeOrder(Long userId, List<Long> certificates);
 
-    List<Order> findUserOrders(Long userId);
+    List<OrderEntity> findUserOrders(Long userId);
 
-    List<Tag> findMostWidelyUsedTag();
+    List<TagEntity> findMostWidelyUsedTag();
 
-    Order findOrderById(long orderId);
+    OrderEntity findOrderById(long orderId);
 
-    List<Order> findAll(Map<String, String> pagingParameters);
+    List<OrderEntity> findAll(Map<String, String> pagingParameters);
 }

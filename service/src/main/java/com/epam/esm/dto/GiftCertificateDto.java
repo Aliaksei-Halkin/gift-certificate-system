@@ -1,13 +1,14 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.TagEntity;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 
-public class GiftCertificateDto {
+public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
     private Long id;
     private String name;
     private String description;
@@ -15,7 +16,7 @@ public class GiftCertificateDto {
     private int duration;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
-    private Set<Tag> tags;
+    private Set<TagEntity> tags;
 
     public GiftCertificateDto() {
     }
@@ -76,11 +77,11 @@ public class GiftCertificateDto {
         this.updateDate = updateDate;
     }
 
-    public Set<Tag> getTags() {
+    public Set<TagEntity> getTags() {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(Set<TagEntity> tags) {
         this.tags = tags;
     }
 

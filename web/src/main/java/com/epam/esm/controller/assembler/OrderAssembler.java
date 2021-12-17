@@ -1,8 +1,7 @@
 package com.epam.esm.controller.assembler;
 
 import com.epam.esm.controller.OrderController;
-import com.epam.esm.dto.OrderDto;
-import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderEntity;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
@@ -12,10 +11,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class OrderAssembler implements SimpleRepresentationModelAssembler<Order> {
+public class OrderAssembler implements SimpleRepresentationModelAssembler<OrderEntity> {
 
     @Override
-    public void addLinks(EntityModel<Order> resource) {
+    public void addLinks(EntityModel<OrderEntity> resource) {
         resource.add(linkTo(methodOn(OrderController.class)
                 .findOrderById(resource.getContent().getOrderId())).withSelfRel());
         resource.add(linkTo(methodOn(OrderController.class)
@@ -23,7 +22,7 @@ public class OrderAssembler implements SimpleRepresentationModelAssembler<Order>
     }
 
     @Override
-    public void addLinks(CollectionModel<EntityModel<Order>> resources) {
+    public void addLinks(CollectionModel<EntityModel<OrderEntity>> resources) {
 
     }
 }

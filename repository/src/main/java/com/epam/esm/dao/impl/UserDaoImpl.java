@@ -1,7 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.UserDao;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.UserEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -20,27 +20,27 @@ public class UserDaoImpl implements UserDao {
 
 
     @Override
-    public Optional<User> findById(Long id) {
-        return Optional.ofNullable(entityManager.find(User.class, id));
+    public Optional<UserEntity> findById(Long id) {
+        return Optional.ofNullable(entityManager.find(UserEntity.class, id));
     }
 
     @Override
-    public long add(User entity) {
+    public long add(UserEntity entity) {
         entityManager.persist(entity);
         return entity.getUserId();
     }
 
     @Override
-    public User update(User entity) {
+    public UserEntity update(UserEntity entity) {
         return null;
     }
 
     @Override
-    public List<User> findAll(Map<String, String> queryParameters) {
+    public List<UserEntity> findAll(Map<String, String> queryParameters) {
         int page = Integer.parseInt(queryParameters.get(PAGE));
         int perPage = Integer.parseInt(queryParameters.get(PER_PAGE));
         int firstResult = page == 1 ? 0 : page * perPage - perPage;
-        return entityManager.createQuery(SELECT_ALL_USERS, User.class)
+        return entityManager.createQuery(SELECT_ALL_USERS, UserEntity.class)
                 .setFirstResult(firstResult)
                 .setMaxResults(perPage)
                 .getResultList();

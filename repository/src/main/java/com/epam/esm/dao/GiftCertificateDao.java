@@ -1,7 +1,7 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.GiftCertificateEntity;
+import com.epam.esm.entity.TagEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -13,16 +13,16 @@ import java.util.Set;
  *
  * @author Aliaksei Halkin
  */
-public interface GiftCertificateDao extends BaseDao<GiftCertificate, Long> {
-    List<GiftCertificate> findAll(Map<String, String> queryParameters);
+public interface GiftCertificateDao extends BaseDao<GiftCertificateEntity, Long> {
+    List<GiftCertificateEntity> findAll(Map<String, String> queryParameters);
 
-    List<GiftCertificate> findCertificatesByQueryParameters(Map<String, String> query);
+    List<GiftCertificateEntity> findCertificatesByQueryParameters(Map<String, String> query);
 
-    Set<Tag> findGiftCertificateTags(long certificateId);
+    Set<TagEntity> findGiftCertificateTags(long certificateId);
 
-    void deactivate(GiftCertificate giftCertificate);
+    void deactivate(GiftCertificateEntity giftCertificate);
 
-    Optional<GiftCertificate> findByName(String name);
+    Optional<GiftCertificateEntity> findByName(String name);
 
     long countTotalRows(Map<String, String> queryParameters);
 }

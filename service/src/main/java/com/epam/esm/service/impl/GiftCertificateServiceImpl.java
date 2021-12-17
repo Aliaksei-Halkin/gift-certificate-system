@@ -3,8 +3,8 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.GiftCertificateField;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.GiftCertificateEntity;
+import com.epam.esm.entity.TagEntity;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
@@ -50,18 +50,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     /**
-     * The method represents adding a new {@link GiftCertificate }to the database
+     * The method represents adding a new {@link GiftCertificateEntity }to the database
      *
-     * @param giftCertificate new {@link GiftCertificate }
-     * @return updated and added {@link GiftCertificate }
+     * @param giftCertificate new {@link GiftCertificateEntity }
+     * @return updated and added {@link GiftCertificateEntity }
      */
     @Override
     @Transactional
-    public GiftCertificate addGiftCertificate(GiftCertificate giftCertificate) {
+    public GiftCertificateEntity addGiftCertificate(GiftCertificateEntity giftCertificate) {
         giftCertificateValidator.isValidGiftCertificate(giftCertificate);
-        Optional<GiftCertificate> optionalCertificate = giftCertificateValidator.ifExistName(giftCertificate.getName());
+        Optional<GiftCertificateEntity> optionalCertificate = giftCertificateValidator.ifExistName(giftCertificate.getName());
         if (optionalCertificate.isPresent()) {
-            GiftCertificate updatedCertificate = optionalCertificate.get();
+            GiftCertificateEntity updatedCertificate = optionalCertificate.get();
             updatedCertificate.setActive(true);
             giftCertificateDao.update(updatedCertificate);
             return updatedCertificate;
@@ -82,14 +82,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      *
      * @param giftCertificate the GiftCertificate
      */
-    private void updateTagsInCertificate(GiftCertificate giftCertificate) {
-        Set<Tag> tags = giftCertificate.getTags();
-        Set<Tag> updatedTags = new HashSet<>();
-        for (Tag tag : tags) {
+    private void updateTagsInCertificate(GiftCertificateEntity giftCertificate) {
+        Set<TagEntity> tags = giftCertificate.getTags();
+        Set<TagEntity> updatedTags = new HashSet<>();
+        for (TagEntity tag : tags) {
             if (tag.isActive()) {
-                Optional<Tag> optionalTag = tagDao.findByName(tag.getName());
+                Optional<TagEntity> optionalTag = tagDao.findByName(tag.getName());
                 if (optionalTag.isPresent()) {
-                    Tag receivedTag = optionalTag.get();
+                    TagEntity receivedTag = optionalTag.get();
                     if (!receivedTag.isActive()) {
                         tagDao.changeActiveForTag(receivedTag.getName());
                         receivedTag.setActive(true);
@@ -107,9 +107,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificate.setTags(updatedTags);
     }
 
-    private Tag findTag(Tag tag) {
-        Optional<Tag> tagByName = tagDao.findByName(tag.getName());
-        Tag movableTag = new Tag();
+    private TagEntity findTag(TagEntity tag) {
+        Optional<TagEntity> tagByName = tagDao.findByName(tag.getName());
+        TagEntity movableTag = new TagEntity();
         if (!tagByName.isPresent()) {
             tag.setId(null);
             tag.setActive(true);
@@ -124,21 +124,21 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     /**
-     * The method represents adding the {@link Tag} to the {@link GiftCertificate }
+     * The method represents adding the {@link TagEntity} to the {@link GiftCertificateEntity }
      *
      * @param giftCertificateId id of gift certificate
-     * @param tag               {@link Tag}
-     * @return {@link GiftCertificate } with all tags
+     * @param tag               {@link TagEntity}
+     * @return {@link GiftCertificateEntity } with all tags
      */
     @Override
     @Transactional
-    public GiftCertificate addTagToGiftCertificate(Long giftCertificateId, Tag tag) {
+    public GiftCertificateEntity addTagToGiftCertificate(Long giftCertificateId, TagEntity tag) {
         giftCertificateValidator.isValidId(giftCertificateId);
         tagValidator.isValidTag(tag);
-        GiftCertificate giftCertificate = checkAndGetGiftCertificate(giftCertificateId);
-        Tag updatedTag = findTag(tag);
+        GiftCertificateEntity giftCertificate = checkAndGetGiftCertificate(giftCertificateId);
+        TagEntity updatedTag = findTag(tag);
         giftCertificate.getTags().add(updatedTag);
-        GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificate);
+        GiftCertificateEntity updatedGiftCertificate = giftCertificateDao.update(giftCertificate);
         LOGGER.info("Tag added to gift certificate: " + tag);
         return updatedGiftCertificate;
     }
@@ -149,8 +149,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @param id unique id of gift certificate
      * @return iftCertificate
      */
-    private GiftCertificate checkAndGetGiftCertificate(Long id) {
-        Optional<GiftCertificate> giftCertificateOptional = giftCertificateDao.findById(id);
+    private GiftCertificateEntity checkAndGetGiftCertificate(Long id) {
+        Optional<GiftCertificateEntity> giftCertificateOptional = giftCertificateDao.findById(id);
         return giftCertificateOptional
                 .orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND,
                         id, IdentifierEntity.CERTIFICATE));
@@ -163,9 +163,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @return GiftCertificate
      */
     @Override
-    public GiftCertificate findGiftCertificateById(Long id) {
+    public GiftCertificateEntity findGiftCertificateById(Long id) {
         giftCertificateValidator.isValidId(id);
-        GiftCertificate giftCertificate = checkAndGetGiftCertificate(id);
+        GiftCertificateEntity giftCertificate = checkAndGetGiftCertificate(id);
         LOGGER.log(Level.INFO, "Found gift certificate by id: ", giftCertificate);
         return giftCertificate;
     }
@@ -177,12 +177,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @return GiftCertificates
      */
     @Override
-    public List<GiftCertificate> findGiftCertificatesByParameters(Map<String, String> queryParameters) {
+    public List<GiftCertificateEntity> findGiftCertificatesByParameters(Map<String, String> queryParameters) {
         Map<String, String> processedQueryParameters = ParameterManager
                 .giftCertificateQueryParametersProcessing(queryParameters);
         QueryParameterValidator.isValidGiftCertificateQueryParameters(processedQueryParameters);
         LOGGER.debug("Query parameter: {}", processedQueryParameters);
-        List<GiftCertificate> giftCertificates = giftCertificateDao
+        List<GiftCertificateEntity> giftCertificates = giftCertificateDao
                 .findCertificatesByQueryParameters(new HashMap<>(processedQueryParameters));
         if (giftCertificates.isEmpty()) {
             throw new ResourceNotFoundException(ExceptionPropertyKey
@@ -201,7 +201,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public void deleteGiftCertificateById(Long id) {
         giftCertificateValidator.isValidId(id);
-        GiftCertificate giftCertificate = checkCertificateOnDoubleDelete(id);
+        GiftCertificateEntity giftCertificate = checkCertificateOnDoubleDelete(id);
         giftCertificateDao.deactivate(giftCertificate);
         LOGGER.log(Level.INFO, "The certificate with id = {} deleted", id);
     }
@@ -215,9 +215,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     @Transactional
-    public GiftCertificate updateGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate) {
+    public GiftCertificateEntity updateGiftCertificate(Long giftCertificateId, GiftCertificateEntity giftCertificate) {
         giftCertificateValidator.isValidId(giftCertificateId);
-        GiftCertificate giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);
+        GiftCertificateEntity giftCertificateVerified = checkAndGetGiftCertificate(giftCertificateId);
         updateFields(giftCertificate, giftCertificateVerified);
         if (giftCertificate.getTags() != null) {
             updateTagsInCertificate(giftCertificate);
@@ -233,7 +233,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * @param receivedGiftCertificate certificate with new fields
      * @param updatedGiftCertificate  certificate from database with old fields
      */
-    private void updateFields(GiftCertificate receivedGiftCertificate, GiftCertificate updatedGiftCertificate) {
+    private void updateFields(GiftCertificateEntity receivedGiftCertificate, GiftCertificateEntity updatedGiftCertificate) {
         if (receivedGiftCertificate.getName() != null && !receivedGiftCertificate.getName().isEmpty()) {
             updatedGiftCertificate.setName(receivedGiftCertificate.getName());
         }
@@ -256,8 +256,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         LOGGER.log(Level.DEBUG, "Updated gift certificate: {}", updatedGiftCertificate);
     }
 
-    private GiftCertificate checkCertificateOnDoubleDelete(long id) {
-        GiftCertificate giftCertificate = findGiftCertificateById(id);
+    private GiftCertificateEntity checkCertificateOnDoubleDelete(long id) {
+        GiftCertificateEntity giftCertificate = findGiftCertificateById(id);
         if (!giftCertificate.isActive()) {
             throw new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND, id,
                     IdentifierEntity.CERTIFICATE);
@@ -266,7 +266,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> findAllCertificates(Map<String, String> queryParameters) {
+    public List<GiftCertificateEntity> findAllCertificates(Map<String, String> queryParameters) {
         QueryParameterValidator.isValidPage(queryParameters.get(PAGE));
         QueryParameterValidator.isValidPage(queryParameters.get(PER_PAGE));
         countTotalPages(queryParameters);
@@ -275,17 +275,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     @Transactional
-    public GiftCertificate updateGiftCertificateField(Long id, GiftCertificateField giftCertificateField) {
+    public GiftCertificateEntity updateGiftCertificateField(Long id, GiftCertificateField giftCertificateField) {
         giftCertificateValidator.isValidId(id);
         giftCertificateValidator.isValidField(giftCertificateField);
-        GiftCertificate giftCertificate = checkAndGetGiftCertificate(id);
+        GiftCertificateEntity giftCertificate = checkAndGetGiftCertificate(id);
         updateField(giftCertificateField, giftCertificate);
-        GiftCertificate updatedCertificate = giftCertificateDao.update(giftCertificate);
+        GiftCertificateEntity updatedCertificate = giftCertificateDao.update(giftCertificate);
         LOGGER.info("Gift certificate with id = {} updated", id);
         return updatedCertificate;
     }
 
-    private void updateField(GiftCertificateField giftCertificateField, GiftCertificate updatedGiftCertificate) {
+    private void updateField(GiftCertificateField giftCertificateField, GiftCertificateEntity updatedGiftCertificate) {
         GiftCertificateField.FieldName fieldName = GiftCertificateField.FieldName.valueOf(giftCertificateField
                 .getFieldName().toUpperCase());
         switch (fieldName) {

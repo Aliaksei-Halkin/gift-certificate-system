@@ -2,7 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.controller.assembler.GiftCertificateAssembler;
 import com.epam.esm.controller.assembler.OrderAssembler;
-import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderEntity;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +54,8 @@ public class OrderController {
      * @return {@link ResponseEntity} with found order.
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<Order>>> findAll(@RequestBody Map<String, String> pagingParameters) {
-        List<Order> orders = orderService.findAll(pagingParameters);
+    public ResponseEntity<CollectionModel<EntityModel<OrderEntity>>> findAll(@RequestBody Map<String, String> pagingParameters) {
+        List<OrderEntity> orders = orderService.findAll(pagingParameters);
         return new ResponseEntity<>(orderAssembler.toCollectionModel(orders), HttpStatus.OK);
     }
     /**
@@ -71,8 +71,8 @@ public class OrderController {
      * @return {@link ResponseEntity} with found order.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<Order>> findOrderById(@PathVariable("id") long orderId) {
-        Order order = orderService.findOrderById(orderId);
+    public ResponseEntity<EntityModel<OrderEntity>> findOrderById(@PathVariable("id") long orderId) {
+        OrderEntity order = orderService.findOrderById(orderId);
         return new ResponseEntity<>(orderAssembler.toModel(order), HttpStatus.OK);
     }
 }

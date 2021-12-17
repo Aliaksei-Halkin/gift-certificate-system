@@ -1,6 +1,6 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.TagEntity;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ValidationException;
@@ -16,7 +16,7 @@ public class TagValidator {
     private static final long MIN_ID = 1;
     private static final String REGEX_NAME = "[а-яА-Я\\w\\s\\.,?!']{1,45}";
 
-    public void isValidTag(Tag tag) {
+    public void isValidTag(TagEntity tag) {
         isValidName(tag.getName());
     }
 

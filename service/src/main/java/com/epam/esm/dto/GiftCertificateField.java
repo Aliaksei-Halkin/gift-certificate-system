@@ -1,6 +1,5 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.entity.GiftCertificate;
 import org.springframework.hateoas.RepresentationModel;
 
 public class GiftCertificateField extends RepresentationModel<GiftCertificateField> {

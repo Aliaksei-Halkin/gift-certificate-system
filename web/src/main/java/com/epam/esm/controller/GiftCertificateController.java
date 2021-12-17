@@ -3,8 +3,8 @@ package com.epam.esm.controller;
 import com.epam.esm.controller.assembler.GiftCertificateAssembler;
 import com.epam.esm.controller.assembler.TagAssembler;
 import com.epam.esm.dto.GiftCertificateField;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.GiftCertificateEntity;
+import com.epam.esm.entity.TagEntity;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -65,8 +65,8 @@ public class GiftCertificateController {
      * @return {@link ResponseEntity} with the inserted gift certificate and its location included.
      */
     @PostMapping
-    public ResponseEntity<EntityModel<GiftCertificate>> addGiftCertificate(@RequestBody GiftCertificate giftCertificate) {
-        GiftCertificate addedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificate);
+    public ResponseEntity<EntityModel<GiftCertificateEntity>> addGiftCertificate(@RequestBody GiftCertificateEntity giftCertificate) {
+        GiftCertificateEntity addedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificate);
         return new ResponseEntity<>(giftCertificateAssembler.toModel(addedGiftCertificate), HttpStatus.CREATED);
     }
 
@@ -85,9 +85,9 @@ public class GiftCertificateController {
      * @return {@link ResponseEntity} with the set of tags which belongs to the gift certificate.
      */
     @PutMapping("/{id}/tags")
-    public ResponseEntity<CollectionModel<EntityModel<Tag>>> addTagToGiftCertificate(@PathVariable("id") long giftCertificateId,
-                                                                                     @RequestBody Tag tag) {
-        GiftCertificate giftCertificate = giftCertificateService.addTagToGiftCertificate(giftCertificateId, tag);
+    public ResponseEntity<CollectionModel<EntityModel<TagEntity>>> addTagToGiftCertificate(@PathVariable("id") long giftCertificateId,
+                                                                                           @RequestBody TagEntity tag) {
+        GiftCertificateEntity giftCertificate = giftCertificateService.addTagToGiftCertificate(giftCertificateId, tag);
         return new ResponseEntity<>(tagAssembler.toCollectionModel(giftCertificate.getTags()), HttpStatus.OK);
     }
 
@@ -105,8 +105,8 @@ public class GiftCertificateController {
      * @return {@link ResponseEntity} with found gift certificate.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<GiftCertificate>> findGiftCertificateById(@PathVariable("id") long id) {
-        GiftCertificate giftCertificate = giftCertificateService.findGiftCertificateById(id);
+    public ResponseEntity<EntityModel<GiftCertificateEntity>> findGiftCertificateById(@PathVariable("id") long id) {
+        GiftCertificateEntity giftCertificate = giftCertificateService.findGiftCertificateById(id);
         return new ResponseEntity<>(giftCertificateAssembler.toModel(giftCertificate), HttpStatus.OK);
     }
 
@@ -123,9 +123,9 @@ public class GiftCertificateController {
      * @return {@link ResponseEntity} with the set of tags which belongs to the gift certificate.
      */
     @GetMapping("/{id}/tags")
-    public ResponseEntity<CollectionModel<EntityModel<Tag>>> findGiftCertificateTags(@PathVariable("id") long certificateId) {
-        GiftCertificate giftCertificate = giftCertificateService.findGiftCertificateById(certificateId);
-        Set<Tag> tags = giftCertificate.getTags();
+    public ResponseEntity<CollectionModel<EntityModel<TagEntity>>> findGiftCertificateTags(@PathVariable("id") long certificateId) {
+        GiftCertificateEntity giftCertificate = giftCertificateService.findGiftCertificateById(certificateId);
+        Set<TagEntity> tags = giftCertificate.getTags();
         return new ResponseEntity<>(tagAssembler.toCollectionModel(tags), HttpStatus.OK);
     }
 
@@ -151,9 +151,9 @@ public class GiftCertificateController {
      * @return {@link ResponseEntity} with the list of the gift certificates.
      */
     @GetMapping("/selection")
-    public ResponseEntity<CollectionModel<EntityModel<GiftCertificate>>> findGiftCertificatesByParameters
+    public ResponseEntity<CollectionModel<EntityModel<GiftCertificateEntity>>> findGiftCertificatesByParameters
     (@RequestBody Map<String, String> queryParameters) {
-        List<GiftCertificate> giftCertificates = giftCertificateService.findGiftCertificatesByParameters(queryParameters);
+        List<GiftCertificateEntity> giftCertificates = giftCertificateService.findGiftCertificatesByParameters(queryParameters);
         return new ResponseEntity<>(giftCertificateAssembler.toCollectionModel(giftCertificates), HttpStatus.OK);
     }
 
@@ -172,9 +172,9 @@ public class GiftCertificateController {
      * @return {@link ResponseEntity} with the updated gift certificate.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<EntityModel<GiftCertificate>> updateGiftCertificate(@PathVariable("id") long giftCertificateId,
-                                                                              @RequestBody GiftCertificate giftCertificate) {
-        GiftCertificate updatedGiftCertificate = giftCertificateService
+    public ResponseEntity<EntityModel<GiftCertificateEntity>> updateGiftCertificate(@PathVariable("id") long giftCertificateId,
+                                                                                    @RequestBody GiftCertificateEntity giftCertificate) {
+        GiftCertificateEntity updatedGiftCertificate = giftCertificateService
                 .updateGiftCertificate(giftCertificateId, giftCertificate);
         return new ResponseEntity<>(giftCertificateAssembler.toModel(updatedGiftCertificate), HttpStatus.OK);
     }
@@ -204,8 +204,8 @@ public class GiftCertificateController {
      * @return the list of certificates
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<GiftCertificate>>> findAllGiftCertificates(@RequestBody Map<String, String> queryParameters) {
-        List<GiftCertificate> giftCertificates = giftCertificateService.findAllCertificates(queryParameters);
+    public ResponseEntity<CollectionModel<EntityModel<GiftCertificateEntity>>> findAllGiftCertificates(@RequestBody Map<String, String> queryParameters) {
+        List<GiftCertificateEntity> giftCertificates = giftCertificateService.findAllCertificates(queryParameters);
         return new ResponseEntity<>(giftCertificateAssembler.toCollectionModel(giftCertificates), HttpStatus.OK);
     }
 
@@ -217,9 +217,9 @@ public class GiftCertificateController {
      * @return updated GiftCertificate
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<EntityModel<GiftCertificate>> updateGiftCertificateField(@PathVariable Long id,
-                                                                                   @RequestBody GiftCertificateField giftCertificateField) {
-        GiftCertificate updatedGiftCertificate = giftCertificateService.updateGiftCertificateField(id, giftCertificateField);
+    public ResponseEntity<EntityModel<GiftCertificateEntity>> updateGiftCertificateField(@PathVariable Long id,
+                                                                                         @RequestBody GiftCertificateField giftCertificateField) {
+        GiftCertificateEntity updatedGiftCertificate = giftCertificateService.updateGiftCertificateField(id, giftCertificateField);
         return new ResponseEntity<>(giftCertificateAssembler.toModel(updatedGiftCertificate), HttpStatus.OK);
     }
 

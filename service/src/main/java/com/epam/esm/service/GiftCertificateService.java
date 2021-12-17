@@ -1,9 +1,8 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.GiftCertificateField;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
-import org.springframework.transaction.annotation.Transactional;
+import com.epam.esm.entity.GiftCertificateEntity;
+import com.epam.esm.entity.TagEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -14,19 +13,19 @@ import java.util.Map;
  * @author Aliaksei Halkin
  */
 public interface GiftCertificateService {
-    GiftCertificate addGiftCertificate(GiftCertificate giftCertificate);
+    GiftCertificateEntity addGiftCertificate(GiftCertificateEntity giftCertificate);
 
-    GiftCertificate addTagToGiftCertificate(Long giftCertificateId, Tag tag);
+    GiftCertificateEntity addTagToGiftCertificate(Long giftCertificateId, TagEntity tag);
 
-    GiftCertificate findGiftCertificateById(Long id);
+    GiftCertificateEntity findGiftCertificateById(Long id);
 
-    List<GiftCertificate> findGiftCertificatesByParameters(Map<String, String> queryParameters);
+    List<GiftCertificateEntity> findGiftCertificatesByParameters(Map<String, String> queryParameters);
 
     void deleteGiftCertificateById(Long id);
 
-    GiftCertificate updateGiftCertificate(Long giftCertificateId, GiftCertificate giftCertificate);
+    GiftCertificateEntity updateGiftCertificate(Long giftCertificateId, GiftCertificateEntity giftCertificate);
 
-    List<GiftCertificate> findAllCertificates(Map<String, String> queryParameters);
+    List<GiftCertificateEntity> findAllCertificates(Map<String, String> queryParameters);
 
-    GiftCertificate updateGiftCertificateField(Long id, GiftCertificateField giftCertificateField);
+    GiftCertificateEntity updateGiftCertificateField(Long id, GiftCertificateField giftCertificateField);
 }

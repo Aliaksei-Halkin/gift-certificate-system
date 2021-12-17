@@ -1,17 +1,18 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.entity.Order;
+import com.epam.esm.entity.OrderEntity;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 import java.util.Objects;
 
-public class UserDto {
+public class UserDto extends RepresentationModel<TagDto> {
 
     private long userId;
     private String firstName;
     private String lastName;
     private String email;
-    private List<Order> orders;
+    private List<OrderEntity> orders;
 
     public long getUserId() {
         return userId;
@@ -45,11 +46,11 @@ public class UserDto {
         this.email = email;
     }
 
-    public List<Order> getOrders() {
+    public List<OrderEntity> getOrders() {
         return orders;
     }
 
-    public void setOrders(List<Order> orders) {
+    public void setOrders(List<OrderEntity> orders) {
         this.orders = orders;
     }
 

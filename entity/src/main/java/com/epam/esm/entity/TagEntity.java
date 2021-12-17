@@ -2,7 +2,6 @@ package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Where;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "tags")
 @Where(clause = "active = 1")
-public class Tag extends RepresentationModel<Tag> {
+public class TagEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tagId",
@@ -31,17 +30,17 @@ public class Tag extends RepresentationModel<Tag> {
     @JoinTable(name = "certificates_has_tags",
             joinColumns = @JoinColumn(name = "tagId"),
             inverseJoinColumns = @JoinColumn(name = "certificateId"))
-    private List<GiftCertificate> giftCertificates;
+    private List<GiftCertificateEntity> giftCertificates;
 
     /**
      * The no-args constructor
      */
 
 
-    public Tag() {
+    public TagEntity() {
     }
 
-    public Tag(Long id, String name, boolean active, List<GiftCertificate> giftCertificates) {
+    public TagEntity(Long id, String name, boolean active, List<GiftCertificateEntity> giftCertificates) {
         this.id = id;
         this.name = name;
         this.active = active;
@@ -64,11 +63,11 @@ public class Tag extends RepresentationModel<Tag> {
         this.active = active;
     }
 
-    public List<GiftCertificate> getGiftCertificates() {
+    public List<GiftCertificateEntity> getGiftCertificates() {
         return giftCertificates;
     }
 
-    public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
+    public void setGiftCertificates(List<GiftCertificateEntity> giftCertificates) {
         this.giftCertificates = giftCertificates;
     }
 
@@ -102,7 +101,7 @@ public class Tag extends RepresentationModel<Tag> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tag tag = (Tag) o;
+        TagEntity tag = (TagEntity) o;
         return active == tag.active && Objects.equals(id, tag.id) && Objects.equals(name, tag.name);
     }
 

@@ -1,7 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.TagEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +30,7 @@ public class TagDaoImpl implements TagDao {
     /**
      * This is the query DELETE to database, the active value of Tag set false
      */
-    public static final String DELETE_TAG_BY_ID = "UPDATE Tag SET active=FALSE WHERE id = :id ";
+    public static final String DELETE_TAG_BY_ID = "UPDATE TagEntity SET active=FALSE WHERE id = :id ";
     private static final String ID_PARAMETER = "id";
     public static final String ACTIVATE_TAG_BY_NAME = "UPDATE tags SET active=true WHERE tagName = :name";
 
@@ -43,11 +43,11 @@ public class TagDaoImpl implements TagDao {
      * The method find   Tag by id
      *
      * @param id {@code Long} the id of the Tag
-     * @return Optional with {@link Tag} entity
+     * @return Optional with {@link TagEntity} entity
      */
     @Override
-    public Optional<Tag> findById(Long id) {
-        return Optional.ofNullable(entityManager.find(Tag.class, id));
+    public Optional<TagEntity> findById(Long id) {
+        return Optional.ofNullable(entityManager.find(TagEntity.class, id));
     }
 
     /**
@@ -57,7 +57,7 @@ public class TagDaoImpl implements TagDao {
      * @return id  of Tag
      */
     @Override
-    public long add(Tag entity) {
+    public long add(TagEntity entity) {
         entityManager.persist(entity);
         return entity.getId();
     }
@@ -81,7 +81,7 @@ public class TagDaoImpl implements TagDao {
      */
 
     @Override
-    public Tag update(Tag entity) {
+    public TagEntity update(TagEntity entity) {
         throw new UnsupportedOperationException("Update is not available action for Tag");
     }
 
@@ -91,15 +91,15 @@ public class TagDaoImpl implements TagDao {
      * @return {@code List} of all tags
      */
     @Override
-    public List<Tag> findAll(int page, int perPage) {
+    public List<TagEntity> findAll(int page, int perPage) {
         int firstResult = page == 1 ? 0 : page * perPage - perPage;
-        return entityManager.createQuery(SELECT_ALL_TAGS, Tag.class)
+        return entityManager.createQuery(SELECT_ALL_TAGS, TagEntity.class)
                 .setFirstResult(firstResult).setMaxResults(perPage).getResultList();
     }
 
     @Override
     public long countTotalRows(int page, int perPage) {
-        return entityManager.createQuery(SELECT_ALL_TAGS, Tag.class)
+        return entityManager.createQuery(SELECT_ALL_TAGS, TagEntity.class)
                .getResultStream().count();
     }
 
@@ -110,8 +110,8 @@ public class TagDaoImpl implements TagDao {
      * @return {@code Optional<Tag>} tag
      */
     @Override
-    public Optional<Tag> findByName(String name) {
-        return entityManager.createQuery(SELECT_TAG_BY_NAME, Tag.class)
+    public Optional<TagEntity> findByName(String name) {
+        return entityManager.createQuery(SELECT_TAG_BY_NAME, TagEntity.class)
                 .setParameter(NAME_PARAMETER, name)
                 .getResultStream()
                 .findFirst();
@@ -119,7 +119,7 @@ public class TagDaoImpl implements TagDao {
 
     @Override
     public void changeActiveForTag(String name) {
-        entityManager.createNativeQuery(ACTIVATE_TAG_BY_NAME, Tag.class)
+        entityManager.createNativeQuery(ACTIVATE_TAG_BY_NAME, TagEntity.class)
                 .setParameter(NAME_PARAMETER, name)
                 .executeUpdate();
     }

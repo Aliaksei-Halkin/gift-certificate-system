@@ -1,19 +1,20 @@
 package com.epam.esm.dto;
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.GiftCertificateEntity;
+import com.epam.esm.entity.UserEntity;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-public class OrderDto {
+public class OrderDto  extends RepresentationModel<OrderDto> {
     private long orderId;
     private LocalDateTime createDate;
     private BigDecimal totalCost;
-    private List<GiftCertificate> giftCertificates;
-    private User user;
+    private List<GiftCertificateEntity> giftCertificates;
+    private UserEntity user;
 
     public OrderDto() {
     }
@@ -42,19 +43,19 @@ public class OrderDto {
         this.createDate = createDate;
     }
 
-    public List<GiftCertificate> getGiftCertificates() {
+    public List<GiftCertificateEntity> getGiftCertificates() {
         return giftCertificates;
     }
 
-    public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
+    public void setGiftCertificates(List<GiftCertificateEntity> giftCertificates) {
         this.giftCertificates = giftCertificates;
     }
 
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 

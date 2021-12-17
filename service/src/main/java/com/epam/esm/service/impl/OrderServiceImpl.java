@@ -4,10 +4,10 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.UserDao;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.GiftCertificateEntity;
+import com.epam.esm.entity.OrderEntity;
+import com.epam.esm.entity.TagEntity;
+import com.epam.esm.entity.UserEntity;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
@@ -45,20 +45,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Order makeOrder(Long userId, List<Long> certificatesIds) {
-        List<GiftCertificate> giftCertificates = new ArrayList<>();
+    public OrderEntity makeOrder(Long userId, List<Long> certificatesIds) {
+        List<GiftCertificateEntity> giftCertificates = new ArrayList<>();
         UserValidator.isValidId(userId);
         certificatesIds.forEach((id) -> {
             giftCertificateValidator.isValidId(id);
-            GiftCertificate giftCertificate = giftCertificateDao.findById(id)
+            GiftCertificateEntity giftCertificate = giftCertificateDao.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND,
                             id, IdentifierEntity.CERTIFICATE));
             giftCertificates.add(giftCertificate);
         });
-        BigDecimal cost = giftCertificates.stream().map(GiftCertificate::getPrice).reduce(BigDecimal::add).get();
-        User user = userDao.findById(userId)
+        BigDecimal cost = giftCertificates.stream().map(GiftCertificateEntity::getPrice).reduce(BigDecimal::add).get();
+        UserEntity user = userDao.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.USER_WITH_ID_NOT_FOUND, userId, IdentifierEntity.USER));
-        Order order = new Order();
+        OrderEntity order = new OrderEntity();
         order.setActive(true);
         order.setGiftCertificates(giftCertificates);
         order.setTotalCost(cost);
@@ -69,23 +69,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findUserOrders(Long userId) {
+    public List<OrderEntity> findUserOrders(Long userId) {
         UserValidator.isValidId(userId);
         return orderDao.findUserOrders(userId);
     }
 
     @Override
-    public List<Tag> findMostWidelyUsedTag() {
-        User user = orderDao.findTopUser();
+    public List<TagEntity> findMostWidelyUsedTag() {
+        UserEntity user = orderDao.findTopUser();
         List<Object[]> listOfTagsAndQuantity = orderDao.findPopularTag(user.getUserId());
-        Map<Tag, Long> resultMap = extractTagsAndValues(listOfTagsAndQuantity);
+        Map<TagEntity, Long> resultMap = extractTagsAndValues(listOfTagsAndQuantity);
         return getPopularTagFromSortedMap(resultMap);
     }
 
-    private List<Tag> getPopularTagFromSortedMap(Map<Tag, Long> sortedResultMap) {
-        List<Tag> tags = new ArrayList<>();
+    private List<TagEntity> getPopularTagFromSortedMap(Map<TagEntity, Long> sortedResultMap) {
+        List<TagEntity> tags = new ArrayList<>();
         Long maxQuantity = -1L;
-        for (Map.Entry<Tag, Long> entry : sortedResultMap.entrySet()) {
+        for (Map.Entry<TagEntity, Long> entry : sortedResultMap.entrySet()) {
             if (tags.isEmpty()) {
                 tags.add(entry.getKey());
                 maxQuantity = entry.getValue();
@@ -100,10 +100,10 @@ public class OrderServiceImpl implements OrderService {
         return tags;
     }
 
-    private Map<Tag, Long> extractTagsAndValues(List<Object[]> listOfTagsAndQuantity) {
-        Map<Tag, Long> resultMap = new LinkedHashMap<>();
+    private Map<TagEntity, Long> extractTagsAndValues(List<Object[]> listOfTagsAndQuantity) {
+        Map<TagEntity, Long> resultMap = new LinkedHashMap<>();
         listOfTagsAndQuantity.stream().forEach(result -> {
-            Tag tag1 = (Tag) result[0];
+            TagEntity tag1 = (TagEntity) result[0];
             Long quantity = (Long) result[1];
             resultMap.put(tag1, quantity);
         });
@@ -111,15 +111,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findOrderById(long orderId) {
+    public OrderEntity findOrderById(long orderId) {
         OrderValidator.isValidId(orderId);
-        Optional<Order> order = orderDao.findById(orderId);
+        Optional<OrderEntity> order = orderDao.findById(orderId);
         return order.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.ORDER_WITH_ID_NOT_FOUND,
                 orderId, IdentifierEntity.ORDER));
     }
 
     @Override
-    public List<Order> findAll(Map<String, String> pages) {
+    public List<OrderEntity> findAll(Map<String, String> pages) {
         String page = pages.get(REGEX_PAGE_KEY);
         String perPage = pages.get(REGEX_PER_PAGE_KEY);
         QueryParameterValidator.isValidPage(page);
@@ -127,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
         int firstPage = Integer.parseInt(page);
         int numberOfRowOnPage = Integer.parseInt(perPage);
         countTotalPages(firstPage, numberOfRowOnPage);
-        List<Order> orders = orderDao.findAll(firstPage, numberOfRowOnPage);
+        List<OrderEntity> orders = orderDao.findAll(firstPage, numberOfRowOnPage);
         return orders;
     }
 

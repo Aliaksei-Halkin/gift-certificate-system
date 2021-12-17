@@ -2,7 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.impl.TagDaoImpl;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.TagEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.TagService;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class TagServiceImplTest {
     private TagDao tagDao = mock(TagDaoImpl.class);
     private TagService tagService = new TagServiceImpl(tagDao, new TagValidator());
-    Tag tag = new Tag();
+    TagEntity tag = new TagEntity();
 
     @BeforeEach
     void beforeAll() {
@@ -33,19 +33,19 @@ class TagServiceImplTest {
 
     @Test
     void when_AddTag_ThenShouldReturnTagDto() {
-        Tag tagActual = new Tag();
+        TagEntity tagActual = new TagEntity();
         tagActual.setId(2L);
         tagActual.setName("Hi");
         tagActual.setActive(true);
         when(tagDao.add(tagActual)).thenReturn(1L);
-        Tag mockedTag = tagService.addTag(tagActual);
-        verify(tagDao).add(any(Tag.class));
+        TagEntity mockedTag = tagService.addTag(tagActual);
+        verify(tagDao).add(any(TagEntity.class));
         assertEquals(tag, mockedTag);
     }
 
     @Test
     void when_AddTag_ThenShouldThrowException() {
-        Tag tag = new Tag();
+        TagEntity tag = new TagEntity();
         tag.setName("<test*>");
         assertThrows(ValidationException.class, () -> tagService.addTag(tag));
     }
@@ -57,7 +57,7 @@ class TagServiceImplTest {
         queryParam.put("per_page", "1");
         when(tagDao.findAll(1, 1)).thenReturn(Collections.singletonList(tag));
         when(tagDao.countTotalRows(1, 1)).thenReturn(1L);
-        Set<Tag> allTags = tagService.findAllTags(queryParam);
+        Set<TagEntity> allTags = tagService.findAllTags(queryParam);
         verify(tagDao).findAll(1, 1);
         verify(tagDao).countTotalRows(1, 1);
         assertEquals(1, allTags.size());
@@ -66,7 +66,7 @@ class TagServiceImplTest {
     @Test
     void when_FindTagById_ThenShouldReturnTagDto() {
         when(tagDao.findById(tag.getId())).thenReturn(Optional.of(tag));
-        Tag mockedTag = tagService.findTagById(tag.getId());
+        TagEntity mockedTag = tagService.findTagById(tag.getId());
         verify(tagDao).findById(anyLong());
         assertEquals(tag, mockedTag);
     }

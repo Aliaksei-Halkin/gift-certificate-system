@@ -2,7 +2,7 @@ package com.epam.esm.controller.assembler;
 
 import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.controller.TagController;
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.GiftCertificateEntity;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
@@ -12,10 +12,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class GiftCertificateAssembler implements SimpleRepresentationModelAssembler<GiftCertificate> {
+public class GiftCertificateAssembler implements SimpleRepresentationModelAssembler<GiftCertificateEntity> {
 
     @Override
-    public void addLinks(EntityModel<GiftCertificate> resource) {
+    public void addLinks(EntityModel<GiftCertificateEntity> resource) {
         resource.add(linkTo(methodOn(GiftCertificateController.class)
                 .findGiftCertificateById(resource.getContent().getId())).withSelfRel());
         resource.add(linkTo(methodOn(GiftCertificateController.class)
@@ -35,6 +35,6 @@ public class GiftCertificateAssembler implements SimpleRepresentationModelAssemb
     }
 
     @Override
-    public void addLinks(CollectionModel<EntityModel<GiftCertificate>> resources) {
+    public void addLinks(CollectionModel<EntityModel<GiftCertificateEntity>> resources) {
     }
 }

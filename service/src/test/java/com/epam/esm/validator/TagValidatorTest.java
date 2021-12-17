@@ -1,6 +1,6 @@
 package com.epam.esm.validator;
 
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.TagEntity;
 import com.epam.esm.exception.ValidationException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,16 +15,16 @@ class TagValidatorTest {
     private final TagValidator tagValidator = new TagValidator();
 
     public static Object[][] correctTag() {
-        Tag tag1 = new Tag();
+        TagEntity tag1 = new TagEntity();
         tag1.setId(1L);
         tag1.setName("rest 1");
-        Tag tag2 = new Tag();
+        TagEntity tag2 = new TagEntity();
         tag2.setId(2L);
         tag2.setName("danger! 2");
-        Tag tag3 = new Tag();
+        TagEntity tag3 = new TagEntity();
         tag3.setId(3L);
         tag3.setName("skyDiving? 3");
-        Tag tag4 = new Tag();
+        TagEntity tag4 = new TagEntity();
         tag4.setId(4L);
         tag4.setName("winter");
         return new Object[][]{{tag1}, {tag2}, {tag3}, {tag4}};
@@ -32,24 +32,24 @@ class TagValidatorTest {
 
     @ParameterizedTest
     @MethodSource("correctTag")
-    void whenIsValidNameTagThenShouldNotThrowException(Tag tag) {
+    void whenIsValidNameTagThenShouldNotThrowException(TagEntity tag) {
         assertDoesNotThrow(() -> tagValidator.isValidTag(tag));
     }
 
     public static Object[][] incorrectTag() {
-        Tag tagDto1 = new Tag();
+        TagEntity tagDto1 = new TagEntity();
         tagDto1.setId(1L);
         tagDto1.setName("rest_1*");
-        Tag tagDto2 = new Tag();
+        TagEntity tagDto2 = new TagEntity();
         tagDto2.setId(1L);
         tagDto2.setName("danger!_2/");
-        Tag tagDto3 = new Tag();
+        TagEntity tagDto3 = new TagEntity();
         tagDto3.setId(1L);
         tagDto3.setName("skyDiving?_3&");
-        Tag tagDto4 = new Tag();
+        TagEntity tagDto4 = new TagEntity();
         tagDto4.setId(1L);
         tagDto4.setName("лето256>");
-        Tag tagDto5 = new Tag();
+        TagEntity tagDto5 = new TagEntity();
         tagDto5.setId(1L);
         tagDto5.setName("");
         return new Object[][]{{tagDto1}, {tagDto2}, {tagDto3}, {tagDto4}, {tagDto5}};
@@ -57,7 +57,7 @@ class TagValidatorTest {
 
     @ParameterizedTest
     @MethodSource("incorrectTag")
-    void whenIsNotValidNameTagThenShouldThrowException(Tag tag) {
+    void whenIsNotValidNameTagThenShouldThrowException(TagEntity tag) {
         assertThrows(ValidationException.class, () -> tagValidator.isValidTag(tag));
     }
 

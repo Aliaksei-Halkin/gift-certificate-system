@@ -2,7 +2,6 @@ package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -12,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "orders")
-public class Order extends RepresentationModel<Order> {
+public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id", nullable = false, unique = true)
@@ -30,13 +29,13 @@ public class Order extends RepresentationModel<Order> {
     @JoinTable(name = "orders_has_gift_certificate",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "certificate_id"))
-    private List<GiftCertificate> giftCertificates;
+    private List<GiftCertificateEntity> giftCertificates;
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE,
             CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
-    public Order() {
+    public OrderEntity() {
     }
 
     public long getOrderId() {
@@ -71,19 +70,19 @@ public class Order extends RepresentationModel<Order> {
         this.active = active;
     }
 
-    public List<GiftCertificate> getGiftCertificates() {
+    public List<GiftCertificateEntity> getGiftCertificates() {
         return giftCertificates;
     }
 
-    public void setGiftCertificates(List<GiftCertificate> giftCertificates) {
+    public void setGiftCertificates(List<GiftCertificateEntity> giftCertificates) {
         this.giftCertificates = giftCertificates;
     }
 
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -91,7 +90,7 @@ public class Order extends RepresentationModel<Order> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
+        OrderEntity order = (OrderEntity) o;
         return orderId == order.orderId && active == order.active
                 && createDate.equals(order.createDate) && totalCost.equals(order.totalCost)
                 && giftCertificates.equals(order.giftCertificates) && user.equals(order.user);

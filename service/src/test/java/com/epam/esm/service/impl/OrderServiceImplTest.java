@@ -7,10 +7,10 @@ import com.epam.esm.dao.UserDao;
 import com.epam.esm.dao.impl.GiftCertificateDaoImpl;
 import com.epam.esm.dao.impl.OrderDaoImpl;
 import com.epam.esm.dao.impl.TagDaoImpl;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.GiftCertificateEntity;
+import com.epam.esm.entity.OrderEntity;
+import com.epam.esm.entity.TagEntity;
+import com.epam.esm.entity.UserEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.validator.GiftCertificateValidator;
@@ -34,9 +34,9 @@ class OrderServiceImplTest {
     private OrderService orderService =
             new OrderServiceImpl(giftCertificateDao, new GiftCertificateValidator(giftCertificateDao),
                     userDao, orderDao, tagDao);
-    GiftCertificate giftCertificate = new GiftCertificate();
-    User user = new User();
-    Order order = new Order();
+    GiftCertificateEntity giftCertificate = new GiftCertificateEntity();
+    UserEntity user = new UserEntity();
+    OrderEntity order = new OrderEntity();
 
     @BeforeEach
     void beforeAll() {
@@ -62,18 +62,18 @@ class OrderServiceImplTest {
         when(giftCertificateDao.findById(giftCertificate.getId())).thenReturn(Optional.of(giftCertificate));
         when(userDao.findById(user.getUserId())).thenReturn(Optional.of(user));
         when(orderDao.add(order)).thenReturn(order.getOrderId());
-        Order createdOrder = orderService.makeOrder(user.getUserId(), Collections.singletonList(giftCertificate.getId()));
+        OrderEntity createdOrder = orderService.makeOrder(user.getUserId(), Collections.singletonList(giftCertificate.getId()));
         createdOrder.setCreateDate(order.getCreateDate());
         createdOrder.setOrderId(1);
         verify(giftCertificateDao).findById(anyLong());
         verify(userDao).findById(anyLong());
-        verify(orderDao).add(any(Order.class));
+        verify(orderDao).add(any(OrderEntity.class));
         assertEquals(order, createdOrder);
     }
 
     @Test
     void when_MakeOrder_ThenShould_ThrowException() {
-        GiftCertificate giftCertificate = new GiftCertificate();
+        GiftCertificateEntity giftCertificate = new GiftCertificateEntity();
         giftCertificate.setId(145L);
         when(giftCertificateDao.findById(giftCertificate.getId())).thenThrow(ResourceNotFoundException.class);
         assertThrows(ResourceNotFoundException.class, () -> orderService.makeOrder(1L, Collections.singletonList(145L)));
@@ -83,14 +83,14 @@ class OrderServiceImplTest {
     @Test
     void when_FindOrderByExistId_ThenShould_ReturnOrder() {
         when(orderDao.findById(order.getOrderId())).thenReturn(Optional.of(order));
-        Order foundOrder = orderService.findOrderById(order.getOrderId());
+        OrderEntity foundOrder = orderService.findOrderById(order.getOrderId());
         verify(orderDao).findById(anyLong());
         assertEquals(order, foundOrder);
     }
 
     @Test
     void when_FindOrderByNotExistId_ThenShould_ThrowException() {
-        Order order = new Order();
+        OrderEntity order = new OrderEntity();
         order.setOrderId(3312331);
         when(orderDao.findById(order.getOrderId())).thenThrow(ResourceNotFoundException.class);
         assertThrows(ResourceNotFoundException.class, () -> orderService.findOrderById(order.getOrderId()));
@@ -99,13 +99,13 @@ class OrderServiceImplTest {
 
     @Test
     void when_FindMostWidelyUsedTag_WithHighestCostOfAllOrders_ThenShouldReturnTag() {
-        Tag tag = new Tag();
+        TagEntity tag = new TagEntity();
         tag.setId(1L);
         tag.setName("spring");
         Object[] arrayTagsWithQuantity = new Object[]{tag, 1L};
         when(orderDao.findTopUser()).thenReturn(user);
         when(orderDao.findPopularTag(user.getUserId())).thenReturn(Collections.singletonList(arrayTagsWithQuantity));
-        List<Tag> tags = orderService.findMostWidelyUsedTag();
+        List<TagEntity> tags = orderService.findMostWidelyUsedTag();
         verify(orderDao).findPopularTag(anyLong());
         verify(orderDao).findTopUser();
         assertEquals(tags.get(0), tag);
@@ -128,7 +128,7 @@ class OrderServiceImplTest {
         paging.put("per_page", per_page);
         when(orderDao.findAll(anyInt(), anyInt())).thenReturn(Collections.singletonList(order));
         when(orderDao.countTotalRows(anyInt(), anyInt())).thenReturn(1L);
-        List<Order> foundOrder = orderService.findAll(paging);
+        List<OrderEntity> foundOrder = orderService.findAll(paging);
         verify(orderDao).findAll(anyInt(), anyInt());
         verify(orderDao).countTotalRows(anyInt(), anyInt());
         assertEquals(order, foundOrder.get(0));

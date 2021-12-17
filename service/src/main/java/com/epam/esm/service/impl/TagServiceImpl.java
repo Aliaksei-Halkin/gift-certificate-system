@@ -1,7 +1,8 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.dto.TagDto;
+import com.epam.esm.entity.TagEntity;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
@@ -13,11 +14,15 @@ import com.epam.esm.validator.TagValidator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -33,16 +38,19 @@ public class TagServiceImpl implements TagService {
     private static final long NO_EXIST_ID = -1;
     private final TagDao tagDao;
     private final TagValidator tagValidator;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, TagValidator tagValidator) {
+    public TagServiceImpl(TagDao tagDao, TagValidator tagValidator, ModelMapper modelMapper) {
         this.tagDao = tagDao;
         this.tagValidator = tagValidator;
+        this.modelMapper = modelMapper;
     }
 
     @Transactional
     @Override
-    public Tag addTag(Tag tag) {
+    public TagDto addTag(TagDto tagDto) {
+        TagEntity tag = modelMapper.map(tagDto, TagEntity.class);
         tag.setId(null);
         tag.setActive(true);
         long tagId;
@@ -53,12 +61,12 @@ public class TagServiceImpl implements TagService {
         }
         tag.setId(tagId);
         LOGGER.log(Level.INFO, "Tag added: {}", tag);
-        return tag;
+        return modelMapper.map(tag, TagDto.class);
     }
 
     private long checkOnExist(String nameTag) {
         long idTag = NO_EXIST_ID;
-        Optional<Tag> tag = tagDao.findByName(nameTag);
+        Optional<TagEntity> tag = tagDao.findByName(nameTag);
         if (tag.isPresent() && tag.get().isActive() == true) {
             throw new ValidationException(ExceptionPropertyKey.EXISTING_TAG, nameTag, IdentifierEntity.TAG);
         }
@@ -70,7 +78,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Set<Tag> findAllTags(Map<String, String> pages) {
+    public Set<TagDto> findAllTags(Map<String, String> pages) {
         String page = pages.get(REGEX_PAGE_KEY);
         String perPage = pages.get(REGEX_PER_PAGE_KEY);
         QueryParameterValidator.isValidPage(page);
@@ -78,16 +86,16 @@ public class TagServiceImpl implements TagService {
         int firstPage = Integer.parseInt(page);
         int numberOfRowOnPage = Integer.parseInt(perPage);
         countTotalPages(firstPage, numberOfRowOnPage);
-        List<Tag> tags = tagDao.findAll(firstPage, numberOfRowOnPage);
-        return tags.stream().collect(Collectors.toSet());
+        List<TagEntity> tags = tagDao.findAll(firstPage, numberOfRowOnPage);
+        return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toSet());
     }
 
     @Override
-    public Tag findTagById(long tagId) {
+    public TagDto findTagById(long tagId) {
         tagValidator.isValidId(tagId);
-        Tag tag = retrieveTag(tagId);
+        TagEntity tag = retrieveTag(tagId);
         LOGGER.log(Level.INFO, "Found tag by id = {}, tag: {}", tagId, tag);
-        return tag;
+        return modelMapper.map(tag,TagDto.class);
     }
 
     @Transactional
@@ -100,15 +108,15 @@ public class TagServiceImpl implements TagService {
     }
 
     private void checkTagOnDoubleDelete(long tagId) {
-        Tag tag = retrieveTag(tagId);
+        TagEntity tag = retrieveTag(tagId);
         if (tag.isActive() == false) {
             throw new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_ID_NOT_FOUND,
                     tagId, IdentifierEntity.TAG);
         }
     }
 
-    private Tag retrieveTag(long tagId) {
-        Optional<Tag> optionalTag = tagDao.findById(tagId);
+    private TagEntity retrieveTag(long tagId) {
+        Optional<TagEntity> optionalTag = tagDao.findById(tagId);
         return optionalTag.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.TAG_WITH_ID_NOT_FOUND,
                 tagId, IdentifierEntity.TAG));
     }

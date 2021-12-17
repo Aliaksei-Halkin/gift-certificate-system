@@ -1,23 +1,22 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.OrderEntity;
+import com.epam.esm.entity.UserEntity;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface OrderDao extends BaseDao<Order, Long> {
+public interface OrderDao extends BaseDao<OrderEntity, Long> {
 
-    List<Order> findUserOrders(Long userId);
+    List<OrderEntity> findUserOrders(Long userId);
 
-    Optional<Order> findUserOrder(Long userId, Long orderId);
+    Optional<OrderEntity> findUserOrder(Long userId, Long orderId);
 
-    User findTopUser();
+    UserEntity findTopUser();
 
     List<Object[]> findPopularTag(long userId);
 
-    List<Order> findAll(int firstPage, int numberOfRowOnPage);
+    List<OrderEntity> findAll(int firstPage, int numberOfRowOnPage);
 
     long countTotalRows(int page, int perPage);
 }

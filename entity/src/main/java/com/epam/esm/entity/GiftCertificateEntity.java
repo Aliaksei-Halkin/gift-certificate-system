@@ -3,7 +3,6 @@ package com.epam.esm.entity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -19,7 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "gift_certificates")
 @Where(clause = "active = 1")
-public class GiftCertificate extends RepresentationModel<GiftCertificate> {
+public class GiftCertificateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "certificateId",
@@ -68,12 +67,12 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
             joinColumns = @JoinColumn(name = "certificateId"),
             inverseJoinColumns = @JoinColumn(name = "tagId")
     )
-    private Set<Tag> tags;
+    private Set<TagEntity> tags;
 
     /**
      * The no-args constructor
      */
-    public GiftCertificate() {
+    public GiftCertificateEntity() {
     }
 
     /**
@@ -89,8 +88,8 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
      * @param updateDate  {@code LocalDate} of gift certificate creation
      * @param tags        {@code Set} represents set of tags
      */
-    public GiftCertificate(Long id, String name, String description, BigDecimal price,
-                           int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<Tag> tags, boolean active) {
+    public GiftCertificateEntity(Long id, String name, String description, BigDecimal price,
+                                 int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<TagEntity> tags, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -166,11 +165,11 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
         this.updateDate = updateDate;
     }
 
-    public Set<Tag> getTags() {
+    public Set<TagEntity> getTags() {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(Set<TagEntity> tags) {
         this.tags = tags;
     }
 
@@ -186,7 +185,7 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GiftCertificate that = (GiftCertificate) o;
+        GiftCertificateEntity that = (GiftCertificateEntity) o;
         return active == that.active && duration == that.duration && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(createdDate, that.createdDate) && Objects.equals(updateDate, that.updateDate) && Objects.equals(tags, that.tags);
     }
 

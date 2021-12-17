@@ -2,7 +2,7 @@ package com.epam.esm.validator;
 
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dto.GiftCertificateField;
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.GiftCertificateEntity;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ValidationException;
@@ -34,7 +34,7 @@ public class GiftCertificateValidator {
     }
 
 
-    public void isValidGiftCertificate(GiftCertificate giftCertificate) {
+    public void isValidGiftCertificate(GiftCertificateEntity giftCertificate) {
         isValidName(giftCertificate.getName());
         isValidDescription(giftCertificate.getDescription());
         isValidPrice(giftCertificate.getPrice());
@@ -55,8 +55,8 @@ public class GiftCertificateValidator {
         }
     }
 
-    public Optional<GiftCertificate> ifExistName(String name) {
-        Optional<GiftCertificate> certificateByName = giftCertificateDao.findByName(name);
+    public Optional<GiftCertificateEntity> ifExistName(String name) {
+        Optional<GiftCertificateEntity> certificateByName = giftCertificateDao.findByName(name);
         if (certificateByName.isPresent() && certificateByName.get().isActive() == true) {
             throw new ValidationException(ExceptionPropertyKey.EXISTING_CERTIFICATE, name,
                     IdentifierEntity.CERTIFICATE);

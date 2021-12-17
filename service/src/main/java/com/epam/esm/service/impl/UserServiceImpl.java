@@ -3,8 +3,8 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.OrderEntity;
+import com.epam.esm.entity.UserEntity;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
@@ -42,18 +42,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll(Map<String, String> queryParameters) {
+    public List<UserEntity> findAll(Map<String, String> queryParameters) {
         QueryParameterValidator.isValidPage(queryParameters.get(PAGE));
         QueryParameterValidator.isValidPage(queryParameters.get(PER_PAGE));
         countTotalPages(queryParameters);
-        List<User> users = userDao.findAll(queryParameters);
+        List<UserEntity> users = userDao.findAll(queryParameters);
         return users;
     }
 
     @Override
-    public User findById(long id) {
+    public UserEntity findById(long id) {
         UserValidator.isValidId(id);
-        User user = checkAndGetUser(id);
+        UserEntity user = checkAndGetUser(id);
         return user;
     }
 
@@ -61,15 +61,15 @@ public class UserServiceImpl implements UserService {
     public OrderDto findUserOrder(Long userId, Long orderId) {
         UserValidator.isValidId(userId);
         OrderValidator.isValidId(orderId);
-        Optional<Order> orderOptional = orderDao.findUserOrder(userId, orderId);
-        Order order = orderOptional.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.USER_WITH_ID_NOT_FOUND, userId,
+        Optional<OrderEntity> orderOptional = orderDao.findUserOrder(userId, orderId);
+        OrderEntity order = orderOptional.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.USER_WITH_ID_NOT_FOUND, userId,
                 IdentifierEntity.USER));
         OrderDto orderDto = modelMapper.map(order, OrderDto.class);
         return orderDto;
     }
 
-    private User checkAndGetUser(long id) {
-        Optional<User> userOptional = userDao.findById(id);
+    private UserEntity checkAndGetUser(long id) {
+        Optional<UserEntity> userOptional = userDao.findById(id);
         return userOptional
                 .orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.USER_WITH_ID_NOT_FOUND, id,
                         IdentifierEntity.USER));

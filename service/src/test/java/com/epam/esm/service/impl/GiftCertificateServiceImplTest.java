@@ -4,8 +4,8 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dao.impl.GiftCertificateDaoImpl;
 import com.epam.esm.dao.impl.TagDaoImpl;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.GiftCertificateEntity;
+import com.epam.esm.entity.TagEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
@@ -30,9 +30,9 @@ class GiftCertificateServiceImplTest {
     private TagDao tagDao = mock(TagDaoImpl.class);
     private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateDao, tagDao,
             new GiftCertificateValidator(giftCertificateDao), new TagValidator());
-    private GiftCertificate giftCertificateFirst = new GiftCertificate();
-    private GiftCertificate giftCertificateSecond = new GiftCertificate();
-    private Tag tag = new Tag();
+    private GiftCertificateEntity giftCertificateFirst = new GiftCertificateEntity();
+    private GiftCertificateEntity giftCertificateSecond = new GiftCertificateEntity();
+    private TagEntity tag = new TagEntity();
 
 
     @BeforeEach
@@ -44,7 +44,7 @@ class GiftCertificateServiceImplTest {
         giftCertificateFirst.setCreatedDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificateFirst.setUpdateDate(LocalDateTime.of(2012, 12, 2, 14, 56, 44));
         giftCertificateFirst.setActive(true);
-        Set<Tag> tags = new HashSet<>();
+        Set<TagEntity> tags = new HashSet<>();
         tag.setId(1L);
         tag.setName("Hi");
         tags.add(tag);
@@ -62,11 +62,11 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void when_addGiftCertificate_ThenShouldReturnGiftCertificate() {
-        when(giftCertificateDao.add(any(GiftCertificate.class))).thenReturn(giftCertificateSecond.getId());
-        GiftCertificate mockedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificateSecond);
+        when(giftCertificateDao.add(any(GiftCertificateEntity.class))).thenReturn(giftCertificateSecond.getId());
+        GiftCertificateEntity mockedGiftCertificate = giftCertificateService.addGiftCertificate(giftCertificateSecond);
         giftCertificateSecond.setCreatedDate(mockedGiftCertificate.getCreatedDate());
         giftCertificateSecond.setUpdateDate(mockedGiftCertificate.getUpdateDate());
-        verify(giftCertificateDao).add(any(GiftCertificate.class));
+        verify(giftCertificateDao).add(any(GiftCertificateEntity.class));
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 
@@ -79,15 +79,15 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void when_AddTagToGiftCertificate_ThenShouldReturnGiftCertificate() {
-        Tag tagDto = new Tag();
+        TagEntity tagDto = new TagEntity();
         tagDto.setName("Hi");
         when(giftCertificateDao.findById(giftCertificateSecond.getId())).thenReturn(Optional.of(giftCertificateSecond));
         when(giftCertificateDao.update(giftCertificateSecond)).thenReturn(giftCertificateSecond);
         when(tagDao.findByName(tag.getName())).thenReturn(Optional.ofNullable(tag));
-        GiftCertificate mockedGiftCertificate = giftCertificateService.addTagToGiftCertificate(giftCertificateSecond.getId(), tag);
+        GiftCertificateEntity mockedGiftCertificate = giftCertificateService.addTagToGiftCertificate(giftCertificateSecond.getId(), tag);
         verify(giftCertificateDao).findById(anyLong());
         verify(tagDao).findByName(anyString());
-        verify(giftCertificateDao).update(any(GiftCertificate.class));
+        verify(giftCertificateDao).update(any(GiftCertificateEntity.class));
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 
@@ -100,7 +100,7 @@ class GiftCertificateServiceImplTest {
     @Test
     void when_FindGiftCertificateById_ThenShouldReturnGiftCertificate() {
         when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.of(giftCertificateSecond));
-        GiftCertificate mockedGiftCertificate = giftCertificateService.findGiftCertificateById(giftCertificateSecond.getId());
+        GiftCertificateEntity mockedGiftCertificate = giftCertificateService.findGiftCertificateById(giftCertificateSecond.getId());
         verify(giftCertificateDao).findById(anyLong());
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
@@ -121,7 +121,7 @@ class GiftCertificateServiceImplTest {
         queryParameter1.put("per_page", "1");
         when(giftCertificateDao.countTotalRows(anyMap())).thenReturn(1L);
         when(giftCertificateDao.findCertificatesByQueryParameters(anyMap())).thenReturn(Collections.singletonList(giftCertificateSecond));
-        List<GiftCertificate> giftCertificateDtos = giftCertificateService.findGiftCertificatesByParameters(queryParameter1);
+        List<GiftCertificateEntity> giftCertificateDtos = giftCertificateService.findGiftCertificatesByParameters(queryParameter1);
         verify(giftCertificateDao).findCertificatesByQueryParameters(anyMap());
         verify(giftCertificateDao).countTotalRows(anyMap());
         assertEquals(Collections.singletonList(giftCertificateSecond), giftCertificateDtos);
@@ -154,10 +154,10 @@ class GiftCertificateServiceImplTest {
     void when_UpdateGiftCertificate_ThenShouldReturnUpdatedGiftCertificate() {
         when(giftCertificateDao.findById(giftCertificateSecond.getId())).thenReturn(Optional.of(giftCertificateSecond));
         when(giftCertificateDao.update(giftCertificateSecond)).thenReturn(giftCertificateSecond);
-        GiftCertificate mockedGiftCertificate = giftCertificateService
+        GiftCertificateEntity mockedGiftCertificate = giftCertificateService
                 .updateGiftCertificate(giftCertificateSecond.getId(), giftCertificateSecond);
         verify(giftCertificateDao).findById(anyLong());
-        verify(giftCertificateDao).update(any(GiftCertificate.class));
+        verify(giftCertificateDao).update(any(GiftCertificateEntity.class));
         assertEquals(giftCertificateSecond, mockedGiftCertificate);
     }
 

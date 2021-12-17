@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.controller.assembler.TagAssembler;
-import com.epam.esm.entity.Tag;
+import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -57,8 +57,8 @@ public class TagController {
      * @return {@link ResponseEntity} with the inserted tag and its location included.
      */
     @PostMapping
-    public ResponseEntity<EntityModel<Tag>> addTag(@RequestBody Tag tag) {
-        Tag addedTag = tagService.addTag(tag);
+    public ResponseEntity<EntityModel<TagDto>> addTag(@RequestBody TagDto tag) {
+        TagDto addedTag = tagService.addTag(tag);
         return new ResponseEntity<>(tagAssembler.toModel(addedTag), HttpStatus.CREATED);
     }
 
@@ -75,8 +75,8 @@ public class TagController {
      * @return {@link ResponseEntity} with found tag.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<Tag>> findTagById(@PathVariable("id") long id) {
-        Tag tag = tagService.findTagById(id);
+    public ResponseEntity<EntityModel<TagDto>> findTagById(@PathVariable("id") long id) {
+        TagDto tag = tagService.findTagById(id);
         return new ResponseEntity<>(tagAssembler.toModel(tag), HttpStatus.OK);
     }
 
@@ -90,8 +90,8 @@ public class TagController {
      * @return {@link ResponseEntity} with the list of the gift certificates.
      */
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<Tag>>> findAllTags(@RequestBody Map<String, String> pages) {
-        Set<Tag> tags = tagService.findAllTags(pages);
+    public ResponseEntity<CollectionModel<EntityModel<TagDto>>> findAllTags(@RequestBody Map<String, String> pages) {
+        Set<TagDto> tags = tagService.findAllTags(pages);
         return new ResponseEntity<>(tagAssembler.toCollectionModel(tags), HttpStatus.OK);
     }
 

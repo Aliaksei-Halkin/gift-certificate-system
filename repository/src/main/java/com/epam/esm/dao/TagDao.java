@@ -1,6 +1,6 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.TagEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,14 +10,14 @@ import java.util.Optional;
  *
  * @author Aliaksei Halkin
  */
-public interface TagDao extends BaseDao<Tag, Long> {
+public interface TagDao extends BaseDao<TagEntity, Long> {
     void removeById(Long id);
 
-    Optional<Tag> findByName(String name);
+    Optional<TagEntity> findByName(String name);
 
     void changeActiveForTag(String name);
 
-    List<Tag> findAll(int page, int perPage);
+    List<TagEntity> findAll(int page, int perPage);
 
     long countTotalRows(int page, int perPage);
 }

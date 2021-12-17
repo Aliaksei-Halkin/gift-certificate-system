@@ -4,8 +4,8 @@ import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dao.impl.OrderDaoImpl;
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.entity.Order;
-import com.epam.esm.entity.User;
+import com.epam.esm.entity.OrderEntity;
+import com.epam.esm.entity.UserEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
 import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.UserService;
@@ -26,7 +26,7 @@ class UserServiceImplTest {
     private OrderDao orderDao = mock(OrderDaoImpl.class);
     private UserDao userDao = mock(UserDao.class);
     private ModelMapper modelMapper = new ModelMapper();
-    User user = new User();
+    UserEntity user = new UserEntity();
     UserService userService = new UserServiceImpl(userDao, orderDao, modelMapper);
 
     {
@@ -47,7 +47,7 @@ class UserServiceImplTest {
     @Test
     void when_FindUserByExistId_Then_ShouldReturnUser() {
         when(userDao.findById(user.getUserId())).thenReturn(Optional.of(user));
-        User foundUser = userService.findById(user.getUserId());
+        UserEntity foundUser = userService.findById(user.getUserId());
         verify(userDao).findById(anyLong());
         assertEquals(user, foundUser);
     }
@@ -66,7 +66,7 @@ class UserServiceImplTest {
         queryParameters.put("per_page", "10");
         when(userDao.findAll(queryParameters)).thenReturn(Collections.singletonList(user));
         when(userDao.countTotalRows(queryParameters)).thenReturn(1L);
-        List<User> foundUsers = userService.findAll(queryParameters);
+        List<UserEntity> foundUsers = userService.findAll(queryParameters);
         verify(userDao).findAll(anyMap());
         verify(userDao).countTotalRows(anyMap());
         assertEquals(foundUsers.get(0), user);
@@ -81,7 +81,7 @@ class UserServiceImplTest {
 
     @Test
     void when_FindUserOrder_Then_ShouldReturnListOfOrders() {
-        Order order = new Order();
+        OrderEntity order = new OrderEntity();
         order.setOrderId(1);
         when(orderDao.findUserOrder(user.getUserId(), order.getOrderId())).thenReturn(Optional.of(order));
         OrderDto foundOrder = userService.findUserOrder(user.getUserId(), 1L);
@@ -91,7 +91,7 @@ class UserServiceImplTest {
 
     @Test
     void when_FindUserOrder_ThenShouldThrowException() {
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setUserId(-1231);
         assertThrows(ValidationException.class, () -> userService.findUserOrder(user.getUserId(), 1L));
     }
