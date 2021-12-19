@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         UserValidator.isValidId(userId);
         OrderValidator.isValidId(orderId);
         Optional<Order> orderOptional = orderDao.findUserOrder(userId, orderId);
-        Order order = orderOptional.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.USER_WITH_ID_NOT_FOUND, userId,
+        Order order = orderOptional.orElseThrow(() -> new ResourceNotFoundException(ExceptionPropertyKey.USER_ORDER_NOT_FOUND, userId,
                 IdentifierEntity.USER));
         OrderDto orderDto = modelMapper.map(order, OrderDto.class);
         return orderDto;

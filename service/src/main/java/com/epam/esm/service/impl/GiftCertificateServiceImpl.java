@@ -8,6 +8,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.ExceptionPropertyKey;
 import com.epam.esm.exception.IdentifierEntity;
 import com.epam.esm.exception.ResourceNotFoundException;
+import com.epam.esm.exception.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.ParameterManager;
 import com.epam.esm.validator.GiftCertificateValidator;
@@ -110,6 +111,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private Tag findTag(Tag tag) {
         Optional<Tag> tagByName = tagDao.findByName(tag.getName());
         Tag movableTag = new Tag();
+        movableTag.setActive(true);
         if (!tagByName.isPresent()) {
             tag.setId(null);
             tag.setActive(true);
@@ -118,7 +120,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             movableTag.setName(tag.getName());
         } else {
             movableTag = tagByName.get();
-            movableTag.setActive(true);
         }
         return movableTag;
     }
@@ -137,6 +138,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         tagValidator.isValidTag(tag);
         GiftCertificate giftCertificate = checkAndGetGiftCertificate(giftCertificateId);
         Tag updatedTag = findTag(tag);
+        if (giftCertificate.getTags().contains(updatedTag)) {
+            throw new ValidationException(ExceptionPropertyKey.TAG_EXIST, tag.getName(), IdentifierEntity.TAG);
+        }
+        ;
         giftCertificate.getTags().add(updatedTag);
         GiftCertificate updatedGiftCertificate = giftCertificateDao.update(giftCertificate);
         LOGGER.info("Tag added to gift certificate: " + tag);

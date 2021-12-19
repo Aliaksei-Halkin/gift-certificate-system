@@ -28,8 +28,7 @@ public class ParameterManager {
                         processedParameters.put(key + count++, tag.trim());
                     }
                 } else {
-                    value.trim();
-                    if (!value.isEmpty()) {
+                    if (!value.trim().isEmpty()) {
                         processedParameters.put(key, value);
                     }
                 }

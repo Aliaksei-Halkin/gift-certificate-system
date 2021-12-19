@@ -27,7 +27,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public static final String SELECT_CERTIFICATE_TAGS =
             "SELECT tags FROM GiftCertificate WHERE GiftCertificate.id = ?1";
     private static final String SELECT_ALL_CERTIFICATES = "SELECT g FROM GiftCertificate g ";
-    private static final String SELECT_CERTIFICATE_BY_NAME = "FROM GiftCertificate WHERE name = ?1";
+    private static final String SELECT_CERTIFICATE_BY_NAME = "SELECT g FROM GiftCertificate g WHERE name = ?1";
 
     @PersistenceContext
     private EntityManager entityManager;
