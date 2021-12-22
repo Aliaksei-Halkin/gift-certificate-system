@@ -18,7 +18,7 @@ import java.util.Optional;
  * @author Aliaksei Halkin
  */
 @Component
-public class GiftCertificateValidator {
+public class GiftCertificateValidator extends BaseValidator {
     private static final String REGEX_NAME_AND_DESCRIPTION = "[а-яА-Я\\w\\s\\.,?!'-]{1,250}";
     private static final long MIN_ID = 1;
     private static final BigDecimal MIN_PRICE = new BigDecimal("0.01");
@@ -39,6 +39,20 @@ public class GiftCertificateValidator {
         isValidDescription(giftCertificate.getDescription());
         isValidPrice(giftCertificate.getPrice());
         isValidDuration(giftCertificate.getDuration());
+    }
+
+    public void checkForActive(Boolean active) {
+        if (active = false) {
+            throw new ValidationException(ExceptionPropertyKey.ACTIVE_FALSE, active,
+                    IdentifierEntity.ALL);
+        }
+    }
+
+    public void checkForNoId(Long id) {
+        if (id != null) {
+            throw new ValidationException(ExceptionPropertyKey.NOT_NULL_ID, id,
+                    IdentifierEntity.ALL);
+        }
     }
 
     public void isValidId(long id) {

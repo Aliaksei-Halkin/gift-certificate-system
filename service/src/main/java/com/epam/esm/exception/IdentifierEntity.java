@@ -4,5 +4,6 @@ public enum IdentifierEntity {
     TAG,
     CERTIFICATE,
     USER,
-    ORDER;
+    ORDER,
+    ALL
 }

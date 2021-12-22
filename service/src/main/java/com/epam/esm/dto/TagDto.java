@@ -1,6 +1,7 @@
 package com.epam.esm.dto;
 
 import com.epam.esm.entity.GiftCertificateEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class TagDto extends RepresentationModel<TagDto> {
     public void setName(String name) {
         this.name = name;
     }
-
+    @JsonIgnore
     public List<GiftCertificateEntity> getGiftCertificates() {
         return giftCertificates;
     }

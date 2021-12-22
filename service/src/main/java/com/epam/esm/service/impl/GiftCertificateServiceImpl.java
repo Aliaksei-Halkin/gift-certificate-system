@@ -72,9 +72,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificateDao.update(updatedCertificate);
             return modelMapper.map(updatedCertificate, GiftCertificateDto.class);
         }
-        giftCertificate.setId(null);
-        giftCertificate.setActive(true);
-        if (giftCertificate.getTags() != null) {
+               if (giftCertificate.getTags() != null) {
             giftCertificate.getTags().forEach(tagValidator::isValidTag);
             updateTagsInCertificate(giftCertificate);
         }
