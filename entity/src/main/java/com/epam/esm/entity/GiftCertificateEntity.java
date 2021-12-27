@@ -62,7 +62,7 @@ public class GiftCertificateEntity {
     /**
      * The set of tags in this Gift certificate
      */
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name = "certificates_has_tags",
             joinColumns = @JoinColumn(name = "certificateId"),
             inverseJoinColumns = @JoinColumn(name = "tagId")

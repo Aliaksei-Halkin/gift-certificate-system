@@ -1,6 +1,7 @@
 package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -25,6 +26,7 @@ public class TagEntity {
     private String name;
     @Column(name = "active")
     private boolean active;
+    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "certificates_has_tags",
             joinColumns = @JoinColumn(name = "tagId"),

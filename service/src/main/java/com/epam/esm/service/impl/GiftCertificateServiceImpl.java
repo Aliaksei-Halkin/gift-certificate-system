@@ -72,7 +72,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificateDao.update(updatedCertificate);
             return modelMapper.map(updatedCertificate, GiftCertificateDto.class);
         }
-               if (giftCertificate.getTags() != null) {
+        if (giftCertificate.getTags() != null) {
             giftCertificate.getTags().forEach(tagValidator::isValidTag);
             updateTagsInCertificate(giftCertificate);
         }
@@ -131,7 +131,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
      * The method represents adding the {@link TagEntity} to the {@link GiftCertificateEntity }
      *
      * @param giftCertificateId id of gift certificate
-     * @param tagDto               {@link TagEntity}
+     * @param tagDto            {@link TagEntity}
      * @return {@link GiftCertificateEntity } with all tags
      */
     @Override
@@ -217,8 +217,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     /**
      * The method represents updating
      *
-     * @param giftCertificateId the unique id of the gift certificate
-     * @param giftCertificateDto   giftCertificate with new data
+     * @param giftCertificateId  the unique id of the gift certificate
+     * @param giftCertificateDto giftCertificate with new data
      * @return updatedGiftCertificate
      */
     @Override
@@ -232,7 +232,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             updateTagsInCertificate(giftCertificate);
         }
         giftCertificateVerified.setTags(giftCertificate.getTags());
-        giftCertificateDao.update(giftCertificateVerified);
+        GiftCertificateEntity updatedEntity = giftCertificateDao.update(giftCertificateVerified);
+
         return modelMapper.map(giftCertificateVerified, GiftCertificateDto.class);
     }
 
