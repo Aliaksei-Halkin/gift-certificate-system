@@ -11,6 +11,7 @@ public class TagDto extends RepresentationModel<TagDto> {
 
     private Long id;
     private String name;
+    private Boolean active;
     private List<GiftCertificateEntity> giftCertificates;
 
     public Long getId() {
@@ -37,17 +38,26 @@ public class TagDto extends RepresentationModel<TagDto> {
         this.giftCertificates = giftCertificates;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         TagDto tagDto = (TagDto) o;
-        return Objects.equals(id, tagDto.id) && Objects.equals(name, tagDto.name) && Objects.equals(giftCertificates, tagDto.giftCertificates);
+        return Objects.equals(id, tagDto.id) && Objects.equals(name, tagDto.name) && Objects.equals(active, tagDto.active) && Objects.equals(giftCertificates, tagDto.giftCertificates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, giftCertificates);
+        return Objects.hash(super.hashCode(), id, name, active, giftCertificates);
     }
 
     @Override
@@ -55,6 +65,7 @@ public class TagDto extends RepresentationModel<TagDto> {
         return "TagDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", active=" + active +
                 ", giftCertificates=" + giftCertificates +
                 '}';
     }

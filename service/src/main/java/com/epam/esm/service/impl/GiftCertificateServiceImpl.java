@@ -266,12 +266,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private GiftCertificateEntity checkCertificateOnDoubleDelete(long id) {
-        GiftCertificateDto giftCertificate = findGiftCertificateById(id);
+        GiftCertificateEntity giftCertificate = checkAndGetGiftCertificate(id);
         if (!giftCertificate.isActive()) {
             throw new ResourceNotFoundException(ExceptionPropertyKey.GIFT_CERTIFICATE_WITH_ID_NOT_FOUND, id,
                     IdentifierEntity.CERTIFICATE);
         }
-        return modelMapper.map(giftCertificate, GiftCertificateEntity.class);
+        return giftCertificate;
     }
 
     @Override

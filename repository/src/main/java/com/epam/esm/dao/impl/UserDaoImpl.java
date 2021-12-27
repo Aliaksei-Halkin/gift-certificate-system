@@ -14,7 +14,7 @@ import java.util.Optional;
 public class UserDaoImpl implements UserDao {
     private static final String PAGE = "page";
     private static final String PER_PAGE = "per_page";
-    private static final String SELECT_ALL_USERS = "FROM User";
+    private static final String SELECT_ALL_USERS = "FROM UserEntity";
     @PersistenceContext
     private EntityManager entityManager;
 

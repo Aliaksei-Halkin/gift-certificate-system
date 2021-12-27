@@ -4,7 +4,6 @@ import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.GiftCertificateField;
 
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.entity.TagEntity;
 
 import java.util.List;
 import java.util.Map;

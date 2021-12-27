@@ -27,7 +27,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     public static final String SELECT_CERTIFICATE_TAGS =
             "SELECT tags FROM GiftCertificateEntity WHERE GiftCertificateEntity.id = ?1";
     private static final String SELECT_ALL_CERTIFICATES = "SELECT g FROM GiftCertificateEntity g ";
-    private static final String SELECT_CERTIFICATE_BY_NAME = "FROM GiftCertificate WHERE name = ?1";
+    private static final String SELECT_CERTIFICATE_BY_NAME = "FROM GiftCertificateEntity WHERE name = ?1";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -121,6 +121,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     @Override
     public void deactivate(GiftCertificateEntity giftCertificate) {
         giftCertificate.setActive(false);
+        entityManager.merge(giftCertificate);
         entityManager.flush();
         entityManager.clear();
     }

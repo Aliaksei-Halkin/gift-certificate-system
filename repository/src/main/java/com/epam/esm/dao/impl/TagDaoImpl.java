@@ -21,11 +21,11 @@ public class TagDaoImpl implements TagDao {
     /**
      * This is the query SELECT to database
      */
-    public static final String SELECT_ALL_TAGS = "  FROM Tag  ";
+    public static final String SELECT_ALL_TAGS = "  FROM TagEntity  ";
     /**
      * This is the query SELECT to database
      */
-    public static final String SELECT_TAG_BY_NAME = "  FROM Tag WHERE name = :name";
+    public static final String SELECT_TAG_BY_NAME = "  FROM TagEntity WHERE name = :name";
     private static final String NAME_PARAMETER = "name";
     /**
      * This is the query DELETE to database, the active value of Tag set false
