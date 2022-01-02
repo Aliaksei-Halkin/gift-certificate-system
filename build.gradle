@@ -20,6 +20,9 @@ allprojects {
         implementation('org.springframework.boot:spring-boot-starter-hateoas')
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        implementation 'javax.validation:validation-api:2.0.1.Final'
+        implementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
+        implementation 'org.springframework.boot:spring-boot-starter-validation:2.6.1'
     }
     test {
         useJUnitPlatform()

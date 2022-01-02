@@ -4,6 +4,8 @@ import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificateEntity;
 import com.epam.esm.entity.TagEntity;
 import com.epam.esm.util.QueryBuilder;
+
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -79,6 +81,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     @Override
     public GiftCertificateEntity update(GiftCertificateEntity entity) {
         GiftCertificateEntity updatedGiftCertificate = entityManager.merge(entity);
+        Hibernate.initialize(updatedGiftCertificate.getTags());
         entityManager.flush();
         entityManager.clear();
         return updatedGiftCertificate;

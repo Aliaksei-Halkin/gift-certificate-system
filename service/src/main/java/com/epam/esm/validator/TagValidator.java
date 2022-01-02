@@ -21,14 +21,14 @@ public class TagValidator {
     }
 
     public void isValidId(long id) {
-        if (id < MIN_ID) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_ID, id, IdentifierEntity.TAG);
-        }
+//        if (id < MIN_ID) {
+//            throw new ValidationException(ExceptionPropertyKey.INCORRECT_ID, id, IdentifierEntity.TAG);
+//        }
     }
 
     private void isValidName(String name) {
-        if (name == null || name.isEmpty() || !name.matches(REGEX_NAME)) {
-            throw new ValidationException(ExceptionPropertyKey.INCORRECT_TAG_NAME, name, IdentifierEntity.TAG);
-        }
+//        if (name == null || name.isEmpty() || !name.matches(REGEX_NAME)) {
+//            throw new ValidationException(ExceptionPropertyKey.INCORRECT_TAG_NAME, name, IdentifierEntity.TAG);
+//        }
     }
 }

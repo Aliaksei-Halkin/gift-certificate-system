@@ -65,6 +65,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateDto addGiftCertificate(GiftCertificateDto giftCertificateDto) {
         GiftCertificateEntity giftCertificate = modelMapper.map(giftCertificateDto, GiftCertificateEntity.class);
         giftCertificateValidator.isValidGiftCertificate(giftCertificate);
+        giftCertificateValidator.checkForActive(giftCertificate.isActive());
+        giftCertificateValidator.checkForNoId(giftCertificate.getId());
         Optional<GiftCertificateEntity> optionalCertificate = giftCertificateValidator.ifExistName(giftCertificate.getName());
         if (optionalCertificate.isPresent()) {
             GiftCertificateEntity updatedCertificate = optionalCertificate.get();
@@ -256,9 +258,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (receivedGiftCertificate.getDuration() > 0) {
             updatedGiftCertificate.setDuration(receivedGiftCertificate.getDuration());
         }
-        if (receivedGiftCertificate.isActive() || !receivedGiftCertificate.isActive()) {
-            updatedGiftCertificate.setActive(receivedGiftCertificate.isActive());
-        }
+        updatedGiftCertificate.setActive(receivedGiftCertificate.isActive());
         giftCertificateValidator.isValidGiftCertificate(updatedGiftCertificate);
         if (receivedGiftCertificate.getTags() != null) {
             receivedGiftCertificate.getTags().forEach(tagValidator::isValidTag);

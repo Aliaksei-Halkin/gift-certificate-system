@@ -21,16 +21,14 @@ import java.util.Set;
 public class GiftCertificateEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "certificateId",
-            nullable = false, unique = true)
+    @Column(name = "certificateId", nullable = false, unique = true)
     private Long id;
     @Column(name = "active", nullable = false)
     private boolean active;
     /**
      * The name of GiftCertificate
      */
-    @Column(name = "name",
-            nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
     /**
      * The description of GiftCertificate
@@ -62,11 +60,9 @@ public class GiftCertificateEntity {
     /**
      * The set of tags in this Gift certificate
      */
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JoinTable(name = "certificates_has_tags",
-            joinColumns = @JoinColumn(name = "certificateId"),
-            inverseJoinColumns = @JoinColumn(name = "tagId")
-    )
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "certificates_has_tags", joinColumns = @JoinColumn(name = "certificateId"),
+            inverseJoinColumns = @JoinColumn(name = "tagId"))
     private Set<TagEntity> tags;
 
     /**
@@ -88,8 +84,7 @@ public class GiftCertificateEntity {
      * @param updateDate  {@code LocalDate} of gift certificate creation
      * @param tags        {@code Set} represents set of tags
      */
-    public GiftCertificateEntity(Long id, String name, String description, BigDecimal price,
-                                 int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<TagEntity> tags, boolean active) {
+    public GiftCertificateEntity(Long id, String name, String description, BigDecimal price, int duration, LocalDateTime createdDate, LocalDateTime updateDate, Set<TagEntity> tags, boolean active) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -207,16 +202,6 @@ public class GiftCertificateEntity {
      */
     @Override
     public String toString() {
-        return "GiftCertificate{" +
-                "id=" + id +
-                ", active=" + active +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                ", duration=" + duration +
-                ", createdDate=" + createdDate +
-                ", updateDate=" + updateDate +
-                ", tags=" + tags +
-                '}';
+        return "GiftCertificate{" + "id=" + id + ", active=" + active + ", name='" + name + '\'' + ", description='" + description + '\'' + ", price=" + price + ", duration=" + duration + ", createdDate=" + createdDate + ", updateDate=" + updateDate + ", tags=" + tags + '}';
     }
 }

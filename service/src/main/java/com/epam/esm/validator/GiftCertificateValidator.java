@@ -116,6 +116,9 @@ public class GiftCertificateValidator extends BaseValidator {
                 case DURATION:
                     isValidDuration(Integer.parseInt(giftCertificateField.getFieldValue()));
                     break;
+                default:
+                    throw new ValidationException(ExceptionPropertyKey.INCORRECT_FIELD, giftCertificateField.getFieldName(),
+                            IdentifierEntity.CERTIFICATE);
             }
         } catch (NumberFormatException exception) {
             throw new ValidationException(ExceptionPropertyKey.INCORRECT_FIELD_VALUE,
