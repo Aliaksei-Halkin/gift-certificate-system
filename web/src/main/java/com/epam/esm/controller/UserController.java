@@ -6,9 +6,6 @@ import com.epam.esm.controller.assembler.UserAssembler;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.entity.OrderEntity;
-import com.epam.esm.entity.TagEntity;
-import com.epam.esm.entity.UserEntity;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.UserService;
@@ -142,9 +139,9 @@ public class UserController {
      * @return {@link ResponseEntity} with found orders.
      */
     @GetMapping("/{id}/orders")
-    public ResponseEntity<List<OrderDto>> findOrdersByUserId(@PathVariable("id") Long userId) {
+    public ResponseEntity<CollectionModel<EntityModel<OrderDto>>> findOrdersByUserId(@PathVariable("id") Long userId) {
         List<OrderDto> orders = orderService.findUserOrders(userId);
-        return new ResponseEntity<>(orders, HttpStatus.OK);
+        return new ResponseEntity<>(orderAssembler.toCollectionModel(orders), HttpStatus.OK);
     }
 
     /**
