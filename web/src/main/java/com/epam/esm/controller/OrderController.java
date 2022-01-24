@@ -3,7 +3,6 @@ package com.epam.esm.controller;
 import com.epam.esm.controller.assembler.GiftCertificateAssembler;
 import com.epam.esm.controller.assembler.OrderAssembler;
 import com.epam.esm.dto.OrderDto;
-import com.epam.esm.entity.OrderEntity;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +43,13 @@ public class OrderController {
         this.orderService = orderService;
         this.orderAssembler = orderAssembler;
     }
+
     /**
      * Returns   all orders with the specified identifier from the storage.
      * <p>
      * Annotated by {@link RequestBody} with pagingParameters.
      * <p>
-        * The default response status is 200 - OK.
+     * The default response status is 200 - OK.
      *
      * @param pagingParameters with keys "page", "per_page" describe number of page and quantity values on page
      * @return {@link ResponseEntity} with found order.
@@ -59,6 +59,7 @@ public class OrderController {
         List<OrderDto> orders = orderService.findAll(pagingParameters);
         return new ResponseEntity<>(orderAssembler.toCollectionModel(orders), HttpStatus.OK);
     }
+
     /**
      * Returns the order with the specified identifier from the storage.
      * <p>

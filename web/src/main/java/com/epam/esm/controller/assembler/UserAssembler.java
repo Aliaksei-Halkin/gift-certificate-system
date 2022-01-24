@@ -2,7 +2,6 @@ package com.epam.esm.controller.assembler;
 
 import com.epam.esm.controller.UserController;
 import com.epam.esm.dto.UserDto;
-import com.epam.esm.entity.UserEntity;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
