@@ -115,7 +115,7 @@ public class TagEntity {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, active, giftCertificates);
+        return Objects.hash(id, name, active);
     }
 
 

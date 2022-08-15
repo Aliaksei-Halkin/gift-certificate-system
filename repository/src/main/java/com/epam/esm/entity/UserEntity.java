@@ -32,8 +32,20 @@ public class UserEntity {
     @JsonBackReference
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "user")
     private List<OrderEntity> orders;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "role_id")
+    private RoleEntity role;
+
 
     public UserEntity() {
+    }
+
+    public RoleEntity getRole() {
+        return role;
+    }
+
+    public void setRole(RoleEntity role) {
+        this.role = role;
     }
 
     public boolean getActive() {
@@ -100,18 +112,18 @@ public class UserEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserEntity user = (UserEntity) o;
-        return userId == user.userId && active == user.active && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(orders, user.orders);
+        UserEntity that = (UserEntity) o;
+        return userId == that.userId && active == that.active && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(password, that.password) && Objects.equals(email, that.email) && Objects.equals(orders, that.orders) && Objects.equals(role, that.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, firstName, lastName, password, email, active, orders);
+        return Objects.hash(userId, firstName, lastName, password, email, active, orders, role);
     }
 
     @Override
     public String toString() {
-        return "User{" +
+        return "UserEntity{" +
                 "userId=" + userId +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
@@ -119,6 +131,7 @@ public class UserEntity {
                 ", email='" + email + '\'' +
                 ", active=" + active +
                 ", orders=" + orders +
+                ", role=" + role +
                 '}';
     }
 }
