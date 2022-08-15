@@ -122,6 +122,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             long id = tagDao.add(tag);
             movableTag.setId(id);
             movableTag.setName(tag.getName());
+            movableTag.setActive(true);
         } else {
             movableTag = tagByName.get();
             movableTag.setActive(true);
