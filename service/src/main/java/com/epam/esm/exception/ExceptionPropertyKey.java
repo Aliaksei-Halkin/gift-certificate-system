@@ -30,6 +30,9 @@ public class ExceptionPropertyKey {
     public static final String ORDER_WITH_ID_NOT_FOUND = "order.not.found";
     public static final String NOT_NULL_ID = "not.null.id";
     public static final String ACTIVE_FALSE = "active.false";
+    public static final String INCORRECT_LOGIN = "incorrect.login";
+    public static final String INCORRECT_PASSWORD = "incorrect.password";
+
 
     private ExceptionPropertyKey() {
     }

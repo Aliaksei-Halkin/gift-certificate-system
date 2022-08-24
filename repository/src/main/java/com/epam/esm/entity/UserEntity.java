@@ -21,6 +21,8 @@ public class UserEntity {
     private String firstName;
     @Column(name = "last_name", nullable = false)
     private String lastName;
+    @Column(name = "login", nullable = false)
+    private String login;
     @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
@@ -38,6 +40,14 @@ public class UserEntity {
 
 
     public UserEntity() {
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public RoleEntity getRole() {

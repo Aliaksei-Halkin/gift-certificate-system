@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.RegistrationUserDto;
 import com.epam.esm.dto.UserDto;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface UserService {
     UserDto findById(long id);
 
     OrderDto findUserOrder(Long userId, Long orderId);
+    UserDto add(RegistrationUserDto userDto);
 }

@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.dto.OrderDto;
+import com.epam.esm.dto.RegistrationUserDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.entity.OrderEntity;
 import com.epam.esm.entity.UserEntity;
@@ -71,6 +72,11 @@ public class UserServiceImpl implements UserService {
                 IdentifierEntity.USER));
         OrderDto orderDto = modelMapper.map(order, OrderDto.class);
         return orderDto;
+    }
+
+    @Override
+    public UserDto add(RegistrationUserDto userDto) {
+        return null;
     }
 
     private UserEntity checkAndGetUser(long id) {

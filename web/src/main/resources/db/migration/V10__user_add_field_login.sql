@@ -1,0 +1,1 @@
+alter table user add column login varchar(50);
