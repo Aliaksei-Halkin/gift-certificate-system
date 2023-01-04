@@ -5,4 +5,5 @@ dependencies {
     implementation("org.hibernate:hibernate-core")
     implementation("org.springframework:spring-orm")
     testImplementation("com.h2database:h2:1.4.200")
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.24'
 }
