@@ -28,7 +28,6 @@ import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
-@NoArgsConstructor
 @AllArgsConstructor
 @Data
 @PropertySource("classpath:application.properties")
@@ -41,9 +40,7 @@ public class JwtTokenProvider {
     private String authorizationHeader;
     private final UserDetailsService userDetailsService;
 
-    public JwtTokenProvider(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+
 
     @PostConstruct
     private void init() {

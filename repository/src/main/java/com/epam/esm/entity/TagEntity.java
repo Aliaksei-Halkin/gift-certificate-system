@@ -1,7 +1,6 @@
 package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;

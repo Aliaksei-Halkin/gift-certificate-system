@@ -32,6 +32,7 @@ public class ExceptionPropertyKey {
     public static final String ACTIVE_FALSE = "active.false";
     public static final String INCORRECT_LOGIN = "incorrect.login";
     public static final String INCORRECT_PASSWORD = "incorrect.password";
+    public static final String INCORRECT_CREDENTIALS = "incorrect.credentials";
 
 
     private ExceptionPropertyKey() {

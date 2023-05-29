@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -76,7 +77,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto add(RegistrationUserDto userDto) {
-        return null;
+        if (!userDto.getPassword().equals(userDto.getRepeatedPassword())) {
+            throw new BadCredentialsException(ExceptionPropertyKey.INCORRECT_CREDENTIALS);
+        }
+        if (userDao.existsByLogin(userDto.getLogin())) {
+            throw new UserAlreadyExistException(ExceptionPropertyKey.USER_WITH_LOGIN_ALREADY_EXIST, userDto.getLogin());
+        }
+        User user = modelMapper.map(userDto, User.class);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setRole(roleRepository.findRoleByRoleId(DEFAULT_USER_ROLE_ID));
+        User addedUser = userRepository.save(user);
+        return modelMapper.map(addedUser, UserDto.class);
     }
 
     private UserEntity checkAndGetUser(long id) {
